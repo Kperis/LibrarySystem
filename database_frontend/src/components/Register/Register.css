@@ -1,0 +1,111 @@
+.register_form_box{
+    display:flex;
+    flex-direction: column;
+    max-width: 30%;
+    height: 700px;
+    align-items:center;
+    justify-content: center;
+    margin: 20px auto 20px auto;
+    padding: 32px;
+    gap: 10px;
+    flex-wrap:nowrap;
+    background: rgb(116,111,120);
+    background: linear-gradient(90deg,
+   rgb(227, 240, 236) 0%,
+    rgb(166, 235, 212) 60%,
+     rgb(87, 230, 168) 94%);
+    border: 2px solid rgb(54, 50, 50);
+    box-shadow: 0 1px 5px 1px #222;
+}
+
+.register_header{
+    margin: 80px auto 0px auto;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 60px;
+    font-weight: 400;
+}
+
+.register_input{
+    padding: 8px;
+    margin-left: 6px;
+    background-color: rgb(255, 236, 236);
+    width: 80%;
+    font-size: 16px;
+    transition: all 0.25s linear;
+}
+
+.register_input:hover{
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+
+.register_label{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.register_button{
+    padding: 10px;
+    width: 25%;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    margin-top: 12px;
+    margin-bottom: 0px;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: rgb(227, 250, 241);
+    box-shadow: 0 1px 1px 0px #222;
+    transition: all 0.25s linear;
+}
+
+.register_button:hover{
+    background-color: rgb(46, 67, 58);
+    color: white;
+    transform: scale(1.2);
+    border-radius: 6px;
+    box-shadow: 0 1px 1px 0px #222;
+}
+
+.register_date{
+    padding: 12px;
+    text-align: center;
+    width: 25%;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: rgb(227, 250, 241);
+    box-shadow: 0 1px 1px 0px #222;
+}
+
+.type_select{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-align: left;
+    gap: 5px;
+    width:100%;
+}
+
+.radio_btn{
+    width: 10%;
+}
+
+.radio_label{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 500;
+    width: 80%;
+    text-align: left;
+}
+
+.radio_title{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 500;
+    width: 100%;
+    text-align: left;
+    margin-left: 52px;
+}

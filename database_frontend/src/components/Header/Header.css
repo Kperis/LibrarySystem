@@ -1,0 +1,13 @@
+.header{
+    width: 60%;
+    margin: 80px auto auto auto;
+    padding: 10px;
+}
+
+.welcome_text{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 500;
+    font-size: 3em;
+    text-align: center;
+    color:rgb(62, 61, 61);
+}

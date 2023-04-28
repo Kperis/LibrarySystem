@@ -1,0 +1,39 @@
+.navigation{
+    background: rgb(10,6,84);
+    background: linear-gradient(90deg,
+     rgb(65, 56, 238) 0%,
+      rgb(94, 94, 245) 41%,
+       rgba(204,88,255,1) 100%);
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    -webkit-box-shadow: 0 1px 5px 1px #222;
+    -moz-box-shadow: 0 1px 5px 1px #222;
+    box-shadow: 0 1px 5px 1px #222;
+}
+
+.navbuttons{
+    font-family:'Lucida Sans', 
+    'Lucida Sans Regular',
+     'Lucida Grande',
+      'Lucida Sans Unicode',
+       Geneva,
+        Verdana,
+         sans-serif ;
+    text-align: center;
+    color: #fff6f6;
+    padding: 20px;
+    font-size: 18px;
+    margin-left: 50px;
+}
+
+.navbuttons:hover{
+    cursor: pointer;
+    color: #352f44;
+}
+
+.signout{
+    margin-left: auto;
+    margin-right: 20px;
+}
