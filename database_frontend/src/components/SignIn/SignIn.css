@@ -12,11 +12,11 @@
     flex-wrap: wrap;
     background: rgb(116,111,120);
     background: linear-gradient(90deg,
-   rgb(227, 240, 236) 0%,
-    rgb(166, 235, 212) 60%,
-     rgb(87, 230, 168) 94%);
-    border: 2px solid rgb(54, 50, 50);
-    box-shadow: 0 1px 5px 1px #222;
+   rgb(194, 163, 255) 0%,
+    rgb(223, 97, 255) 60%,
+     rgb(193, 44, 247) 94%);
+    border: 2px solid rgb(255, 255, 255);
+    box-shadow: 0 1px 5px 1px #ffffff;
 }
 
 .signin_header{
@@ -24,6 +24,7 @@
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 60px;
     font-weight: 400;
+    color:#ea7fff ;
 }
 
 .signin_input{
@@ -36,7 +37,7 @@
 }
 
 .signin_input:hover{
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(71, 71, 71);
     color: white;
 }
 
@@ -62,7 +63,7 @@
 }
 
 .login_button:hover{
-    background-color: rgb(46, 67, 58);
+    background-color: rgb(83, 3, 129);
     color: white;
     transform: scale(1.2);
     border-radius: 6px;

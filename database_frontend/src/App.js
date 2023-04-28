@@ -10,7 +10,7 @@ class App extends React.Component{
   constructor(){
     super();
     this.state = {
-      route: 'home',
+      route: 'signin',
       input: '',
       usr_type: ''
     }
