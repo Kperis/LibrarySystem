@@ -5,12 +5,14 @@ import Books from './components/Books/Books';
 import Header from './components/Header/Header';
 import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
+import { Routes, Route } from 'react-router-dom';
+
 
 class App extends React.Component{
   constructor(){
     super();
     this.state = {
-      route: 'signin',
+      route: 'home',
       input: '',
       usr_type: ''
     }
@@ -30,19 +32,18 @@ class App extends React.Component{
 
   render(){
     return (
-      <div className="App">
-        {this.state.route === 'home' 
-        ? <div>
-            <Navigation />
-            <Header />
-            <Books />
-          </div>
-        : (this.state.route === 'signin' 
-          ? <SignIn />
-          : <Register />
-        )        
-    }
-      </div>
+      <>
+       <Routes>
+          <Route path="/home" element={
+              <div>
+                <Navigation />
+                <Header />
+                <Books />
+              </div>} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/register" element={<Register />} />
+       </Routes>
+    </>
     );
   }
 }
