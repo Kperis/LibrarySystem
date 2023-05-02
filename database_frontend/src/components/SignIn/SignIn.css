@@ -20,7 +20,7 @@
 }
 
 .signin_header{
-    margin: 200px auto 0px auto;
+    margin: 100px auto 0px auto;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 60px;
     font-weight: 400;
@@ -69,4 +69,20 @@
     transform: scale(1.2);
     border-radius: 6px;
     box-shadow: 0 1px 1px 0px #222;
+}
+
+.btn{
+    max-width: 80px;
+    font-size: 24px;
+    color:white;
+    text-align: center;
+    margin: 30px 40px 0px auto;
+    text-decoration: underline;
+    transition: all linear 0.4s;
+}
+
+.btn:hover{
+    color: blueviolet;
+    transform:scale(1.2);
+    cursor: pointer;
 }

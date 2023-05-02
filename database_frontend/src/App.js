@@ -1,83 +1,44 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import Navigation from './components/Navigation/Navigation';
-import Books from './components/Books/Books';
-import Header from './components/Header/Header';
 import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
-import { Routes, Route } from 'react-router-dom';
-import UserInfo from './components/UserInfo/UserInfo';
-import Book from './components/Book/Book';
-
+import Home from './components/HomeComponent/Home';
 
 
 function App(){
 
   const [route,setRoute] = useState('/');
-  const [input,setInput] = useState('');
-  const [userid,setUserid] = useState('')
-
-  
-  useEffect(() => {
-    fetch('http://localhost:3000/sex',{
-      method:'post',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        info: 'get reckt'
-      })
-    })
-    .then(response => response.json())
+  const [user,setUser] = useState({
+    username: '',
+    password:'',
+    first_name: '',
+    last_name: '',
+    birthday: '',
+    role: '',
+    school: ''
   })
 
-  const onInputChange = (event) => {
-    setInput(event.target.value);
-  }
-
-  const onButtonSubmit = () => {
-
-  }
+  
 
   const onRouteChange = (route) => {
-
+    setRoute(route);
   }
+
+
+  const loadUser = (user) => {
+    setUser(user);
+  }
+
   return (
-    <>
-      <Routes>
-        <Route path="/home" element={
-          <div>
-            <Navigation />
-            <Header />
-            <Books />
-          </div>
-        } />
-         <Route path="/book" element={
-          <div>
-            <Navigation />
-            <Book />
-          </div>
-        } />
-        <Route path='/myProfile' element={
-          <div>
-            <Navigation />
-            <UserInfo />
-          </div>
-        }/>
-        <Route path='/borrowed' element={
-          <div>
-            <Navigation />
-            <Books />
-          </div>
-        }/>
-        <Route path='/requested' element={
-          <div>
-            <Navigation />
-            <Books />
-          </div>
-        }/>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/" element={<Register />} />
-        </Routes>
-    </>
+    <div className='App'>
+      {route === 'register'
+      ? <Register onRouteChange={onRouteChange}/>
+      : (route === 'home' 
+        ? <Home user={user} />
+        : <SignIn onRouteChange={onRouteChange} loadUser={loadUser}/>
+      )
+      }
+    </div>
   );
 }
 

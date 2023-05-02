@@ -22,6 +22,12 @@ CORS(app)
 # database = "schooldatabasev4"
 # )
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json(['body'])
+    print(data)
+    return('success')
+
 @app.route('/sex', methods=['POST','GET'])
 def someshit():
     data = request.get_json(['body'])
