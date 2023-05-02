@@ -26,11 +26,13 @@
     padding: 20px;
     font-size: 18px;
     margin-left: 50px;
+    text-decoration: none;    
 }
 
 .navbuttons:hover{
     cursor: pointer;
     color: #352f44;
+    text-decoration: none;    
 }
 
 .signout{

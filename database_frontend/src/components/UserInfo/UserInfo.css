@@ -1,0 +1,11 @@
+.userinfo_container{
+    display:flex;
+    text-align: left;
+    
+}
+
+.userinfo{
+    list-style: none;
+    font-size: 24px;
+    color: white;
+}

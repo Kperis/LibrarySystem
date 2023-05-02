@@ -1,14 +1,15 @@
 import React from 'react';
 import './Navigation.css';
+import { NavLink } from 'react-router-dom';
 
 const Navigation = () => {
     return(
         <div className ='navigation'>
-            <p className = 'navbuttons'>Home</p>
-            <p className = 'navbuttons'>My Profile</p>
-            <p className = 'navbuttons'>My Books</p>
-            <p className = 'navbuttons'>Requested</p>
-            <p className = 'navbuttons signout'>Sign Out</p>
+            <NavLink to='/home' className = 'navbuttons'>Home</NavLink>
+            <NavLink to='/myProfile' className = 'navbuttons'>My Profile</NavLink>
+            <NavLink to='/borrowed' className = 'navbuttons'>My Books</NavLink>
+            <NavLink to='/requested' className = 'navbuttons'>Requested</NavLink>
+            <NavLink to='/signin' className = 'navbuttons signout'>Sign Out</NavLink>
         </div>
     );
 }
