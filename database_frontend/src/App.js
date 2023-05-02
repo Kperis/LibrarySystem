@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navigation from './components/Navigation/Navigation';
 import Books from './components/Books/Books';
 import Header from './components/Header/Header';
@@ -10,12 +10,24 @@ import UserInfo from './components/UserInfo/UserInfo';
 import Book from './components/Book/Book';
 
 
+
 function App(){
 
   const [route,setRoute] = useState('/');
   const [input,setInput] = useState('');
   const [userid,setUserid] = useState('')
+
   
+  useEffect(() => {
+    fetch('http://localhost:3000/sex',{
+      method:'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        info: 'get reckt'
+      })
+    })
+    .then(response => response.json())
+  })
 
   const onInputChange = (event) => {
     setInput(event.target.value);
