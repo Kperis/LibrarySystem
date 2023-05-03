@@ -11,6 +11,7 @@ import UserInfo from '../UserInfo/UserInfo';
 const Home = ({user, onRouteChange}) => {
 
 
+
     const [books,setBooks] = useState([]);
     const [borrowed,setBorrowed] = useState([]);
     const [requested,setRequested] = useState([]);
@@ -23,6 +24,8 @@ const Home = ({user, onRouteChange}) => {
         })
         .then(response => response.json())
         .then(data => setBooks(data))
+
+    }, [])
 
     //     fetch('http://localhost:3000/borrowed',{
     //         method: 'get',
@@ -37,7 +40,7 @@ const Home = ({user, onRouteChange}) => {
     //     })
     //     .then(response => response.json())
     //     .then(requested => setRequested(requested))
-    }, [])
+    
 
     const onBookClicked = (index) => {
         setActiveBook(books[index]);
@@ -55,7 +58,7 @@ const Home = ({user, onRouteChange}) => {
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book book={activeBook}/>
+                        <Book user={user} book={activeBook}/>
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>
