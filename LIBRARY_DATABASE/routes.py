@@ -22,6 +22,44 @@ CORS(app)
 # database = "schooldatabasev4"
 # )
 
+book_list = [{
+        'title':'narnia',
+        'category':'fantasy',
+        'cover': 'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/a0c39048873339.58a470c427a06.jpg'
+    },
+    {
+        'title': 'harry potter',
+        'category': 'fantasy',
+        'cover': 'https://images.squarespace-cdn.com/content/v1/5c71c7d8aadd342945360ba1/1586723509001-E5NQB7VLS1R9NS0EOSOM/Harry+Potter+and+the+Philosopher%27s+Stone+Original+Children%27s+Edition+Cover.jpg'     
+    },
+    {
+        'title':'A Song of Ice And Fire',
+        'category':'porn',
+        'cover': 'https://upload.wikimedia.org/wikipedia/en/c/c2/Fire_%26_Blood_%282018%29_hardcover.jpg'
+
+    },
+    {
+        'title':'The three body problem',
+        'category':'Sci-fi',
+        'cover' : 'https://m.media-amazon.com/images/I/919XM42JQlL.jpg'
+    },
+    {
+        'title':'A Song of Ice And Fire',
+        'category':'porn',
+        'cover': 'https://upload.wikimedia.org/wikipedia/en/c/c2/Fire_%26_Blood_%282018%29_hardcover.jpg'
+    },
+    {
+        'title':'A Song of Ice And Fire',
+        'category':'porn',
+        'cover': 'https://upload.wikimedia.org/wikipedia/en/c/c2/Fire_%26_Blood_%282018%29_hardcover.jpg'
+    }
+    ]
+
+@app.route('/books',methods=['GET'])
+def books():
+    return(book_list)
+
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json(['body'])

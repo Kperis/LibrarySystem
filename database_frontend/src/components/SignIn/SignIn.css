@@ -61,6 +61,7 @@
     background-color: rgb(227, 250, 241);
     box-shadow: 0 1px 1px 0px #222;
     transition: all 0.25s linear;
+    cursor: pointer;
 }
 
 .login_button:hover{
