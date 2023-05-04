@@ -77,7 +77,8 @@ def Insert_Authors(isbn,author):
 
 
 No_of_books = 100
-response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
+response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
+#response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
 data = response.json()
 
 for i in range(No_of_books):

@@ -9,7 +9,17 @@ const Register = ({onRouteChange}) => {
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
     const [birthday, setBirthday] = useState('');
-    const [role, setRole] = useState('')
+    const [role, setRole] = useState('');
+
+    useEffect(() => {
+        fetch('http://localhost:3000/register', {
+            method: 'get',
+            headers: {'Content-Type':'application/json'}
+        })
+        .then(data => data.json())
+        .then(data => console.log(data))
+    },[])
+    
 
     const onSubmitRegister = () =>{
         fetch('http://localhost:3000/register', {

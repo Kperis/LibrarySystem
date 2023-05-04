@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './SignIn.css';
 
 const SignIn = ({loadUser, onRouteChange}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    
     
 
     const onSubmitSignin = () =>{
@@ -12,16 +13,11 @@ const SignIn = ({loadUser, onRouteChange}) => {
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: username,
-                password:password,
+                password:password
             })
         })
-        .then(response => response.json())
-        .then(user => {
-            if(user.id){
-                loadUser(user);
-                onRouteChange('home')
-            }
-        })
+        .then(data => data.json())
+        .then(data => console.log(data))
     }
 
     const onUsernameChange = (event) => {
