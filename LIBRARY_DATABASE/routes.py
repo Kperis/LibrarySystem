@@ -51,53 +51,32 @@ def register():
         return 1
 
 
-# @app.route('/signin',methods = ['GET','POST'])
-# def sign_in():
-#     data = request.get_json(['body'])
-#     username = data['username']
-#     password = data['password']
-#     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
-#     try:
-#         cursor.fetchall()[0][0]
-#         print("success")
-#         return jsonify({"result":"success"})
-#     except:
-#         print("no user found")
-#         return jsonify({"result":"failure"})
 
-@app.route('/signin',methods = ['POST'])
+@app.route('/signin',methods = ['POST','GET'])
 def sign_in():
-    if request.method == 'POST':
-        data = request.get_json(['body'])
-        username = data['username']
-        password = data['password']
-        cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
-        try:
-            cursor.fetchall()[0][0]
-            print("success")
-            return jsonify({"result": "success"})
-        except:
-            print("no user found")
-            return jsonify({"result": "failure"})
-    else:
-        return 1
+    data = request.get_json(['body'])
+    username = data['username']
+    password = data['password']
+    cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
+    try:
+        user_id = cursor.fetchall()[0][0]
+        print("success")
+        print(user_id)
+        cursor.execute('SELECT Authentication.username,Authentication.password,School.name\
+                        FROM Authentication JOIN App_user\
+                        ON App_user.user_id = Authentication.user_id JOIN School\
+                        ON School.school_id = App_user.school_id\
+                        WHERE Authentication.user_id = {}'.format(user_id))
+        result = cursor.fetchall()
+        return jsonify(result)
+    except:
+        print("no user found")
+        return jsonify({"result": "failure"})
+    # else:
+    #     return 1
 
+#@app.route('/books',methods = )
 
-# @app.route('/', methods=['GET'])
-# def hello():
-#     return 'Hello'
-# @app.route('/',methods= ['GET','POST'])
-# def start_page():
-#     return render_template('index.html')
-
-# @app.route('/sign_up',methods = ['GET','POST'])
-# def sign_up():
-#     cursor = mydb.cursor(buffered=True)
-#     cursor.execute("SELECT name FROM School")
-#     school_names = cursor.fetchall()
-#     cursor.close()
-
-#     return render_template('sign_up.html',data = school_names)
 
 if __name__ == "__main__":
     app.run(debug = True, host="localhost", port = 3000)
