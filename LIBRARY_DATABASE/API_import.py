@@ -18,6 +18,11 @@ def jprint(obj):
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
+def Number_of_Schools():
+    cursor.execute('SELECT COUNT(*) FROM School')
+    N = cursor.fetchall()[0][0]
+    return N
+
 def Insert_Books(isbn,page_count,publisher,title,summary,s_cover_path,m_cover_path):
         try:
             cursor.execute('INSERT INTO Books (isbn,page_count,publisher,title,summary,cover_path) VALUES ({},{},"{}","{}","{}","{}")'\
@@ -27,12 +32,15 @@ def Insert_Books(isbn,page_count,publisher,title,summary,s_cover_path,m_cover_pa
             print("error in book insert")
 
 def Insert_Stores(isbn):
+    N = Number_of_Schools()
     try:
         cursor.execute('SELECT school_id FROM School ORDER BY RAND()')
-        school_id = cursor.fetchall()[0][0]
-        copies = random.randint(0,20)
-        cursor.execute('INSERT INTO Stores (isbn,school_id,copies) VALUES ({},{},{})'.format(isbn,school_id,copies))
-        mydb.commit()
+        school_id = cursor.fetchall()
+        for i in range(random.randint(1,N)):
+            copies = random.randint(0,20)
+            school_id_var = school_id[i][0]
+            cursor.execute('INSERT INTO Stores (isbn,school_id,copies) VALUES ({},{},{})'.format(isbn,school_id_var,copies))
+            mydb.commit()
     except:
         print("error in store insert")
 
@@ -69,7 +77,8 @@ def Insert_Authors(isbn,author):
 
 
 No_of_books = 100
-response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
+response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
+#response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
 data = response.json()
 
 for i in range(No_of_books):
