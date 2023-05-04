@@ -46,18 +46,21 @@ class user_provider:
     num_of_users = 0
     def __init__(self,fake):
         user_provider.num_of_users+=1
-        self.name_list = fake.name().split(' ')
-        self.age = random.randint(0,70)
-        self.type = ['Μαθητής', 'Καθηγητής', 'Χειριστής','Κεντρικός Χειριστής']
+        self.profile = fake.simple_profile()
+        self.type = random.choices(['Μαθητής', 'Καθηγητής', 'Χειριστής','Κεντρικός Χειριστής'],weights = [90,10,0,0])
     def get_first_name(self):
-        return self.name_list[0]
+        return self.profile['name'].split(' ')[0]
     def get_last_name(self):
-        return self.name_list[1]
+        return self.profile['name'].split(' ')[1]
     def get_type(self):
-        random_list_type = random.choices((self.type),weights = [90,10,0,0])
-        return random_list_type[0]
+        return self.type[0]
     def get_age(self):
-        return self.age
+        age = 0
+        if(self.type[0] == 'Μαθητής'):
+            age = random.randint(10,18)
+        else:
+            age = random.randint(24,65)
+        return age
     def delete(self):
         user_provider.num_of_users-=1
 
