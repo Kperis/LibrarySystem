@@ -16,7 +16,7 @@ const Reviews = ({score, submited_by, desc}) =>{
                 score_text = 'Neutral'
                 break;
             case 3:
-            score_text = 'MIldly Liked'
+            score_text = 'Mildly Liked'
             break;
             case 4:
             score_text = 'Strongly Liked'

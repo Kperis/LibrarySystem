@@ -11,6 +11,10 @@ const Register = ({onRouteChange}) => {
     const [birthday, setBirthday] = useState('');
     const [role, setRole] = useState('')
 
+
+    
+
+
     const onSubmitRegister = () =>{
         fetch('http://localhost:3000/register', {
             method: 'post',
@@ -25,6 +29,8 @@ const Register = ({onRouteChange}) => {
             })
             
         })
+        .then(response => response.json())
+        
     }
 
     const onFirstNameChange = (event) => {
