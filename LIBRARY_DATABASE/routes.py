@@ -23,6 +23,13 @@ cursor = mydb.cursor(buffered = True)
 
 
 
+
+# @app.route('/books',methods=['GET'])
+# def books():
+#     return(book_list)
+
+
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'GET':
@@ -43,12 +50,20 @@ def register():
         print("ERROR")
         return 1
 
-@app.route('/sex', methods=['POST','GET'])
-def someshit():
-    print("sex")
-    data = request.get_json(['body'])
-    print(data)
-    return data
+
+# @app.route('/signin',methods = ['GET','POST'])
+# def sign_in():
+#     data = request.get_json(['body'])
+#     username = data['username']
+#     password = data['password']
+#     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
+#     try:
+#         cursor.fetchall()[0][0]
+#         print("success")
+#         return jsonify({"result":"success"})
+#     except:
+#         print("no user found")
+#         return jsonify({"result":"failure"})
 
 @app.route('/signin',methods = ['POST'])
 def sign_in():
@@ -67,9 +82,6 @@ def sign_in():
     else:
         return 1
 
-@app.route('/hello')
-def hello():
-    return 'Hello'
 
 # @app.route('/', methods=['GET'])
 # def hello():
