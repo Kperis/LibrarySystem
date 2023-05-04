@@ -7,11 +7,11 @@ import Home from './components/HomeComponent/Home';
 
 function App(){
 
-  const [route,setRoute] = useState('/');
+  const [route,setRoute] = useState('home');
   const [user,setUser] = useState({
-    username: '',
+    username: 'kostas',
     password:'',
-    first_name: '',
+    first_name: 'kostas',
     last_name: '',
     birthday: '',
     role: '',
@@ -34,7 +34,7 @@ function App(){
       {route === 'register'
       ? <Register onRouteChange={onRouteChange}/>
       : (route === 'home' 
-        ? <Home user={user} />
+        ? <Home user={user} onRouteChange={onRouteChange} />
         : <SignIn onRouteChange={onRouteChange} loadUser={loadUser}/>
       )
       }

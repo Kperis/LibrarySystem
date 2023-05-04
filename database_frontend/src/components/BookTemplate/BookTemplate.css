@@ -1,0 +1,22 @@
+.book{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-decoration: none;
+    gap: 14px;
+}
+
+span.book_title{
+    font-size: 28px;
+    color: rgb(246, 221, 195);
+    font-style: italic;
+    text-align: center;
+}
+
+.book_cover{
+    transition:all linear 0.4s;
+}
+
+.book_cover:hover{
+    transform: scale(1.05);
+}

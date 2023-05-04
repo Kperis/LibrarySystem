@@ -1,36 +1,66 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import './Books.css';
-import { NavLink } from 'react-router-dom';
+import BookTemplate from '../BookTemplate/BookTemplate';
 
-const Books = () => {
+
+const Books = ({books,onBookClicked}) => {
+
+    const [category, setCategory] = useState('');
+    const [authorsearch, setAuthorSearch] = useState('');
+    const [titlesearch, setTitleSearch] = useState('');
+
+    let booklist = books;
+    
+    const onBookClicked2 = (index) =>{
+        onBookClicked(index);
+    }
+
+    const onCategorySelect = (event) => {
+        setCategory(event.target.value);
+    }
+
+    const onAuthorSearch = (event) => {
+        setAuthorSearch(event.target.value);
+    }
+
+    const onTitleSearch = (event) => {
+        setTitleSearch(event.target.value);
+    }
+
+    const Search = (author, cat, title) => {
+        if(cat){
+        booklist = booklist.filter((a,index) => {
+            if(a.category === category){
+                return true;
+            }
+            else return false;
+        })
+        }
+    }
+
     return(
         <div className='book_box'>
-            <ul className='book_list'>
-                <li className='book'>
-                    <NavLink to='/book'>Book1</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book2</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book3</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book4</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book1</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book2</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book3</NavLink>
-                </li>
-                <li className='book'>
-                    <NavLink to='/book'>Book4</NavLink>
-                </li>
-            </ul>
+            <input onChange={onTitleSearch} type='text' placeholder='Title..'/>
+            <input onChange={onAuthorSearch} type='text' placeholder='Author..'/>
+            <select onChange={onCategorySelect}> 
+                <option value='' >All</option>
+                <option value='Fantasy' >Fantasy</option>
+                <option value='Sci-fi' >Sci-fi</option>
+                <option value='Romance' >Romance</option>
+                <option value='Mystery' >Mystery</option>
+                <option value='Drama' >Drama</option>
+                <option value='Action' >Action</option>
+                <option value='Historical' >Historical</option>
+            </select>
+            <div className='book_list'>
+                {
+                books.map((book,index) => {
+                    return(
+                        <BookTemplate key={index} onBookClicked2={onBookClicked2} index={index} cover={book.cover} title={book.title}/>
+                    );
+                })
+            }
+            </div>
         </div>
         );
     
