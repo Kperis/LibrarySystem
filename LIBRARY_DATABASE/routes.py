@@ -58,32 +58,34 @@ def books():
     return(book_list)
 
 
-# @app.route('/register', methods=['POST'])
-# def register():
-#     print("register")
-#     data = request.get_json(['body'])
-#     username = data['username']
-#     password = data['password']
+@app.route('/register', methods=['POST'])
+def register():
+    print("register")
+    data = request.get_json(['body'])
+    username = data['username']
+    password = data['password']
 
-#     first_name = data['first_name']
-#     last_name = data['last_name']
-#     age = data['birthday'].split('-')[0]
-#     type = data['type']
-#     school_name = data['school_name']
+    first_name = data['first_name']
+    last_name = data['last_name']
+    age = data['birthday'].split('-')[0]
+    type = data['role']
+    # school_name = data['school_name']
+    print(data)
+    return({'success','success'})
     
-#     cursor.execute('SELECT school_id FROM School WHERE School.name = "{}"'.format(school_name))
-#     school_id = cursor.fetchall()[0][0]
-#     cursor.execute('SELECT user_id FROM App_user WHERE App_user.school_id = {} AND type = "Admin"'.format(school_id))
-#     admin_id = cursor.fetchall()[0][0]
-#     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
-#                    VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,\
-#                     age,type,admin_id))
-#     mydb.commit()
-#     cursor.execute('SELECT user_id FROM App_user WHERE first_name = "{}" AND last_name = "{}"'.format(first_name,last_name))
-#     user_id = cursor.fetchall()[0][0]
-#     cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'.format(user_id,username,password))
-#     mydb.commit()
-#     return {"data":"monument"}
+    # cursor.execute('SELECT school_id FROM School WHERE School.name = "{}"'.format(school_name))
+    # school_id = cursor.fetchall()[0][0]
+    # cursor.execute('SELECT user_id FROM App_user WHERE App_user.school_id = {} AND type = "Admin"'.format(school_id))
+    # admin_id = cursor.fetchall()[0][0]
+    # cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
+    #                VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,\
+    #                 age,type,admin_id))
+    # mydb.commit()
+    # cursor.execute('SELECT user_id FROM App_user WHERE first_name = "{}" AND last_name = "{}"'.format(first_name,last_name))
+    # user_id = cursor.fetchall()[0][0]
+    # cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'.format(user_id,username,password))
+    # mydb.commit()
+    # return {"data":"monument"}
 #     #return('success')
 
 
