@@ -36,23 +36,20 @@ const Book = ({user,book}) =>{
             }
         })
 
-    })
+    },[])
 
 
     const onSubmitReview = () =>{
-        if(hasReviewed){
-            return;
-        }
-        else{
-            fetch('http://localhost:5000/submit_review', {
-            method: 'post',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                score: likert,
-                description: reviewDescription
-            })
+        
+        fetch('http://localhost:5000/submit_review', {
+        method: 'post',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+            username: user.username,
+            score: likert,
+            description: reviewDescription
         })
-    }
+        })
     }
 
     const onReviewChange = (event) => {
@@ -91,6 +88,7 @@ const Book = ({user,book}) =>{
                         <h3 className='review_header'>Review</h3>
                         <ul className='review_container'>
                             <span className='review_header'>0(Terrible!)</span>
+                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='0'/></li>
                             <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='1'/></li>
                             <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='2'/></li>
                             <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='3' checked/></li>
@@ -113,7 +111,7 @@ const Book = ({user,book}) =>{
                         {
                             reviews.map((review,index) => {
                                 return(
-                                    <Reviews key={index} submited_by={review.name} score={review.score} desc={review.desc}/>
+                                    <Reviews key={index} submited_by={review.full_name} score={review.score} desc={review.desc}/>
                                 );
                             })
                         }
