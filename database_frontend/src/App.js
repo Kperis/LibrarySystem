@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import Register from './components/Register/Register';
 import SignIn from './components/SignIn/SignIn';
 import Home from './components/HomeComponent/Home';
@@ -8,15 +8,7 @@ import Home from './components/HomeComponent/Home';
 function App(){
 
   const [route,setRoute] = useState('home');
-  const [user,setUser] = useState({
-    username: 'kostas',
-    password:'',
-    first_name: 'kostas',
-    last_name: '',
-    birthday: '',
-    role: '',
-    school: ''
-  })
+  const [user,setUser] = useState({});
 
   
 

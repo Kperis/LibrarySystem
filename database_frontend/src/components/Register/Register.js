@@ -21,6 +21,10 @@ const Register = ({onRouteChange}) => {
     },[])
     
 
+
+    
+
+
     const onSubmitRegister = () =>{
         fetch('http://localhost:3000/register', {
             method: 'post',
@@ -35,6 +39,8 @@ const Register = ({onRouteChange}) => {
             })
             
         })
+        .then(response => response.json())
+        
     }
 
     const onFirstNameChange = (event) => {

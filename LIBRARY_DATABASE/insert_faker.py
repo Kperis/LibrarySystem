@@ -8,11 +8,12 @@ import mysql.connector as con
 import random
 
 
+
 mydb = con.connect(
-host = "localhost",
-user = "root",
-password = "",
-database = "schooldatabasev4"
+host = 'localhost',
+user = 'root',
+password = 'ChoedanKal2002',
+database = 'schooldatabasev4',
 )
 
 
@@ -55,23 +56,19 @@ def Insert_Users(N_Users):
 
 
     for i in range(N_Users):
-        try:
-            cursor.execute('SELECT user_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
-            admin_id = cursor.fetchall()[0][0]
-            user = user_provider(fake)
-            school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                    {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
-                                    user.get_last_name(),user.get_age(),user.get_type()))
-            mydb.commit()
-        except:
-            print("error from user insert")
+        cursor.execute('SELECT user_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
+        admin_id = cursor.fetchall()[0][0]
+        user = user_provider(fake)
+        school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
+                                {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
+                                user.get_last_name(),user.get_age(),user.get_type()))
+        mydb.commit()
 
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
-    try:
-        sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
-    except:
-        print("hello world")
+    
+    sql_file = open("sql_schemas/drop_schema.sql")  
+    
     sql_string = sql_file.read().split(';')
     print(sql_string)
     for row in sql_string:

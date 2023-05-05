@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import './SignIn.css';
 
 const SignIn = ({loadUser, onRouteChange}) => {
@@ -8,16 +8,25 @@ const SignIn = ({loadUser, onRouteChange}) => {
     
 
     const onSubmitSignin = () =>{
-        fetch('http://localhost:3000/signin', {
+        fetch('http://localhost:5000/signin', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: username,
-                password:password
+                password: password
             })
         })
         .then(data => data.json())
-        .then(data => console.log(data))
+        .then(user => {
+            if(user.id){
+                loadUser(user);
+                onRouteChange('home');
+
+            }
+            else{
+                console.log('Invalid username/password');
+            }
+        })
     }
 
     const onUsernameChange = (event) => {

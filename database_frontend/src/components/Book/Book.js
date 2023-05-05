@@ -11,7 +11,8 @@ const Book = ({user,book}) =>{
     const [reviews, setReviews] = useState([]);
     
     useEffect(() => {
-        fetch('http://localhost:3000/reviews', {
+        setHasReviewed(false);
+        fetch('http://localhost:5000/reviews', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -21,7 +22,7 @@ const Book = ({user,book}) =>{
         .then(response => response.json())
         .then(data => setReviews(data))
 
-        fetch('http://localhost:3000/user_review', {
+        fetch('http://localhost:5000/user_review', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -31,7 +32,7 @@ const Book = ({user,book}) =>{
         })
         .then(response => {
             if(response){
-                setHasReviewed(true)
+                setHasReviewed(true);
             }
         })
 
@@ -43,7 +44,7 @@ const Book = ({user,book}) =>{
             return;
         }
         else{
-            fetch('http://localhost:3000/submit_review', {
+            fetch('http://localhost:5000/submit_review', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -67,18 +68,16 @@ const Book = ({user,book}) =>{
         <div>
             <h1 className='book_title'>{`${book.title}`}</h1>
             <div className='book_info'>
-                <img src={`${book.cover}`} width='400px' height='700px'/> 
+                <img alt='' src={`${book.cover}`} width='400px' height='700px'/> 
                 <ul className='book_details'>
                     <li className='description'>
-                        <p>Summary: Lorem ipsum sfhanjafnib  nda osjnjdnj afjn ajn f daudj names
-                            ssnfjfdnsjnjvjfjjjnvjadfjuaf uh fua uf vha 
-                        </p>
+                        <p>{`${book.description}`}</p>
                     </li>
                     <li className='rest'>
-                        <p>hot, amogus, sex</p>
+                        <p>{`${book.keywords}`}</p>
                     </li>
                     <li className='rest'>
-                        <p>Author(s): Brandon Sanserson</p>
+                        <p>Author(s): {`${book.author}`}</p>
                     </li>
                     <li className='rest'>
                         <p>{`Categories: ${book.category}`}</p>
@@ -86,22 +85,26 @@ const Book = ({user,book}) =>{
                     <li>
                         <button className='submit_review'>Request book!</button>
                     </li>
+                    {hasReviewed === false
+                    ? (
                     <li className='review_container'>
-                        <h3 className='review_header'>Reviews</h3>
+                        <h3 className='review_header'>Review</h3>
                         <ul className='review_container'>
-                            <span className='review_header'>Strongly Dislike</span>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='0'/></li>
+                            <span className='review_header'>0(Terrible!)</span>
                             <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='1'/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='2' checked/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='3'/></li>
+                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='2'/></li>
+                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='3' checked/></li>
                             <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='4'/></li>
-                            <span className='review_header'>Strongly Like</span>
+                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='5'/></li>
+                            <span className='review_header'>5(Fantastic!)</span>
                         </ul>
                         <div>
                             <textarea onChange={onReviewChange} className='review_description' type='text' placeholder='Tell us your thoughts on this book!...'></textarea>
                         </div>
                         <button onClick={onSubmitReview} className='submit_review'>Submit</button>
-                    </li>
+                    </li>)
+                    : <p className='rest'>Already Reviewed!</p>
+                    }   
                     <li className='rest'>
                         <p>Other User Reviews:</p>
                     </li>
