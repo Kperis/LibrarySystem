@@ -2,7 +2,7 @@ import React from 'react';
 import './Navigation.css';
 import { NavLink } from 'react-router-dom';
 
-const Navigation = ({onRouteChange}) => {
+const Navigation = ({onRouteChange,getBorrowed,getRequested}) => {
     return(
         <div className ='navigation'>
             <NavLink to='/' className = 'navbuttons'>Home</NavLink>

@@ -1,9 +1,9 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ useState } from 'react';
 import './Books.css';
 import BookTemplate from '../BookTemplate/BookTemplate';
 
 
-const Books = ({books,onBookClicked}) => {
+const Books = ({books,onBookClicked,user}) => {
 
     const [category, setCategory] = useState('');
     const [authorsearch, setAuthorSearch] = useState('');
@@ -40,18 +40,20 @@ const Books = ({books,onBookClicked}) => {
 
     return(
         <div className='book_box'>
-            <input onChange={onTitleSearch} type='text' placeholder='Title..'/>
-            <input onChange={onAuthorSearch} type='text' placeholder='Author..'/>
-            <select onChange={onCategorySelect}> 
-                <option value='' >All</option>
-                <option value='Fantasy' >Fantasy</option>
-                <option value='Sci-fi' >Sci-fi</option>
-                <option value='Romance' >Romance</option>
-                <option value='Mystery' >Mystery</option>
-                <option value='Drama' >Drama</option>
-                <option value='Action' >Action</option>
-                <option value='Historical' >Historical</option>
-            </select>
+            <div className='searchspace'>
+                <input className='searchbox' onChange={onTitleSearch} type='text' placeholder='Title..'/>
+                <input className='searchbox' onChange={onAuthorSearch} type='text' placeholder='Author..'/>
+                <select className='search_cat' onChange={onCategorySelect}> 
+                    <option value='' >All</option>
+                    <option value='Fantasy' >Fantasy</option>
+                    <option value='Sci-fi' >Sci-fi</option>
+                    <option value='Romance' >Romance</option>
+                    <option value='Mystery' >Mystery</option>
+                    <option value='Drama' >Drama</option>
+                    <option value='Action' >Action</option>
+                    <option value='Historical' >Historical</option>
+                </select>
+            </div>
             <div className='book_list'>
                 {
                 books.map((book,index) => {

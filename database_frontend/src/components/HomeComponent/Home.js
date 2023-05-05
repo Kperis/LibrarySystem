@@ -5,6 +5,7 @@ import Books from '../Books/Books';
 import Book from '../Book/Book';
 import { Routes, Route } from 'react-router-dom';
 import UserInfo from '../UserInfo/UserInfo';
+import Admin from '../AdminCompononent/Admin';
 
 
 
@@ -18,34 +19,41 @@ const Home = ({user, onRouteChange}) => {
     const [activeBook, setActiveBook] = useState({});
 
     useEffect(() => {
-        fetch('http://localhost:3000/books',{
+        fetch('http://localhost:5000/books',{
             method: 'get',
             headers: {'Content-Type':'application/json'}
         })
         .then(response => response.json())
         .then(data => setBooks(data))
 
+        fetch('http://localhost:5000/borrowed', {
+            method: 'post',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({
+                role: user.role,
+                school_name: user.school_name
+            })
+        })
+        .then(response => response.json())
+        .then(data => setBorrowed(data))
+
+        fetch('http://localhost:5000/borrowed', {
+            method: 'post',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({
+                role: user.role,
+                school_name: user.school_name
+            })
+        })
+        .then(response => response.json())
+        .then(data => setRequested(data))
+
     }, [])
-
-    //     fetch('http://localhost:3000/borrowed',{
-    //         method: 'get',
-    //         headers: {'Content-Type' : 'application/json'}
-    //     })
-    //     .then(response => response.json())
-    //     .then(borrowed => setBorrowed(borrowed))
-
-    //     fetch('http://localhost:3000/requested',{
-    //         method: 'get',
-    //         headers: {'Content-Type' : 'application/json'}
-    //     })
-    //     .then(response => response.json())
-    //     .then(requested => setRequested(requested))
     
 
     const onBookClicked = (index) => {
         setActiveBook(books[index]);
     }
-
 
     return(
             <>
@@ -64,10 +72,14 @@ const Home = ({user, onRouteChange}) => {
                         <UserInfo user={user}/>
                     }/>
                     <Route path='/borrowed' element={
-                        <Books books_view={borrowed}/>
+                        user.role === 'admin'
+                        ? <Admin book_list={borrowed} borrow={true} />
+                        : <Books books={borrowed} onBookClicked={onBookClicked}/>
                     }/>
                     <Route path='/requested' element={
-                        <Books books_view={requested}/>
+                        user.role === 'admin'
+                        ? <Admin book_list={requested} borrow={false} />
+                        : <Books books={requested} onBookClicked={onBookClicked}/>
                     }/>
 
                 </Routes>
