@@ -68,14 +68,55 @@ def sign_in():
                         ON School.school_id = App_user.school_id\
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
-        return jsonify(result)
+        print(result)
+        return jsonify({"result":"success","username":result[0][0],"password":result[0][1],"School":result[0][2]})
     except:
         print("no user found")
-        return jsonify({"result": "failure"})
+        return jsonify({"result": "failure","data":0})
     # else:
     #     return 1
 
-#@app.route('/books',methods = )
+@app.route('/books',methods = ['POST'])
+def books():
+    data = request.get_json(['body'])
+    school_name = data['school_name']
+    cursor.execute('SELECT Books.isbn,Books.page_count,Books.publisher,Books.title,Books.summary,Books.cover_path,Books.m_cover_path\
+                FROM Books\
+                JOIN Stores\
+                ON Stores.isbn = Books.isbn\
+                JOIN School\
+                ON School.school_id = Stores.school_id\
+                WHERE School.name = "{}";'.format(school_name))
+    book_data = cursor.fetchall()
+    return jsonify(book_data)
+
+
+@app.route('/borrow',methods = ['POST','PUT','GET'])
+def borrow():
+    if request.method == 'POST':
+        data = request.get_json(['body'])
+        username = data['username']
+        type = data['type']
+        if(type == "Student"):
+            result = route_functions.fborrow_username(username)
+            return jsonify(result)
+        elif (type == "Admin"):
+            result = route_functions.fborrow_school(username)
+            return jsonify(result)
+    elif request.method == 'PUT':
+        data = request.get_json(['body'])
+        username = data['username']
+        title = data['title']
+        isbn = route_functions.fbook_title(title)
+        user_id = route_functions.fuser_username(username)
+        print(user_id)
+        print(isbn)
+        route_functions.delete_borrow(user_id,isbn)
+        #ΥΠΑΡΧΕΙ ΕΝΑ ERROR επειδή για καποιο λόγω βιβλία με διαφορετικό isbn μπορεί να έχουν το ιδιο
+        #τίτλο και η sql δεν ξεχωρίζει τα κεφαλαία γράμματα απο τα μικρά
+        return jsonify({"delete":"success"})
+    
+
 
 
 if __name__ == "__main__":

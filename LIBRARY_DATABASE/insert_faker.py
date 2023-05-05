@@ -32,7 +32,7 @@ def Insert_Schools(N_Schools):
     for i in range(N_Schools):
         school = school_provider(fake)
         try:
-            cursor.execute('INSERT INTO School (name,city,email,address) VALUES ("{}","{}","{}","{}")'.format(school.get_name(),school.get_city(),school.get_email(),school.get_address()))
+            cursor.execute('INSERT INTO School (name,city,email,address,total_borrows) VALUES ("{}","{}","{}","{}",0)'.format(school.get_name(),school.get_city(),school.get_email(),school.get_address()))
         except:
             print("probably duplicate entry")
         mydb.commit()
@@ -55,13 +55,16 @@ def Insert_Users(N_Users):
 
 
     for i in range(N_Users):
-        cursor.execute('SELECT user_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
-        admin_id = cursor.fetchall()[0][0]
-        user = user_provider(fake)
-        school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
-                                user.get_last_name(),user.get_age(),user.get_type()))
-        mydb.commit()
+        try:
+            cursor.execute('SELECT user_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
+            admin_id = cursor.fetchall()[0][0]
+            user = user_provider(fake)
+            school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
+                                    {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
+                                    user.get_last_name(),user.get_age(),user.get_type()))
+            mydb.commit()
+        except:
+            print("error from user insert")
 
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
@@ -87,7 +90,7 @@ def create_objects(N_Schools,N_Users):
     Insert_Admins()
     Insert_Users(N_Users)
 
-create_objects(10,10)
+create_objects(10,800)
 
 #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
