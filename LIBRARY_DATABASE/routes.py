@@ -23,25 +23,22 @@ cursor = mydb.cursor(buffered = True)
 
 
 
-@app.route('/books',methods=['GET'])
-def books():
-    return(book_list)
 
 
-@app.route('/signin',methods = ['GET','POST'])
-def sign_in():
-    data = request.get_json(['body'])
-    username = data['username']
-    password = data['password']
-    cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
-    try:
-        cursor.fetchall()[0][0]
-        print("success")
-        return jsonify({"result":"success"})
-    except:
-        print("no user found")
-        return jsonify({"result":"failure"})
-cursor = mydb.cursor(buffered = True)
+# @app.route('/signin',methods = ['GET','POST'])
+# def sign_in():
+#     data = request.get_json(['body'])
+#     username = data['username']
+#     password = data['password']
+#     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
+#     try:
+#         cursor.fetchall()[0][0]
+#         print("success")
+#         return jsonify({"result":"success"})
+#     except:
+#         print("no user found")
+#         return jsonify({"result":"failure"})
+# cursor = mydb.cursor(buffered = True)
 
 
 
@@ -114,7 +111,7 @@ def borrow():
     if request.method == 'POST':
         data = request.get_json(['body'])
         username = data['username']
-        type = data['type']
+        type = data['role']
         if(type == "Student"):
             result = route_functions.fborrow_username(username)
             return jsonify(result)

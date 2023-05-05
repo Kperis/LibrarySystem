@@ -16,6 +16,7 @@ database = "schooldatabasev4"
 )
 
 
+
 cursor = mydb.cursor(buffered = True)
 
 
