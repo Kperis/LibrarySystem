@@ -26,7 +26,7 @@ const Home = ({user, onRouteChange}) => {
         .then(response => response.json())
         .then(data => setBooks(data))
 
-        fetch('http://localhost:5000/borrowed', {
+        fetch('http://localhost:5000/borrow', {
             method: 'post',
             headers: {'Content-Type' : 'application/json'},
             body: JSON.stringify({
@@ -37,7 +37,7 @@ const Home = ({user, onRouteChange}) => {
         .then(response => response.json())
         .then(data => setBorrowed(data))
 
-        fetch('http://localhost:5000/borrowed', {
+        fetch('http://localhost:5000/request', {
             method: 'post',
             headers: {'Content-Type' : 'application/json'},
             body: JSON.stringify({
