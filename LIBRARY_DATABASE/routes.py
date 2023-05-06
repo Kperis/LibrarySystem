@@ -37,7 +37,7 @@ def register():
         data = flask.request.get_json(['body'])
         school_id = route_functions.fschool_name(data['school_name'])
         admin_id = route_functions.fadmin_schoolid(school_id)
-        route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],data['type'],admin_id)
+        route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],data['role'],admin_id)
         user_id = route_functions.fuser_flname(data['first_name'],data['last_name'])
         route_functions.insert_authentication(user_id,data['username'],data['password'])
 

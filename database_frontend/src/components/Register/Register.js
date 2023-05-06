@@ -10,23 +10,26 @@ const Register = ({onRouteChange}) => {
     const [last_name, setLastName] = useState('');
     const [birthday, setBirthday] = useState('');
     const [role, setRole] = useState('');
+    const [school_name,setSchoolName] = useState('');
+    const [school_list,setSchoolList] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:3000/register', {
+        console.log('hi');
+        fetch('http://localhost:5000/register', {
             method: 'get',
             headers: {'Content-Type':'application/json'}
         })
-        .then(data => data.json())
-        .then(data => console.log(data))
+        .then(response => response.json())
+        .then(data => {
+            setSchoolList(data);
+        })
     },[])
     
 
 
-    
-
-
     const onSubmitRegister = () =>{
-        fetch('http://localhost:3000/register', {
+        if(username !== '' && password !== '' && first_name !== '' && last_name !== '' && birthday !== '' &&  role !== '' &&  school_name !== ''){
+        fetch('http://localhost:5000/register', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -35,11 +38,24 @@ const Register = ({onRouteChange}) => {
                 first_name: first_name,
                 last_name: last_name,
                 birthday: birthday,
-                role:role
+                role:role,
+                school_name: school_name
             })
             
         })
         .then(response => response.json())
+        .then(response => console.log(response))
+
+        setUsername('');
+        setBirthday('');
+        setPassword('');
+        setLastName('');
+        setFirstName('');
+        setRole('');
+        }
+        else{
+            console.log('fill everything');
+        }
         
     }
 
@@ -67,6 +83,10 @@ const Register = ({onRouteChange}) => {
 		setRole(event.target.value);
 	}
 
+    const onSelectSchool = (event) =>{
+        setSchoolName(event.target.value);
+    }
+
 
     return(
         <div>
@@ -79,6 +99,7 @@ const Register = ({onRouteChange}) => {
                     type='text' 
                     name='username' 
                     id='username' 
+                    value={username}
                     onChange={onUsernameChange}/>
                 <label className='register_label'>First Name:</label>
                 <input 
@@ -86,6 +107,7 @@ const Register = ({onRouteChange}) => {
                     type='text' 
                     name='first_name' 
                     id='first_name' 
+                    value={first_name}
                     onChange={onFirstNameChange}/>
                 <label className='register_label'>Last Name:</label>
                 <input 
@@ -93,8 +115,18 @@ const Register = ({onRouteChange}) => {
                     type='text' 
                     name='last_name' 
                     id='last_name'
+                    value={last_name}
                     onChange={onLastNameChange}
                     />
+                <select onChange={onSelectSchool}>
+                    {school_list.map((school,index) =>{
+                        return(
+                            <option key={index} value={`${school}`} >{`${school}`}</option>
+                        )
+                    })
+
+                    }
+                </select>
                 <label className='register_label'>Date of Birth</label>
                 <input 
                     className='register_date' 
@@ -133,8 +165,9 @@ const Register = ({onRouteChange}) => {
                 <label className='register_label'>Password:</label>
                 <input 
                     className='register_input' 
-                    type='text' 
-                    name='password' 
+                    type='password' 
+                    name='password'
+                    value={password} 
                     id='password'
                     onChange={onPasswordChange}/>
                 <input 
