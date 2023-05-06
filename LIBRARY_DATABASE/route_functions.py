@@ -77,6 +77,34 @@ def fbook_title(title):
 
     result = cursor.fetchall()[0][0]
     return result
+def frequest_username(username):
+    cursor.execute('SELECT Books.title, Authentication.username,App_user.first_name,App_user.last_name,\
+                   Request.date_of_request\
+                    FROM Authentication\
+                    JOIN App_user\
+                    ON Authentication.user_id = App_user.user_id\
+                    JOIN Request\
+                    ON Request.user_id = App_user.user_id\
+                    JOIN Books\
+                    ON Books.isbn = Request.isbn\
+                    WHERE Authentication.username = "{}"'.format(username))
+    result = cursor.fetchall()
+    return result
+def frequest_school(username):
+    cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
+    admin_id = cursor.fetchall()[0][0]
+    cursor.execute('SELECT Books.title,Authentication.usename,App_user.first_name,App_user.last_name,\
+                   Request.date_of_request\
+                    FROM Authentication\
+                    JOIN App_user\
+                    ON Authentication.user_id = App_user.user_id\
+                    JOIN Request\
+                    ON Request.user_id = App_user.user_id\
+                    JOIN Books\
+                    ON Books.isbn = Request.isbn\
+                    WHERE App_user.admin_id = {}'.format(admin_id))
+    result = cursor.fetchall()
+    return result
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
