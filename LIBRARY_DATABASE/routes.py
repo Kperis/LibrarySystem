@@ -59,13 +59,15 @@ def sign_in():
         print("success")
         print(user_id)
         cursor.execute('SELECT Authentication.username,Authentication.password,School.name\
+                       ,App_user.first_name,App_user.last_name,App_user.type\
                         FROM Authentication JOIN App_user\
                         ON App_user.user_id = Authentication.user_id JOIN School\
                         ON School.school_id = App_user.school_id\
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
         print(result)
-        return flask.jsonify({"result":"success","username":result[0][0],"password":result[0][1],"School":result[0][2]})
+        return flask.jsonify({"result":"success","username":result[0][0],"password":result[0][1],\
+                              "School":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"user_id":user_id})
     except:
         print("no user found")
         return flask.jsonify({"result": "failure","data":0})
@@ -76,7 +78,7 @@ def sign_in():
 def books():
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
-    cursor.execute('SELECT Books.isbn,Books.page_count,Books.publisher,Books.title,Books.summary,Books.cover_path,Books.m_cover_path\
+    cursor.execute('SELECT Books.isbn,Books.page_count,Books.publisher,Books.title,Books.summary,Books.cover_path,Books.m_cover_path,Stores.copies\
                 FROM Books\
                 JOIN Stores\
                 ON Stores.isbn = Books.isbn\
@@ -112,17 +114,27 @@ def borrow():
         #τίτλο και η sql δεν ξεχωρίζει τα κεφαλαία γράμματα απο τα μικρά
         return flask.jsonify({"delete":"success"})
     
-@app.route('/request',methods = ['POST','PUT'])
+@app.route('/request',methods = ['POST','PUT']) #Δεν την έχω δοκιμάσει ακόμα
 def request():
     if flask.request.method == 'POST':
-        data = request.get_json(['body'])
+        data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
         if type == "Student":
+            # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
             return flask.jsonify(result)
         elif type == "Admin":
-            pass
+            # Στέλνω isbn,title,username,first_name,last_name,date_of_request
+            result = route_functions.frequest_school(username)
+            return flask.jsonify(result)
+    elif flask.request.method == 'PUT':
+        data = flask.request.get_json(['body'])
+        username = data['username']
+        isbn = data['isbn']
+        user_id = route_functions.fuser_username(username)
+        route_functions.delete_request(user_id,isbn)
+        return flask.jsonify({"delete":"successful"})
 
 
 if __name__ == "__main__":

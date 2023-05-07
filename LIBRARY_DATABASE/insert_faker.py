@@ -12,7 +12,7 @@ import random
 mydb = con.connect(
 host = 'localhost',
 user = 'root',
-password = 'ChoedanKal2002',
+password = '',
 database = 'schooldatabasev4',
 )
 
@@ -63,11 +63,20 @@ def Insert_Users(N_Users):
                                 {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
                                 user.get_last_name(),user.get_age(),user.get_type()))
         mydb.commit()
+def Insert_Authentication():
+    cursor.execute('SELECT App_user.user_id\
+                    FROM App_user')
+    users_ids = cursor.fetchall()
+    for user_id in users_ids:
+        user = user_provider(fake)
+        cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'\
+                       .format(user_id[0],user.get_username(),user.get_password()))
+        mydb.commit()
 
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     
-    sql_file = open("sql_schemas/drop_schema.sql")  
+    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -86,8 +95,9 @@ def create_objects(N_Schools,N_Users):
     Insert_Schools(N_Schools)
     Insert_Admins()
     Insert_Users(N_Users)
+    Insert_Authentication()
 
-create_objects(10,800)
+create_objects(10,100)
 
 #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 

@@ -78,7 +78,7 @@ def fbook_title(title):
     result = cursor.fetchall()[0][0]
     return result
 def frequest_username(username):
-    cursor.execute('SELECT Books.title, Authentication.username,App_user.first_name,App_user.last_name,\
+    cursor.execute('SELECT Books.isbn,Books.title, Authentication.username,App_user.first_name,App_user.last_name,\
                    Request.date_of_request\
                     FROM Authentication\
                     JOIN App_user\
@@ -93,7 +93,7 @@ def frequest_username(username):
 def frequest_school(username):
     cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.title,Authentication.usename,App_user.first_name,App_user.last_name,\
+    cursor.execute('SELECT Books.isbn,Books.title,Authentication.usename,App_user.first_name,App_user.last_name,\
                    Request.date_of_request\
                     FROM Authentication\
                     JOIN App_user\
@@ -118,3 +118,20 @@ def insert_authentication(user_id,username,password):
 def delete_borrow(user_id,isbn):
     cursor.execute('DELETE FROM Borrow WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
     mydb.commit()
+def delete_request(user_id,isbn):
+    cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
+    mydb.commit()
+    cursor.fetchall()
+    cursor.execute('SELECT Stores.copies,Stores.school_id\
+                    FROM Stores\
+                    JOIN School\
+                    ON School.school_id = Stores.school_id\
+                    JOIN App_user\
+                    ON App_user.school_id = School.school_id\
+                    WHERE App_user.user_id = {} AND Stores.isbn = {}'.format(user_id,isbn))
+    data = cursor.fetchall()
+    cursor.execute('UPDATE Stores\
+                    SET Stores.copies = {}\
+                    WHERE Stores.isbn = {} AND Stores.school_id = {}'.format(data[0][0],isbn,data[0][1]))
+    mydb.commit()
+

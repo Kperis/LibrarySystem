@@ -61,6 +61,10 @@ class user_provider:
         else:
             age = random.randint(24,65)
         return age
+    def get_username(self):
+        return self.profile['username']
+    def get_password(self):
+        return fake.password()
     def delete(self):
         user_provider.num_of_users-=1
 
