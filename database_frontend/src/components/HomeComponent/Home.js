@@ -20,8 +20,14 @@ const Home = ({user, onRouteChange}) => {
 
     useEffect(() => {
         fetch('http://localhost:5000/books',{
-            method: 'get',
-            headers: {'Content-Type':'application/json'}
+            method: 'post',
+            headers: {
+                // 'Accept': 'application/json',
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                school_name: user.school_name
+            })
         })
         .then(response => response.json())
         .then(data => setBooks(data))
@@ -42,11 +48,13 @@ const Home = ({user, onRouteChange}) => {
             headers: {'Content-Type' : 'application/json'},
             body: JSON.stringify({
                 role: user.role,
-                school_name: user.school_name
+                username: user.username
             })
         })
         .then(response => response.json())
-        .then(data => setRequested(data))
+        .then(data => console.log(data))
+
+        
 
     }, [])
     
@@ -61,7 +69,7 @@ const Home = ({user, onRouteChange}) => {
                 <Routes>
                     <Route path='/' element={
                         <div>
-                            <Header first_name={user.first_name} last_name={user.last_name} school={user.school}/>
+                            <Header first_name={user.first_name} last_name={user.last_name} school={user.school_name}/>
                             <Books books={books} onBookClicked={onBookClicked}/>
                         </div>
                     } />

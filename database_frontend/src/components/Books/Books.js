@@ -1,41 +1,53 @@
-import React,{ useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import './Books.css';
 import BookTemplate from '../BookTemplate/BookTemplate';
 
 
 const Books = ({books,onBookClicked,user}) => {
 
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('All');
     const [authorsearch, setAuthorSearch] = useState('');
     const [titlesearch, setTitleSearch] = useState('');
+    const [booklist,setBooklist] = useState([]);
 
-    let booklist = books;
+    useEffect(() =>{
+        let temp = books.filter(book => {
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase());
+        })
+        setBooklist(temp);   
+    },[titlesearch,books])
     
+
     const onBookClicked2 = (index) =>{
         onBookClicked(index);
     }
 
     const onCategorySelect = (event) => {
         setCategory(event.target.value);
+        Search();
     }
 
     const onAuthorSearch = (event) => {
         setAuthorSearch(event.target.value);
+        Search();
     }
 
     const onTitleSearch = (event) => {
         setTitleSearch(event.target.value);
+        
     }
 
-    const Search = (author, cat, title) => {
-        if(cat){
-        booklist = booklist.filter((a,index) => {
-            if(a.category === category){
-                return true;
-            }
-            else return false;
-        })
-        }
+
+    const Search = () => {
+        console.log(titlesearch);
+        booklist = books.filter(book => {
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase());
+        })    
+        return;
+        // booklist = books.filter(book =>{
+        //     return book.author.toLowerCase().includes(authorsearch.toLowerCase());
+
+        // })
     }
 
     return(
@@ -56,9 +68,9 @@ const Books = ({books,onBookClicked,user}) => {
             </div>
             <div className='book_list'>
                 {
-                books.map((book,index) => {
+                booklist.map((book,index) => {
                     return(
-                        <BookTemplate key={index} onBookClicked2={onBookClicked2} index={index} cover={book.cover} title={book.title}/>
+                        <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} cover={book.cover_m}  title={book.title}/>
                     );
                 })
             }

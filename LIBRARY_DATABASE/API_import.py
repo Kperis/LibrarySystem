@@ -8,7 +8,7 @@ import json
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "",
+password = "ChoedanKal2002",
 database = "schooldatabasev4"
 )
 
@@ -25,7 +25,7 @@ def Number_of_Schools():
 
 def Insert_Books(isbn,page_count,publisher,title,summary,s_cover_path,m_cover_path):
         try:
-            cursor.execute('INSERT INTO Books (isbn,page_count,publisher,title,summary,cover_path,m_cover_path) VALUES ({},{},"{}","{}","{}","{}")'\
+            cursor.execute('INSERT INTO Books (isbn,page_count,publisher,title,summary,cover_path,m_cover_path) VALUES ({},{},"{}","{}","{}","{}","{}")'\
                     .format(int(isbn),page_count,publisher[0],title,summary[:699],s_cover_path,m_cover_path))
             mydb.commit()
         except:

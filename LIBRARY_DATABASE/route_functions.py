@@ -11,7 +11,7 @@ from flask import jsonify
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "",
+password = "ChoedanKal2002",
 database = "schooldatabasev4"
 )
 
@@ -78,7 +78,7 @@ def fbook_title(title):
     result = cursor.fetchall()[0][0]
     return result
 def frequest_username(username):
-    cursor.execute('SELECT Books.isbn,Books.title, Authentication.username,App_user.first_name,App_user.last_name,\
+    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
                    Request.date_of_request\
                     FROM Authentication\
                     JOIN App_user\
@@ -88,8 +88,11 @@ def frequest_username(username):
                     JOIN Books\
                     ON Books.isbn = Request.isbn\
                     WHERE Authentication.username = "{}"'.format(username))
+   
     result = cursor.fetchall()
+    print(result)
     return result
+    
 def frequest_school(username):
     cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]

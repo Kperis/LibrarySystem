@@ -65,7 +65,7 @@ const Book = ({user,book}) =>{
         <div>
             <h1 className='book_title'>{`${book.title}`}</h1>
             <div className='book_info'>
-                <img alt='' src={`${book.cover}`} width='400px' height='700px'/> 
+                <img alt='' src={`${book.cover_m}`} width='400px' height='700px'/> 
                 <ul className='book_details'>
                     <li className='description'>
                         <p>{`${book.description}`}</p>

@@ -4,7 +4,7 @@ import flask
 from flask_mysqldb import MySQL
 import mysql.connector as con
 from flask_mysqldb import MySQL
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 # from flask import jsonify
 import route_functions
 
@@ -12,12 +12,16 @@ import json
 # from datetime import date
 
 app = flask.Flask(__name__)
-CORS(app)
+cors = CORS(app,resources={
+    r"/*":{
+        "origins":"*"
+    }
+})
 
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "",
+password = "ChoedanKal2002",
 database = "schooldatabasev4"
 )
 
@@ -48,8 +52,10 @@ def register():
 
 
 
-@app.route('/signin',methods = ['POST','GET'])
+@app.route('/signin',methods = ['POST'])
+@cross_origin(headers=['Content-Type']) # Send Access-Control-Allow-Headers def cross_origin_json_post():)
 def sign_in():
+    
     data = flask.request.get_json(['body'])
     username = data['username']
     password = data['password']
@@ -66,8 +72,13 @@ def sign_in():
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
         print(result)
-        return flask.jsonify({"result":"success","username":result[0][0],"password":result[0][1],\
-                              "School":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"user_id":user_id})
+        print(result[0][1])
+        
+        # response.headers.add('Access-Control-Allow-Methods', '*')
+        # response.headers.add('Access-Control-Allow-Headers','Content-Type, Authorization')
+        # response.headers.add('Access-Control-Allow-Credentials', 'true')
+        
+        return flask.jsonify({"username":result[0][0],"password":result[0][1],"school_name":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"user_id":user_id})
     except:
         print("no user found")
         return flask.jsonify({"result": "failure","data":0})
@@ -75,6 +86,7 @@ def sign_in():
     #     return 1
 
 @app.route('/books',methods = ['POST'])
+@cross_origin(headers=['Content-Type'])
 def books():
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
@@ -86,7 +98,10 @@ def books():
                 ON School.school_id = Stores.school_id\
                 WHERE School.name = "{}";'.format(school_name))
     book_data = cursor.fetchall()
-    return flask.jsonify(book_data)
+    book_dict = [dict(zip(("isbn","page_count","publisher","title","summary","cover","cover_m","copies"), x))for x in book_data]
+ 
+    return flask.jsonify(book_dict)
+    # "result":"success","isbn":book_data[0][0],"page_count":book_data[0][1],"publisher":book_data[0][2],"title":book_data[0][3],"summary":book_data[0][4],"cover":book_data[0][5]
 
 
 @app.route('/borrow',methods = ['POST','PUT','GET'])
@@ -114,17 +129,19 @@ def borrow():
         #τίτλο και η sql δεν ξεχωρίζει τα κεφαλαία γράμματα απο τα μικρά
         return flask.jsonify({"delete":"success"})
     
-@app.route('/request',methods = ['POST','PUT']) #Δεν την έχω δοκιμάσει ακόμα
+@app.route('/request',methods = ['POST','PUT'])
+@cross_origin(headers=['Content-Type']) #Δεν την έχω δοκιμάσει ακόμα
 def request():
     if flask.request.method == 'POST':
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        if type == "Student":
+        if type == "student":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
-            return flask.jsonify(result)
-        elif type == "Admin":
+            print(result)
+            return flask.jsonify({'hi':'hi'})
+        elif type == "admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_school(username)
             return flask.jsonify(result)
@@ -136,6 +153,15 @@ def request():
         route_functions.delete_request(user_id,isbn)
         return flask.jsonify({"delete":"successful"})
 
+
+@app.route('/request_book',methods = ['POST'])
+@cross_origin(headers=['Content-Type']) 
+def request_book():
+    if flask.request.method == 'POST':
+        data = flask.request.get_json(['body'])
+        username = data['username']
+        isbn = data['isbn']
+        
 
 if __name__ == "__main__":
     app.run(debug = True, host="localhost", port = 5000)

@@ -12,7 +12,7 @@ import random
 mydb = con.connect(
 host = 'localhost',
 user = 'root',
-password = '',
+password = 'ChoedanKal2002',
 database = 'schooldatabasev4',
 )
 
@@ -76,7 +76,7 @@ def Insert_Authentication():
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     
-    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
+    sql_file = open("./sql_schemas/drop_schema.sql")  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)

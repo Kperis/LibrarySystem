@@ -7,7 +7,7 @@ import Home from './components/HomeComponent/Home';
 
 function App(){
 
-  const [route,setRoute] = useState('register');
+  const [route,setRoute] = useState('');
   const [user,setUser] = useState({});
 
   

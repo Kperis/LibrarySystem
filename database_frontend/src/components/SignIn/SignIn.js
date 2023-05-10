@@ -10,7 +10,9 @@ const SignIn = ({loadUser, onRouteChange}) => {
     const onSubmitSignin = () =>{
         fetch('http://localhost:5000/signin', {
             method: 'post',
-            headers: {'Content-Type':'application/json'},
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: username,
                 password: password
@@ -18,7 +20,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
         })
         .then(data => data.json())
         .then(user => {
-            if(user.id){
+            if(user.user_id){
                 loadUser(user);
                 onRouteChange('home');
 
@@ -27,6 +29,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
                 console.log('Invalid username/password');
             }
         })
+        .catch(console.log('fail'))
     }
 
     const onUsernameChange = (event) => {
