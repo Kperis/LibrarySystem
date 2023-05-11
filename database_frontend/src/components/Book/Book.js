@@ -2,13 +2,14 @@ import React,{useEffect, useState} from 'react';
 import './Book.css';
 import Reviews from '../Reviews/Reviews';
 
-const Book = ({user,book}) =>{
+const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
 
     const [hasReviewed, setHasReviewed] = useState(false);
     const [likert, setLikert] = useState();
     const [reviewDescription, setReviewDescription] = useState('');
 
     const [reviews, setReviews] = useState([]);
+    const [clicked,setClicked] = useState(false);
     
     useEffect(() => {
         setHasReviewed(false);
@@ -36,6 +37,8 @@ const Book = ({user,book}) =>{
             }
         })
 
+        
+
     },[])
 
 
@@ -57,9 +60,76 @@ const Book = ({user,book}) =>{
     }
 
     const onLikertChange = (event) => {
-        setLikert(event.target.value)
+        setLikert(event.target.value);
     }
 
+
+    const onRequestBook = async () =>{
+        if(!clicked){
+            let hasRequested = false;
+            let hasBorrowed = false;
+            if(requested.length !== 0){
+                requested.forEach(element => {
+                    if(element.isbn === book.isbn){
+                        hasRequested = true;
+                    }
+                    return;
+                });
+            }
+            
+            if(borrowed.length !== 0){
+                borrowed.forEach(element => {
+                    if(element.isbn === book.isbn){
+                        hasBorrowed = true;
+                    }
+                    return;
+                });
+            }
+            
+            if(user.role === 'student'){
+                if(requested.length < 2 && !hasDelayed && !hasRequested && !hasBorrowed){
+                    await fetch('http://localhost:5000/book_request', {
+                        method: 'post',
+                        headers: {
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: user.username,
+                            isbn: book.isbn
+                        })
+                        })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    
+                    update_count();
+                }
+                else{
+                    alert('Cannot request book');
+                }
+            }
+            else{
+                if(requested.length < 1 && !hasDelayed && !hasRequested && !hasBorrowed){
+                    fetch('http://localhost:5000/book_request', {
+                        method: 'post',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({
+                            username: user.username,
+                            isbn: book.isbn
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                }
+                else{
+                    alert('Cannot request book');
+                }
+            }
+        }
+        else{
+            alert('Cannot request book');;
+        }
+        return;
+    }
 
     return(
         <div>
@@ -80,7 +150,7 @@ const Book = ({user,book}) =>{
                         <p>{`Categories: ${book.category}`}</p>
                     </li>
                     <li>
-                        <button className='submit_review'>Request book!</button>
+                        <button className='submit_review' onClick={() => {onRequestBook(); setClicked(true);}} >Request book!</button>
                     </li>
                     {hasReviewed === false
                     ? (

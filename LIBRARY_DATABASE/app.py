@@ -22,12 +22,12 @@ mydb = con.connect(
 host = "localhost",
 user = "root",
 password = "ChoedanKal2002",
-database = "schooldatabasev4"
+database = "schooldatabasev4",
+autocommit = True
 )
 
 
 cursor = mydb.cursor(buffered = True)
-
 
 
 @app.route('/register', methods=['GET','POST'])
@@ -63,7 +63,7 @@ def sign_in():
     try:
         user_id = cursor.fetchall()[0][0]
         print("success")
-        print(user_id)
+        # print(user_id)
         cursor.execute('SELECT Authentication.username,Authentication.password,School.name\
                        ,App_user.first_name,App_user.last_name,App_user.type\
                         FROM Authentication JOIN App_user\
@@ -71,8 +71,7 @@ def sign_in():
                         ON School.school_id = App_user.school_id\
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
-        print(result)
-        print(result[0][1])
+        
         
         # response.headers.add('Access-Control-Allow-Methods', '*')
         # response.headers.add('Access-Control-Allow-Headers','Content-Type, Authorization')
@@ -104,16 +103,19 @@ def books():
     # "result":"success","isbn":book_data[0][0],"page_count":book_data[0][1],"publisher":book_data[0][2],"title":book_data[0][3],"summary":book_data[0][4],"cover":book_data[0][5]
 
 
-@app.route('/borrow',methods = ['POST','PUT','GET'])
+@app.route('/borrow',methods = ['POST','PUT'])
+@cross_origin(headers=['Content-Type'])
 def borrow():
     if flask.request.method == 'POST':
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        if(type == "Student"):
+        if type == "student":
             result = route_functions.fborrow_username(username)
-            return flask.jsonify(result)
-        elif (type == "Admin"):
+            borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
+            print(borrow_dict)
+            return flask.jsonify(borrow_dict)
+        elif (type == "admin"):
             result = route_functions.fborrow_school(username)
             return flask.jsonify(result)
     elif flask.request.method == 'PUT':
@@ -139,8 +141,9 @@ def request():
         if type == "student":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
-            print(result)
-            return flask.jsonify({'hi':'hi'})
+            request_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','date_of_request'),x)) for x in result]
+            print(request_dict)
+            return flask.jsonify(request_dict)
         elif type == "admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_school(username)
@@ -154,13 +157,16 @@ def request():
         return flask.jsonify({"delete":"successful"})
 
 
-@app.route('/request_book',methods = ['POST'])
+@app.route('/book_request',methods = ['POST'])
 @cross_origin(headers=['Content-Type']) 
 def request_book():
-    if flask.request.method == 'POST':
-        data = flask.request.get_json(['body'])
-        username = data['username']
-        isbn = data['isbn']
+    data = flask.request.get_json(['body'])
+    username = data['username']
+    isbn = data['isbn']
+    user_id = route_functions.fuser_username(username)
+    cursor.execute('INSERT INTO Request(date_of_request, isbn, user_id) VALUES(CURDATE(), {},{})'.format(isbn,user_id))
+    mydb.commit()
+    return flask.jsonify({'success':'success'})
         
 
 if __name__ == "__main__":

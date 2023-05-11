@@ -1,10 +1,11 @@
-import routes
+import app
 from flask import Flask,make_response,request,render_template
 from flask_mysqldb import MySQL
 import mysql.connector as con
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from flask import jsonify
+import datetime
 
 
 
@@ -41,8 +42,11 @@ def fuser_flname(first_name,last_name):
     user_id = cursor.fetchall()[0][0]
     return user_id
 def fborrow_username(username):
-    cursor.execute('SELECT Books.title,Authentication.username,App_user.first_name,App_user.last_name\
-                   ,return_date,acquire_date\
+    # user_id = fuser_username(username)
+    # cursor.execute('SELECT ')
+
+    cursor.execute('SELECT Books.isbn,Books.title,Books.m_cover_path,Authentication.username,App_user.first_name,App_user.last_name,\
+                    DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
                     FROM Authentication\
                     JOIN App_user\
                     ON App_user.user_id = Authentication.user_id\
@@ -52,7 +56,20 @@ def fborrow_username(username):
                     ON Books.isbn = Borrow.isbn\
                     WHERE Authentication.username = "{}"'.format(username))
     result = cursor.fetchall()
+    mydb.commit()
+    print(result)
+    # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
+    #                 Request.date_of_request\
+    #                 FROM Authentication\
+    #                 JOIN App_user\
+    #                 ON Authentication.user_id = App_user.user_id\
+    #                 JOIN Request\
+    #                 ON Request.user_id = App_user.user_id\
+    #                 JOIN Books\
+    #                 ON Books.isbn = Request.isbn\
+    #                 WHERE Authentication.username = "{}"'.format(username))
     return result
+
 def fborrow_school(username):
     cursor.execute('SELECT user_id\
                     FROM App_user\
@@ -60,7 +77,7 @@ def fborrow_school(username):
                     ON App_user.user_id = Authentication.user_id\
                     WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.title,Authentication.username,App_user.first_name,App_user.last_name\
+    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name\
                    ,return_date,acquire_date\
                     FROM Authentication\
                     JOIN App_user\
@@ -71,6 +88,7 @@ def fborrow_school(username):
                     ON Books.isbn = Borrow.isbn\
                     WHERE App_user.admin_id = {}'.format(admin_id))
     result = cursor.fetchall()
+    
     return result
 def fbook_title(title):
     cursor.execute('SELECT Books.isbn FROM Books WHERE Books.title = "{}"'.format(title))
@@ -78,8 +96,9 @@ def fbook_title(title):
     result = cursor.fetchall()[0][0]
     return result
 def frequest_username(username):
-    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
-                   Request.date_of_request\
+    print('hi')
+    cursor.execute('SELECT Books.isbn,Books.title,Books.m_cover_path,Authentication.username,App_user.first_name,App_user.last_name,\
+                    DATE_FORMAT(Request.date_of_request, "%m/%d/%Y")\
                     FROM Authentication\
                     JOIN App_user\
                     ON Authentication.user_id = App_user.user_id\
@@ -90,7 +109,7 @@ def frequest_username(username):
                     WHERE Authentication.username = "{}"'.format(username))
    
     result = cursor.fetchall()
-    print(result)
+    mydb.commit()
     return result
     
 def frequest_school(username):
@@ -124,17 +143,19 @@ def delete_borrow(user_id,isbn):
 def delete_request(user_id,isbn):
     cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
     mydb.commit()
-    cursor.fetchall()
-    cursor.execute('SELECT Stores.copies,Stores.school_id\
-                    FROM Stores\
-                    JOIN School\
-                    ON School.school_id = Stores.school_id\
-                    JOIN App_user\
-                    ON App_user.school_id = School.school_id\
-                    WHERE App_user.user_id = {} AND Stores.isbn = {}'.format(user_id,isbn))
-    data = cursor.fetchall()
-    cursor.execute('UPDATE Stores\
-                    SET Stores.copies = {}\
-                    WHERE Stores.isbn = {} AND Stores.school_id = {}'.format(data[0][0],isbn,data[0][1]))
-    mydb.commit()
+    print('done')
+    return
+    # cursor.fetchall()
+    # cursor.execute('SELECT Stores.copies,Stores.school_id\
+    #                 FROM Stores\
+    #                 JOIN School\
+    #                 ON School.school_id = Stores.school_id\
+    #                 JOIN App_user\
+    #                 ON App_user.school_id = School.school_id\
+    #                 WHERE App_user.user_id = {} AND Stores.isbn = {}'.format(user_id,isbn))
+    # data = cursor.fetchall()
+    # cursor.execute('UPDATE Stores\
+    #                 SET Stores.copies = {}\
+    #                 WHERE Stores.isbn = {} AND Stores.school_id = {}'.format(data[0][0],isbn,data[0][1]))
+    # mydb.commit()
 

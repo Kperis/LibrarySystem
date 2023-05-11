@@ -29,7 +29,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
                 console.log('Invalid username/password');
             }
         })
-        .catch(console.log('fail'))
+        
     }
 
     const onUsernameChange = (event) => {

@@ -3,7 +3,7 @@ import './Books.css';
 import BookTemplate from '../BookTemplate/BookTemplate';
 
 
-const Books = ({books,onBookClicked,user}) => {
+const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
     const [category, setCategory] = useState('All');
     const [authorsearch, setAuthorSearch] = useState('');
@@ -34,7 +34,6 @@ const Books = ({books,onBookClicked,user}) => {
 
     const onTitleSearch = (event) => {
         setTitleSearch(event.target.value);
-        
     }
 
 
@@ -49,6 +48,26 @@ const Books = ({books,onBookClicked,user}) => {
 
         // })
     }
+
+    const onCancelRequest = async (index) =>{
+        let isbn = books[index].isbn;
+        await fetch('http://localhost:5000/request', {
+            method: 'put',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.username,
+                isbn: isbn
+            })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+
+        update_count();
+
+    }
+    
 
     return(
         <div className='book_box'>
@@ -70,11 +89,29 @@ const Books = ({books,onBookClicked,user}) => {
                 {
                 booklist.map((book,index) => {
                     return(
-                        <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} cover={book.cover_m}  title={book.title}/>
+                        <div>
+                            <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} cover={book.cover_m}  title={book.title}/>
+                        
+                            {
+                                isonrequest === true
+                                ?   <div>
+                                        <button className='cancel_request' onClick={()=>{ onCancelRequest(index);} } >Cancel Request</button>
+                                    </div>
+                                
+                                :   <div>
+
+                                    </div>
+                            
+                            }
+                        </div>
                     );
                 })
-            }
+                }
+
             </div>
+            
+            
+            
         </div>
         );
     
