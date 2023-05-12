@@ -1,9 +1,12 @@
 .book_info{
+    max-width: 80%;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
+    flex-wrap: wrap;
+    margin: auto;
 }
 
 .description{
@@ -81,8 +84,11 @@ span.review_header{
     background-color: blueviolet;
     font-size: 20px;
     margin-top: 12px;
-    border: none;
+    border: solid 2px #000000;
     border-radius: 10px;
+    -webkit-box-shadow: 3px 3px 4px 2px #000000;
+    -moz-box-shadow: 3px 3px 4px 2px #000000;
+    box-shadow: 3px 3px 4px 2px #000000;
     transition: all linear 0.4s;
 }
 
@@ -92,3 +98,29 @@ span.review_header{
 }
 
 
+
+.review_header2{
+    font-size: 26px;
+    color:rgb(255, 255, 255);
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.book_info>p{
+    color: white;
+    font-size: 24px;
+    font-weight: bolder;
+}
+
+.review_box{
+    width: 1000px;
+}
+
+.book_info > img{
+    border: solid 1px rgb(190, 190, 190);
+    border-radius: 10px;
+    -webkit-box-shadow: 3px 3px 20px 4px #000000;
+    -moz-box-shadow: 3px 3px 20px 4px #000000;
+    box-shadow: 5px 3px 20px 4px #000000;
+}

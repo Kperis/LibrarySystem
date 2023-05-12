@@ -113,7 +113,6 @@ def borrow():
         if type == "student":
             result = route_functions.fborrow_username(username)
             borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
-            print(borrow_dict)
             return flask.jsonify(borrow_dict)
         elif (type == "admin"):
             result = route_functions.fborrow_school(username)
@@ -142,7 +141,6 @@ def request():
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
             request_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','date_of_request'),x)) for x in result]
-            print(request_dict)
             return flask.jsonify(request_dict)
         elif type == "admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
@@ -167,7 +165,49 @@ def request_book():
     cursor.execute('INSERT INTO Request(date_of_request, isbn, user_id) VALUES(CURDATE(), {},{})'.format(isbn,user_id))
     mydb.commit()
     return flask.jsonify({'success':'success'})
-        
+
+@app.route('/reviews',methods = ['POST'])
+@cross_origin(headers=['Content-Type'])
+def get_reviews():
+    data = flask.request.get_json(['body'])
+    isbn = data['isbn']
+    cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,App_user.first_name,App_user.last_name FROM Review JOIN App_user ON Review.user_id = App_user.user_id WHERE Review.isbn={}'.format(isbn))
+    result = cursor.fetchall()
+    mydb.commit()
+    reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name'),x))for x in result]
+
+    return flask.jsonify(reviews_dict)
+
+@app.route('/user_review',methods = ['POST'])
+@cross_origin(headers=['Content-Type'])
+def hasReviewed():
+    data = flask.request.get_json(['body'])
+    isbn = data['isbn']
+    username = data['username']
+    user_id = route_functions.fuser_username(username)
+    cursor.execute('SELECT * FROM Review WHERE isbn={} AND user_id={}'.format(isbn,user_id))
+    result = cursor.fetchall()
+    mydb.commit()
+    if result:
+        return flask.jsonify({'reviewed':'yes'})
+    else:
+        return flask.jsonify({'reviewed': 'none'})
+
+@app.route('/submit_review',methods = ['POST'])
+@cross_origin(headers=['Content-Type'])
+def submit_review():
+    data = flask.request.get_json(['body'])
+    isbn = data['isbn']
+    username = data['username']
+    score = data['score']
+    description = data['description']
+    score = int(score)
+    user_id = route_functions.fuser_username(username)
+    cursor.execute('INSERT INTO Review(date_of_review,score,description,isbn,user_id) VALUES(CURDATE(),{}, "{}",{},{})'.format(score,description,isbn,user_id))
+    mydb.commit()
+    return flask.jsonify({'success':'success'})
+
+
 
 if __name__ == "__main__":
     app.run(debug = True, host="localhost", port = 5000)

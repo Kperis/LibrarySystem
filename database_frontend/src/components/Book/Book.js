@@ -2,18 +2,24 @@ import React,{useEffect, useState} from 'react';
 import './Book.css';
 import Reviews from '../Reviews/Reviews';
 
-const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
+const Book = ({user,book,hasDelayed,rev_count,update_reviews,requested,borrowed,update_count}) =>{
 
     const [hasReviewed, setHasReviewed] = useState(false);
-    const [likert, setLikert] = useState();
+    const [likert, setLikert] = useState('3');
     const [reviewDescription, setReviewDescription] = useState('');
 
     const [reviews, setReviews] = useState([]);
     const [clicked,setClicked] = useState(false);
     
     useEffect(() => {
+        console.log('run')
         setHasReviewed(false);
-        fetch('http://localhost:5000/reviews', {
+        fetchreviews();
+        
+    },[rev_count])
+
+    const fetchreviews = async () =>{
+        await fetch('http://localhost:5000/reviews', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -23,36 +29,43 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
         .then(response => response.json())
         .then(data => setReviews(data))
 
-        fetch('http://localhost:5000/user_review', {
+        await fetch('http://localhost:5000/user_review', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
-                user: user.username, 
+                username: user.username, 
                 isbn:book.isbn
             })
         })
-        .then(response => {
-            if(response){
+        .then(response => response.json())
+        .then(data => {
+            if(data.reviewed === 'yes'){
                 setHasReviewed(true);
             }
+            else{
+
+            }
         })
+    }
 
+
+    const onSubmitReview = async () =>{
         
-
-    },[])
-
-
-    const onSubmitReview = () =>{
-        
-        fetch('http://localhost:5000/submit_review', {
+        await fetch('http://localhost:5000/submit_review', {
         method: 'post',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({
             username: user.username,
+            isbn: book.isbn,
             score: likert,
             description: reviewDescription
         })
         })
+        .then(response => response.json())
+        .then(data => console.log(data))
+
+        update_reviews();
+
     }
 
     const onReviewChange = (event) => {
@@ -61,6 +74,7 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
 
     const onLikertChange = (event) => {
         setLikert(event.target.value);
+        console.log(likert)
     }
 
 
@@ -133,12 +147,12 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
 
     return(
         <div>
-            <h1 className='book_title'>{`${book.title}`}</h1>
+            <h1 className='book_title'>{`${book.title.toUpperCase()}`}</h1>
             <div className='book_info'>
                 <img alt='' src={`${book.cover_m}`} width='400px' height='700px'/> 
                 <ul className='book_details'>
                     <li className='description'>
-                        <p>{`${book.description}`}</p>
+                        <p>{`${book.summary}`}</p>
                     </li>
                     <li className='rest'>
                         <p>{`${book.keywords}`}</p>
@@ -149,6 +163,9 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
                     <li className='rest'>
                         <p>{`Categories: ${book.category}`}</p>
                     </li>
+                    <li className='rest'>
+                        <span>{`Published by: ${book.publisher}`}</span>
+                    </li>
                     <li>
                         <button className='submit_review' onClick={() => {onRequestBook(); setClicked(true);}} >Request book!</button>
                     </li>
@@ -158,12 +175,12 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
                         <h3 className='review_header'>Review</h3>
                         <ul className='review_container'>
                             <span className='review_header'>0(Terrible!)</span>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='0'/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='1'/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='2'/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='3' checked/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='4'/></li>
-                            <li><input onLikertChange={onLikertChange} type='radio' name='likert' value='5'/></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='0' /></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='1'/></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='2'/></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='3'/></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='4'/></li>
+                            <li><input onChange={onLikertChange} type='radio' name='likert' value='5'/></li>
                             <span className='review_header'>5(Fantastic!)</span>
                         </ul>
                         <div>
@@ -173,21 +190,19 @@ const Book = ({user,book,hasDelayed,requested,borrowed,update_count}) =>{
                     </li>)
                     : <p className='rest'>Already Reviewed!</p>
                     }   
-                    <li className='rest'>
-                        <p>Other User Reviews:</p>
-                    </li>
-                    <li>
-                        <div>
-                        {
-                            reviews.map((review,index) => {
-                                return(
-                                    <Reviews key={index} submited_by={review.full_name} score={review.score} desc={review.desc}/>
-                                );
-                            })
-                        }
-                        </div>
-                    </li>
                 </ul>
+                <div>
+                    <p className='review_header2'>Other User Reviews:</p>
+                    <div className='review_box'> 
+                    {
+                        reviews.map((review,index) => {
+                            return(
+                                <Reviews key={index} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} score={review.score} desc={review.description}/>
+                            );
+                        })
+                    }
+                    </div>
+                </div>
             </div>
         </div>
     );

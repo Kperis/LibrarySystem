@@ -19,6 +19,7 @@ const Home = ({user, onRouteChange}) => {
     const [activeBook, setActiveBook] = useState({});
     const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
+    const [rev_count,setRevCount] = useState(0);
 
 
     useEffect(() => {
@@ -96,6 +97,10 @@ const Home = ({user, onRouteChange}) => {
         console.log(count);
     }
 
+    const update_reviews = () =>{
+        setRevCount(rev_count + 1);
+    }
+
     return(
             <>
                 <Navigation onRouteChange={onRouteChange} temp={temp} />
@@ -107,7 +112,7 @@ const Home = ({user, onRouteChange}) => {
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book user={user} book={activeBook} hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
+                        <Book user={user} book={activeBook} rev_count={rev_count} update_reviews={update_reviews} hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>

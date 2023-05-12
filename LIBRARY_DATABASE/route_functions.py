@@ -57,7 +57,7 @@ def fborrow_username(username):
                     WHERE Authentication.username = "{}"'.format(username))
     result = cursor.fetchall()
     mydb.commit()
-    print(result)
+    
     # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
     #                 Request.date_of_request\
     #                 FROM Authentication\
