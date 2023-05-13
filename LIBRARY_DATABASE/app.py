@@ -53,7 +53,7 @@ def register():
 
 
 @app.route('/signin',methods = ['POST'])
-@cross_origin(headers=['Content-Type']) # Send Access-Control-Allow-Headers def cross_origin_json_post():)
+@cross_origin(headers=['Content-Type']) 
 def sign_in():
     
     data = flask.request.get_json(['body'])
@@ -62,22 +62,14 @@ def sign_in():
     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
     try:
         user_id = cursor.fetchall()[0][0]
-        print("success")
-        # print(user_id)
         cursor.execute('SELECT Authentication.username,Authentication.password,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type\
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age\
                         FROM Authentication JOIN App_user\
                         ON App_user.user_id = Authentication.user_id JOIN School\
                         ON School.school_id = App_user.school_id\
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
-        
-        
-        # response.headers.add('Access-Control-Allow-Methods', '*')
-        # response.headers.add('Access-Control-Allow-Headers','Content-Type, Authorization')
-        # response.headers.add('Access-Control-Allow-Credentials', 'true')
-        
-        return flask.jsonify({"username":result[0][0],"password":result[0][1],"school_name":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"user_id":user_id})
+        return flask.jsonify({"username":result[0][0],"password":result[0][1],"school_name":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"age":result[0][6],"user_id":user_id})
     except:
         print("no user found")
         return flask.jsonify({"result": "failure","data":0})
@@ -207,6 +199,16 @@ def submit_review():
     mydb.commit()
     return flask.jsonify({'success':'success'})
 
+
+@app.route('/change_password',methods = ['PUT'])
+@cross_origin(headers=['Content-Type'])
+def changePassword():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+    password = data['new_password']
+    cursor.execute('UPDATE Authentication SET password="{}" WHERE username="{}"'.format(password,username))
+    mydb.commit()
+    return flask.jsonify({'success':'success'})
 
 
 if __name__ == "__main__":

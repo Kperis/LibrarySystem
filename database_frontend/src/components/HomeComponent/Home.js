@@ -9,9 +9,7 @@ import Admin from '../AdminCompononent/Admin';
 
 
 
-const Home = ({user, onRouteChange}) => {
-
-
+const Home = ({user, onRouteChange,onSignout}) => {
 
     const [books,setBooks] = useState([]);
     const [borrowed,setBorrowed] = useState([]);
@@ -79,7 +77,6 @@ const Home = ({user, onRouteChange}) => {
             }
             
         });
-
     }
 
     const update_request_count = () =>{
@@ -88,13 +85,7 @@ const Home = ({user, onRouteChange}) => {
 
     const onBookClicked = (index) => {
         setActiveBook(books[index]);
-    }
-
-    const temp = ()=>{
-        console.log(borrowed);
-        console.log(requested);
-
-        console.log(count);
+        window.localStorage.setItem('book',JSON.stringify(books[index]));
     }
 
     const update_reviews = () =>{
@@ -103,7 +94,7 @@ const Home = ({user, onRouteChange}) => {
 
     return(
             <>
-                <Navigation onRouteChange={onRouteChange} temp={temp} />
+                <Navigation onRouteChange={onRouteChange} onSignout={onSignout}/>
                 <Routes>
                     <Route path='/' element={
                         <div>

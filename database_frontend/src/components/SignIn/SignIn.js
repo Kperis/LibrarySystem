@@ -2,6 +2,8 @@ import React, { useState} from 'react';
 import './SignIn.css';
 
 const SignIn = ({loadUser, onRouteChange}) => {
+
+    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
@@ -21,12 +23,10 @@ const SignIn = ({loadUser, onRouteChange}) => {
         .then(data => data.json())
         .then(user => {
             if(user.user_id){
-                loadUser(user);
-                onRouteChange('home');
-
+                loadUser(user,'home');
             }
             else{
-                console.log('Invalid username/password');
+                alert('Invalid username/password');
             }
         })
         
@@ -42,7 +42,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
 
     return(
         <div>
-            <p className='btn' onClick={() => onRouteChange('register')}>Register</p>
+            <p className='btn' onClick={() => {console.log('hii'); onRouteChange('register');}}>Register</p>
             <h2 className='signin_header'>Sign In</h2>
             <div className='form_box'>
                 <label className='signin_label'>Username:</label>

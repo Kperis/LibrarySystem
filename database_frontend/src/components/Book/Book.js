@@ -12,7 +12,6 @@ const Book = ({user,book,hasDelayed,rev_count,update_reviews,requested,borrowed,
     const [clicked,setClicked] = useState(false);
     
     useEffect(() => {
-        console.log('run')
         setHasReviewed(false);
         fetchreviews();
         

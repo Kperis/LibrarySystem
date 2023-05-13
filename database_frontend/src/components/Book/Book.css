@@ -124,3 +124,11 @@ span.review_header{
     -moz-box-shadow: 3px 3px 20px 4px #000000;
     box-shadow: 5px 3px 20px 4px #000000;
 }
+
+p.rest{
+    margin-top: 30px;
+    text-align: center;
+    font-size: 22px;
+    text-decoration: underline;
+    font-weight: bold;
+}

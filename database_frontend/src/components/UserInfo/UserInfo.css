@@ -4,8 +4,34 @@
     
 }
 
-.userinfo{
+.userinfo > li{
     list-style: none;
-    font-size: 24px;
+    font-size: 28px;
     color: white;
+    word-spacing: 6px;
+    letter-spacing: 1px;
+}
+
+.userinfo > button{
+    color: white;
+    font-size: large;
+    text-align: center;
+    width: 200px;
+    height: 50px;
+    border: solid black 2px;
+    border-radius: 8px;
+    background: linear-gradient(90deg,
+     rgb(96, 88, 238) 0%,
+      rgb(105, 105, 239) 41%,
+       rgba(204,88,255,1) 100%);
+    transition:all linear 0.3s;
+}
+
+.userinfo > button:hover{
+    transform: scale(1.1);
+    color: rgb(53, 52, 52);
+}
+
+.userinfo > button:active{
+    transform: scale(0.9);
 }

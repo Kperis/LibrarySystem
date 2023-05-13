@@ -1,6 +1,6 @@
 .book_box{
     max-width: 80%;
-    margin: 60px auto 50px auto;
+    margin: 30px auto 50px auto;
 
 }
 
@@ -22,6 +22,8 @@
     flex-wrap: wrap;
     justify-content: center;
     gap:10px;
+    margin-top: 0px;
+    margin-bottom: 20px;
 }
 
 .searchbox{
