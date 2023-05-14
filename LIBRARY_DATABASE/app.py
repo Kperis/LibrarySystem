@@ -69,6 +69,7 @@ def sign_in():
                         ON School.school_id = App_user.school_id\
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
+        mydb.commit()
         return flask.jsonify({"username":result[0][0],"password":result[0][1],"school_name":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"age":result[0][6],"user_id":user_id})
     except:
         print("no user found")
@@ -87,11 +88,17 @@ def books():
                 ON Stores.isbn = Books.isbn\
                 JOIN School\
                 ON School.school_id = Stores.school_id\
-                WHERE School.name = "{}";'.format(school_name))
+                WHERE School.name = "{}"'.format(school_name))
     book_data = cursor.fetchall()
-    book_dict = [dict(zip(("isbn","page_count","publisher","title","summary","cover","cover_m","copies"), x))for x in book_data]
- 
-    return flask.jsonify(book_dict)
+    mydb.commit()
+    if book_data:
+        book_dict = [dict(zip(("isbn","page_count","publisher","title","summary","cover","cover_m","copies"), x))for x in book_data]
+        return flask.jsonify(book_dict)
+    else:
+        return flask.jsonify({'no':'books'})    
+    
+    
+    
     # "result":"success","isbn":book_data[0][0],"page_count":book_data[0][1],"publisher":book_data[0][2],"title":book_data[0][3],"summary":book_data[0][4],"cover":book_data[0][5]
 
 
@@ -166,9 +173,12 @@ def get_reviews():
     cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,App_user.first_name,App_user.last_name FROM Review JOIN App_user ON Review.user_id = App_user.user_id WHERE Review.isbn={}'.format(isbn))
     result = cursor.fetchall()
     mydb.commit()
-    reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name'),x))for x in result]
-
-    return flask.jsonify(reviews_dict)
+    if result:
+        reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name'),x))for x in result]
+        return flask.jsonify(reviews_dict)
+    else:
+        return flask.jsonify({'reviews':'none'})
+    
 
 @app.route('/user_review',methods = ['POST'])
 @cross_origin(headers=['Content-Type'])
@@ -212,6 +222,7 @@ def changePassword():
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run(debug = True, host="localhost", port = 5000)
 
 

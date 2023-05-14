@@ -14,17 +14,24 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [books,setBooks] = useState([]);
     const [borrowed,setBorrowed] = useState([]);
     const [requested,setRequested] = useState([]);
-    const [activeBook, setActiveBook] = useState({});
     const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
     const [rev_count,setRevCount] = useState(0);
+    const [active_book,setActiveBook] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [hasReviewed, setHasReviewed] = useState(false);
 
 
     useEffect(() => {
-        fetch('http://localhost:5000/books',{
+        fetchOther();   
+    }, [count])
+
+   
+    const fetchOther = async () => {
+
+        await fetch('http://localhost:5000/books',{
             method: 'post',
             headers: {
-                // 'Accept': 'application/json',
                 'Content-Type':'application/json'
             },
             body: JSON.stringify({
@@ -33,21 +40,16 @@ const Home = ({user, onRouteChange,onSignout}) => {
         })
         .then(response => response.json())
         .then(data => setBooks(data))
+        .catch(err => console.log(err));
 
-        fetchOther();   
-
-
-    }, [count])
-    
-    const fetchOther = async () => {
         await fetch('http://localhost:5000/borrow', {
             method: 'post',
             headers: {
                 'Content-Type' : 'application/json'
             },
             body: JSON.stringify({
-                role: user.role,
-                username: user.username
+                role: user?.role,
+                username: user?.username
             })
         })
         .then(response => response.json())
@@ -59,8 +61,8 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 'Content-Type' : 'application/json'
             },
             body: JSON.stringify({
-                role: user.role,
-                username: user.username
+                role: user?.role,
+                username: user?.username
             })
         })
         .then(response => response.json())
@@ -89,13 +91,52 @@ const Home = ({user, onRouteChange,onSignout}) => {
         let temp = books.filter(a =>{
             return a.isbn === isbn
         });
-        setActiveBook(temp[0]);
-        window.localStorage.setItem('book',JSON.stringify(temp[0]));
+        window.localStorage.setItem("book",JSON.stringify(temp[0]));
     }
 
     const update_reviews = () =>{
         setRevCount(rev_count + 1);
+        // fetch_rev(isbn);
+
     }
+
+    // const fetch_rev = async (isbn) =>{
+    //     await fetch('http://localhost:5000/reviews', {
+    //         method: 'post',
+    //         headers: {'Content-Type':'application/json'},
+    //         body: JSON.stringify({
+    //             isbn:isbn
+    //         })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if(data?.reviews === 'none'){
+    //             setReviews([])
+    //         }
+    //         else{
+    //             setReviews(data);
+    //         }
+    //     })
+    //     .catch(err => console.log(err))
+
+    //     await fetch('http://localhost:5000/user_review', {
+    //         method: 'post',
+    //         headers: {'Content-Type':'application/json'},
+    //         body: JSON.stringify({
+    //             username: user?.username, 
+    //             isbn:isbn
+    //         })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if(data.reviewed === 'yes'){
+    //             setHasReviewed(true);
+    //         }
+    //         else{
+    //             setHasReviewed(false);
+    //         }
+    //     })
+    // }
 
     return(
             <>
@@ -108,7 +149,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book user={user} book={activeBook} rev_count={rev_count} update_reviews={update_reviews} hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
+                        <Book  reviews={reviews} hasReviewed={hasReviewed} rev_count={rev_count} hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>

@@ -57,7 +57,6 @@ def fborrow_username(username):
                     WHERE Authentication.username = "{}"'.format(username))
     result = cursor.fetchall()
     mydb.commit()
-    
     # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
     #                 Request.date_of_request\
     #                 FROM Authentication\
@@ -126,6 +125,7 @@ def frequest_school(username):
                     ON Books.isbn = Request.isbn\
                     WHERE App_user.admin_id = {}'.format(admin_id))
     result = cursor.fetchall()
+    mydb.commit()
     return result
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
