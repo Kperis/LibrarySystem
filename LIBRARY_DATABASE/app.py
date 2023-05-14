@@ -31,6 +31,7 @@ cursor = mydb.cursor(buffered = True)
 
 
 @app.route('/register', methods=['GET','POST'])
+@cross_origin(headers=['Content-Type']) 
 def register():
     if flask.request.method == 'GET':
         # cursor.execute('SELECT name FROM School')
