@@ -177,5 +177,6 @@ ENGINE = InnoDB;
 ALTER TABLE Books MODIFY summary VARCHAR(700);
 ALTER TABLE Books ADD m_cover_path VARCHAR(70);
 ALTER TABLE Books MODIFY cover_path VARCHAR(70);
+ALTER TABLE Review ADD approved BIT;
 
 
