@@ -18,8 +18,8 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
     },[titlesearch,books])
     
 
-    const onBookClicked2 = (index) =>{
-        onBookClicked(index);
+    const onBookClicked2 = (isbn) =>{
+        onBookClicked(isbn);
     }
 
     const onCategorySelect = (event) => {
@@ -90,7 +90,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
                 booklist.map((book,index) => {
                     return(
                         <div>
-                            <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} cover={book.cover_m}  title={book.title}/>
+                            <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m}  title={book.title}/>
                         
                             {
                                 isonrequest === true

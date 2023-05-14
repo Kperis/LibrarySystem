@@ -77,15 +77,20 @@ const Home = ({user, onRouteChange,onSignout}) => {
             }
             
         });
+
+        
     }
 
     const update_request_count = () =>{
         setCount(count+1);
     }
 
-    const onBookClicked = (index) => {
-        setActiveBook(books[index]);
-        window.localStorage.setItem('book',JSON.stringify(books[index]));
+    const onBookClicked = (isbn) => {
+        let temp = books.filter(a =>{
+            return a.isbn === isbn
+        });
+        setActiveBook(temp[0]);
+        window.localStorage.setItem('book',JSON.stringify(temp[0]));
     }
 
     const update_reviews = () =>{
@@ -109,12 +114,12 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         <UserInfo user={user}/>
                     }/>
                     <Route path='/borrowed' element={
-                        user.role === 'admin'
+                        user.role === 'Admin'
                         ? <Admin book_list={borrowed} borrow={true} />
                         : <Books books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                     }/>
                     <Route path='/requested' element={
-                        user.role === 'admin'
+                        user.role === 'Admin'
                         ? <Admin book_list={requested} borrow={false} />
                         : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>

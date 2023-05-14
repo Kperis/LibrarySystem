@@ -14,10 +14,8 @@ function App(){
   useEffect(()=>{
     
     if(window.localStorage.getItem('isSignedIn') === null){
-      console.log('Not signed in');
     }
     else{
-      console.log('loading user');
       loadUser(JSON.parse(window.localStorage.getItem('user')),'home');
     }
   },[])
@@ -40,7 +38,6 @@ function App(){
 
   const loadUser = (user,route) => {
     if(isSignedIn){
-      console.log('run');
       setUser(JSON.parse(window.localStorage.getItem('user')));
       setRoute(JSON.parse(window.localStorage.getItem('route')));
     }
@@ -50,7 +47,6 @@ function App(){
       window.localStorage.setItem('user',JSON.stringify(user));
       setIsSignedIn(true);
       window.localStorage.setItem('isSignedIn',true);
-      console.log(JSON.parse(window.localStorage.getItem('user')));
     }
     
   }
