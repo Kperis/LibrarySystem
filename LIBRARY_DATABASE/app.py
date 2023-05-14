@@ -9,7 +9,7 @@ from flask_cors import CORS,cross_origin
 import route_functions
 
 import json
-# from datetime import date
+from datetime import date
 
 app = flask.Flask(__name__)
 cors = CORS(app,resources={
@@ -44,10 +44,16 @@ def register():
         return flask.jsonify(data)
     elif flask.request.method == 'POST':
         data = flask.request.get_json(['body'])
+        if data['role'] == 'student':
+            role = 'Μαθητής'
+        elif data['role'] == 'admin':
+            role = 'Admin'
+        else:
+            role = 'Καθηγητής'
         #school_id = route_functions.fschool_name(data['school_name'])
         school_id = route_functions.fschool_name_city(data['school_name'],data['city'])
         admin_id = route_functions.fadmin_schoolid(school_id)
-        route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],data['role'],admin_id)
+        route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],role,admin_id)
         user_id = route_functions.fuser_flname(data['first_name'],data['last_name'])
         route_functions.insert_authentication(user_id,data['username'],data['password'])
 
@@ -124,21 +130,24 @@ def borrow():
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        if type == "Μαθητής":
-            try:
-                result = route_functions.fborrow_username(username)
-                if result:
-                    borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
-                    return flask.jsonify(borrow_dict)
-                else:
-                    return flask.jsonify({'borrows':'none'})
-            except:
-                print("fail")
-                return flask.jsonify({"result":"no_borrows"})
+        if type == 'student' or type == 'teacher':
+            result = route_functions.fborrow_username(username)
+            if result:
+                borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
+                return flask.jsonify(borrow_dict)
+            else:
+                return flask.jsonify({'borrows':'none'})
+            # except:
+            #     print("fail")
+            #     return flask.jsonify({"result":"no_borrows"})
         elif (type == "Admin"):
             try:
                 result = route_functions.fborrow_school(username)
-                return flask.jsonify(result)
+                if result:
+                    borrow_dict = [dict(zip(('first_name','last_name','title','isbn','acquire_date','return_date'),x)) for x in result]
+                    return flask.jsonify(borrow_dict)
+                else:
+                    return flask.jsonify({'borrows':'none'})
             except:
                 print("hello from here")
                 return flask.jsonify({"result": "fail"})
@@ -162,8 +171,7 @@ def request():
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        print("hi from here")
-        if type == "Μαθητής":
+        if type == 'student' or type == 'teacher':
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
             if result:
@@ -203,7 +211,7 @@ def get_reviews():
     type = data['role']
     username = data['username']
 
-    if type == "Μαθητής":
+    if type == "student":
         result = route_functions.freview_isbn_approved(isbn)
         if result:
             reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name','approved'),x))for x in result]

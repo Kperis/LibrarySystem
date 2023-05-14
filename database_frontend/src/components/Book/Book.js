@@ -33,11 +33,22 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
     },[refetch])
 
     const fetchreviews = async () =>{
+
+        let role = 'ho'
+        if(user?.role === 'Admin'){
+            role = 'Admin';
+        }
+        else{
+            role = 'student';
+        } 
+
         await fetch('http://localhost:5000/reviews', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
-                isbn:book?.isbn
+                isbn:book?.isbn,
+                role: role,
+                username: user?.username
             })
         })
         .then(response => response.json())
@@ -122,7 +133,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                 });
             }
             
-            if(user.role === 'student'){
+            if(user.role.length === 7){
                 if(requested.length < 2 && !hasDelayed && !hasRequested && !hasBorrowed){
                     await fetch('http://localhost:5000/book_request', {
                         method: 'post',

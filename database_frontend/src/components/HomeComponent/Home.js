@@ -28,6 +28,14 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
    
     const fetchOther = async () => {
+        // console.log(user.role)
+        let role = 'ho'
+        if(user?.role === 'Admin'){
+            role = 'Admin';
+        }
+        else{
+            role = 'student';
+        } 
 
         await fetch('http://localhost:5000/books',{
             method: 'post',
@@ -35,7 +43,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 'Content-Type':'application/json'
             },
             body: JSON.stringify({
-                school_name: user.school_name
+                school_name: user.school_name 
             })
         })
         .then(response => response.json())
@@ -56,7 +64,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 'Content-Type' : 'application/json'
             },
             body: JSON.stringify({
-                role: user?.role,
+                role: role,
                 username: user?.username
             })
         })
@@ -77,7 +85,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 'Content-Type' : 'application/json'
             },
             body: JSON.stringify({
-                role: user?.role,
+                role: role,
                 username: user?.username
             })
         })
@@ -180,12 +188,12 @@ const Home = ({user, onRouteChange,onSignout}) => {
                     }/>
                     <Route path='/borrowed' element={
                         user.role === 'Admin'
-                        ? <Admin book_list={borrowed} borrow={true} />
+                        ? <Admin book_list={borrowed} borrow={true} user={user} />
                         : <Books books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                     }/>
                     <Route path='/requested' element={
                         user.role === 'Admin'
-                        ? <Admin book_list={requested} borrow={false} />
+                        ? <Admin book_list={requested} borrow={false} user={user} />
                         : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>
 
