@@ -39,7 +39,15 @@ const Home = ({user, onRouteChange,onSignout}) => {
             })
         })
         .then(response => response.json())
-        .then(data => setBooks(data))
+        .then(data => {
+            if(data?.books === 'none'){
+                setBooks([]);
+            }
+            else{
+                setBooks(data);
+            }
+            
+        })
         .catch(err => console.log(err));
 
         await fetch('http://localhost:5000/borrow', {
@@ -53,7 +61,15 @@ const Home = ({user, onRouteChange,onSignout}) => {
             })
         })
         .then(response => response.json())
-        .then(data => setBorrowed(data))
+        .then(data => {
+            if(data?.borrows === 'none'){
+                setBorrowed([]);
+            }
+            else{
+                setBorrowed(data);
+            }
+            
+        })
 
         await fetch('http://localhost:5000/request', {
             method: 'post',
@@ -66,7 +82,15 @@ const Home = ({user, onRouteChange,onSignout}) => {
             })
         })
         .then(response => response.json())
-        .then(data => setRequested(data))
+        .then(data => {
+            if(data?.requests === 'none'){
+                setRequested([]);
+            }
+            else{
+                setRequested(data);
+            }
+            
+        })
         
         borrowed.forEach(element => {
             const date1 = new Date(element.acquire_date);
