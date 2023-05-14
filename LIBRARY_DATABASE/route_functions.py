@@ -12,7 +12,7 @@ import datetime
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "ChoedanKal2002",
+password = "",#"ChoedanKal2002",
 database = "schooldatabasev4"
 )
 
@@ -29,8 +29,8 @@ def fuser_username(username):
     cursor.execute('SELECT user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     result = cursor.fetchall()[0][0]
     return result
-def fschool_name(school_name):
-    cursor.execute('SELECT school_id FROM School WHERE School.name = "{}"'.format(school_name))
+def fschool_name_city(school_name,city):
+    cursor.execute('SELECT school_id FROM School WHERE School.name = "{}" AND School.city = "{}"'.format(school_name,city))
     school_id = cursor.fetchall()[0][0]
     return school_id
 def fadmin_schoolid(school_id):
@@ -127,6 +127,33 @@ def frequest_school(username):
                     WHERE App_user.admin_id = {}'.format(admin_id))
     result = cursor.fetchall()
     return result
+def freview_isbn_approved(isbn):
+    cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,App_user.first_name,App_user.last_name,Review.approved \
+            FROM Review JOIN App_user ON Review.user_id = App_user.user_id \
+            WHERE Review.isbn={} AND Review.approved = 1'.format(isbn))
+    result = cursor.fetchall()
+    mydb.commit()
+    return result
+def fschool_username(username):
+    cursor.execute('SELECT School.school_id \
+                   FROM School \
+                   JOIN App_user \
+                   ON App_user.school_id = School.school_id \
+                   JOIN Authentication \
+                   ON Authentication.user_id = App_user.user_id \
+                   WHERE Authentication.username = "{}"'.format(username))
+    result = cursor.fetchall()[0][0]
+    return result
+def freview_school(school_id):
+    cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,\
+                   App_user.first_name,App_user.last_name,Review.approved \
+                   FROM Review \
+                   JOIN App_user \
+                   ON App_user.user_id = Review.user_id \
+                   WHERE App_user.school_id = {} AND Review.approved = 0'.format(school_id))
+    result = cursor.fetchall()
+    mydb.commit()
+    return result
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
@@ -158,4 +185,13 @@ def delete_request(user_id,isbn):
     #                 SET Stores.copies = {}\
     #                 WHERE Stores.isbn = {} AND Stores.school_id = {}'.format(data[0][0],isbn,data[0][1]))
     # mydb.commit()
+def delete_review(isbn,username):
+    cursor.execute('DELETE FROM Review WHERE Review.isbn = {} AND Review.username = "{}"'.format(isbn,username))
+    mydb.commit()
+    
+def approve_review(isbn,username):
+    cursor.execute('UPDATE Review \
+                   SET Review.approved = 1 \
+                   WHERE Review.isbn = {} AND Review.username = "{}"'.format(isbn,username))
+    mydb.commit()
 

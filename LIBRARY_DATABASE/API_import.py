@@ -8,7 +8,7 @@ import json
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "ChoedanKal2002",
+password = '',#"ChoedanKal2002",
 database = "schooldatabasev4"
 )
 
@@ -60,31 +60,44 @@ def Insert_Keywords(isbn,keyword):
             print("error in keyword insert")
 
 def Insert_Authors(isbn,author):
-    try:
-        full_name = author.split(' ')
-        first_name =""
-        last_name = ""
-        if len(full_name) == 1:
-            first_name = full_name[0]
-        else:
-            first_name = full_name[0]
-            last_name = full_name[1]
-        cursor.execute('INSERT INTO Authors (isbn,first_name,last_name) VALUES ({},"{}","{}")'.format(isbn,first_name,last_name))
-        mydb.commit()
-    except:
-        print("error in author insert")
+    for i in range(len(author)):
+        try:
+            full_name = author[i].split(' ')
+            first_name =""
+            last_name = ""
+            if len(full_name) == 1:
+                first_name = full_name[0]
+            else:
+                first_name = full_name[0]
+                last_name = full_name[1]
+            cursor.execute('INSERT INTO Authors (isbn,first_name,last_name) VALUES ({},"{}","{}")'.format(isbn,first_name,last_name))
+            mydb.commit()
+        except:
+            print("error in author insert")
+
+def list_authors(authores):
+    author_names = []
+    for i in range(len(authores)):
+        author_names.append(authores[i]['name'])
+    return author_names
 
 
-
-No_of_books = 100
+No_of_books = 1
 response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
-#response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
-data = response.json()
+#
+    # if i == 0:
+    #     response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
+    # elif i == 1:
+    #     response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
 
+data = response.json()
+#jprint(data)
 for i in range(No_of_books):
     try:
         categories = data['name']
-        author = data['works'][i]['authors'][0]['name']
+        authores = data['works'][i]['authors']
+        author = list_authors(authores)
+        print("NUMBER OF AUTHORS = ",len(author))
         olid_id = data['works'][i]['availability']['openlibrary_edition']
         print("ID = ",olid_id)
         works_di = data['works'][i]['key']
@@ -92,6 +105,7 @@ for i in range(No_of_books):
         response_id = requests.get("https://openlibrary.org/books/{}.json".format(olid_id))
         response_id_json = response_id.json()
         response_works_json = response_works.json()
+        jprint(response_works_json)
         try:
             title = response_id_json['title']
         except:
@@ -120,24 +134,30 @@ for i in range(No_of_books):
         except:
             print("no subjects found")
         #categories , author, olid_id[2:len(olid_id)-1],title, publishers, page_count, cover_url, m_cover_url, summary, subjects
+        book_insertion = False
         try:
             Insert_Books(olid_id[2:len(olid_id)-1],page_count,publishers,title,summary,s_cover_path,m_cover_path)
+            book_insertion = True
         except:
             pass
         try:
-            Insert_Stores(olid_id[2:len(olid_id)-1])
+            if book_insertion == True:
+                Insert_Stores(olid_id[2:len(olid_id)-1])
         except:
             pass
         try:
-            Insert_Categories(olid_id[2:len(olid_id)-1],categories)
+            if book_insertion == True:
+                Insert_Categories(olid_id[2:len(olid_id)-1],categories)
         except:
             pass
         try:
-            Insert_Keywords(olid_id[2:len(olid_id)-1],subjects)
+            if book_insertion == True:
+                Insert_Keywords(olid_id[2:len(olid_id)-1],subjects)
         except:
             pass
         try:
-            Insert_Authors(olid_id[2:len(olid_id)-1],author)
+            if book_insertion == True:
+                Insert_Authors(olid_id[2:len(olid_id)-1],author)
         except:
             pass
         print("\n")

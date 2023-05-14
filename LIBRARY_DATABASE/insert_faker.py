@@ -2,7 +2,7 @@ from faker_data import school_provider,user_provider
 
 from faker import Faker
 from flask import Flask,make_response,request,render_template
-from __init__ import app,mysql
+from app import app#,mysql
 from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
@@ -12,7 +12,7 @@ import random
 mydb = con.connect(
 host = 'localhost',
 user = 'root',
-password = 'ChoedanKal2002',
+password = '',#'ChoedanKal2002',
 database = 'schooldatabasev4',
 )
 

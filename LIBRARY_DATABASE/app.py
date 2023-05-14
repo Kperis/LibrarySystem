@@ -21,25 +21,30 @@ cors = CORS(app,resources={
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "ChoedanKal2002",
+password = "",#"ChoedanKal2002",
 database = "schooldatabasev4",
 autocommit = True
 )
 
-
 cursor = mydb.cursor(buffered = True)
+
 
 
 @app.route('/register', methods=['GET','POST'])
 def register():
     if flask.request.method == 'GET':
-        cursor.execute('SELECT name FROM School')
-        to_send = cursor.fetchall()
+        # cursor.execute('SELECT name FROM School')
+        # to_send = cursor.fetchall()
 
-        return flask.jsonify(to_send)
+        # return flask.jsonify(to_send)
+        cursor.execute('SELECT name,city FROM School')
+        to_send = cursor.fetchall()
+        data = [dict(zip(("name","city"), x))for x in to_send]
+        return flask.jsonify(data)
     elif flask.request.method == 'POST':
         data = flask.request.get_json(['body'])
-        school_id = route_functions.fschool_name(data['school_name'])
+        #school_id = route_functions.fschool_name(data['school_name'])
+        school_id = route_functions.fschool_name_city(data['school_name'],data['city'])
         admin_id = route_functions.fadmin_schoolid(school_id)
         route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],data['role'],admin_id)
         user_id = route_functions.fuser_flname(data['first_name'],data['last_name'])
@@ -81,16 +86,19 @@ def sign_in():
 def books():
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
+    #school_city = data['city']
     cursor.execute('SELECT Books.isbn,Books.page_count,Books.publisher,Books.title,Books.summary,Books.cover_path,Books.m_cover_path,Stores.copies\
                 FROM Books\
                 JOIN Stores\
                 ON Stores.isbn = Books.isbn\
                 JOIN School\
                 ON School.school_id = Stores.school_id\
-                WHERE School.name = "{}";'.format(school_name))
+                WHERE School.name = "{}";'.format(school_name))#AND School.city = "{}";'.format(school_name,school_city))
     book_data = cursor.fetchall()
     book_dict = [dict(zip(("isbn","page_count","publisher","title","summary","cover","cover_m","copies"), x))for x in book_data]
- 
+    #print(book_dict)
+    #cursor.execute('SELECT Keywords.keyword FROM Keywords JOIN ')
+
     return flask.jsonify(book_dict)
     # "result":"success","isbn":book_data[0][0],"page_count":book_data[0][1],"publisher":book_data[0][2],"title":book_data[0][3],"summary":book_data[0][4],"cover":book_data[0][5]
 
@@ -102,13 +110,21 @@ def borrow():
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        if type == "student":
-            result = route_functions.fborrow_username(username)
-            borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
-            return flask.jsonify(borrow_dict)
-        elif (type == "admin"):
-            result = route_functions.fborrow_school(username)
-            return flask.jsonify(result)
+        if type == "Μαθητής":
+            try:
+                result = route_functions.fborrow_username(username)
+                borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
+                return flask.jsonify(borrow_dict)
+            except:
+                print("fail")
+                return flask.jsonify({"result":"no_borrows"})
+        elif (type == "Admin"):
+            try:
+                result = route_functions.fborrow_school(username)
+                return flask.jsonify(result)
+            except:
+                print("hello from here")
+                return flask.jsonify({"result": "fail"})
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
         username = data['username']
@@ -129,12 +145,13 @@ def request():
         data = flask.request.get_json(['body'])
         username = data['username']
         type = data['role']
-        if type == "student":
+        print("hi from here")
+        if type == "Μαθητής":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_username(username)
             request_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','date_of_request'),x)) for x in result]
             return flask.jsonify(request_dict)
-        elif type == "admin":
+        elif type == "Admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_school(username)
             return flask.jsonify(result)
@@ -163,12 +180,20 @@ def request_book():
 def get_reviews():
     data = flask.request.get_json(['body'])
     isbn = data['isbn']
-    cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,App_user.first_name,App_user.last_name FROM Review JOIN App_user ON Review.user_id = App_user.user_id WHERE Review.isbn={}'.format(isbn))
-    result = cursor.fetchall()
-    mydb.commit()
-    reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name'),x))for x in result]
+    type = data['role']
+    username = data['username']
 
-    return flask.jsonify(reviews_dict)
+    if type == "Μαθητής":
+        result = route_functions.freview_isbn_approved(isbn)
+        reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name','approved'),x))for x in result]
+
+        return flask.jsonify(reviews_dict)
+    elif type == "Admin":
+        school_id = route_functions.fschool_username(username)
+        result = route_functions.freview_school(school_id)
+        reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name','approved'),x))for x in result]
+        return flask.jsonify(reviews_dict)
+
 
 @app.route('/user_review',methods = ['POST'])
 @cross_origin(headers=['Content-Type'])
@@ -195,9 +220,22 @@ def submit_review():
     description = data['description']
     score = int(score)
     user_id = route_functions.fuser_username(username)
-    cursor.execute('INSERT INTO Review(date_of_review,score,description,isbn,user_id) VALUES(CURDATE(),{}, "{}",{},{})'.format(score,description,isbn,user_id))
+    cursor.execute('INSERT INTO Review(date_of_review,score,description,isbn,user_id,approved) VALUES(CURDATE(),{}, "{}",{},{},{})'.format(score,description,isbn,user_id,0))
     mydb.commit()
     return flask.jsonify({'success':'success'})
+
+@app.route('/accept_review',methods = ['POST'])
+@cross_origin(headers = ['Content-Type'])
+def accept_review():
+    data = flask.request.get_json(['body'])
+    isbn = data['isbn']
+    username = data['username']
+    approved = data['approved']
+    if approved == 1:
+        route_functions.approve_review(isbn,username)
+    elif approved == 0:
+        route_functions.delete_review(isbn,username)
+    return flask.jsonify({"success":"success"})
 
 
 @app.route('/change_password',methods = ['PUT'])
