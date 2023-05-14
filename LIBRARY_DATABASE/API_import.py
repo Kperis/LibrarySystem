@@ -79,10 +79,12 @@ def list_authors(authores):
     author_names = []
     for i in range(len(authores)):
         author_names.append(authores[i]['name'])
+    if len(authores)>1:
+        print(author_names)
     return author_names
 
 
-No_of_books = 1
+No_of_books = 100
 response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
 #
     # if i == 0:
@@ -105,7 +107,7 @@ for i in range(No_of_books):
         response_id = requests.get("https://openlibrary.org/books/{}.json".format(olid_id))
         response_id_json = response_id.json()
         response_works_json = response_works.json()
-        jprint(response_works_json)
+        #jprint(response_works_json)
         try:
             title = response_id_json['title']
         except:

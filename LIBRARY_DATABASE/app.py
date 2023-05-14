@@ -96,7 +96,15 @@ def books():
                 WHERE School.name = "{}";'.format(school_name))#AND School.city = "{}";'.format(school_name,school_city))
     book_data = cursor.fetchall()
     book_dict = [dict(zip(("isbn","page_count","publisher","title","summary","cover","cover_m","copies"), x))for x in book_data]
-    #print(book_dict)
+    for i in range(len(book_dict)):
+        cursor.execute('SELECT Authors.first_name,Authors.last_name FROM Authors WHERE Authors.isbn = {}'.format(book_dict[i]['isbn']))
+        authors = cursor.fetchall()
+        book_dict[i]['authors'] = authors
+    for i in range(len(book_dict)):
+        cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(book_dict[i]['isbn']))
+        keywords = cursor.fetchall()
+        book_dict[i]['keywords'] = keywords
+
     #cursor.execute('SELECT Keywords.keyword FROM Keywords JOIN ')
 
     return flask.jsonify(book_dict)
