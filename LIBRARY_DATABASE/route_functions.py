@@ -27,8 +27,8 @@ def print_aaa():
 
 def fuser_username(username):
     cursor.execute('SELECT user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
-    result = cursor.fetchall()[0][0]
-    return result
+    user_id = cursor.fetchall()[0][0]
+    return user_id
 def fschool_name_city(school_name,city):
     cursor.execute('SELECT school_id FROM School WHERE School.name = "{}" AND School.city = "{}"'.format(school_name,city))
     school_id = cursor.fetchall()[0][0]

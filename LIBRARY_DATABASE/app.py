@@ -94,14 +94,14 @@ def sign_in():
 def books():
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
-    #school_city = data['city']
+    school_city = data['city']
     cursor.execute('SELECT Books.isbn,Books.page_count,Books.publisher,Books.title,Books.summary,Books.cover_path,Books.m_cover_path,Stores.copies\
                 FROM Books\
                 JOIN Stores\
                 ON Stores.isbn = Books.isbn\
                 JOIN School\
                 ON School.school_id = Stores.school_id\
-                WHERE School.name = "{}";'.format(school_name))#AND School.city = "{}";'.format(school_name,school_city))
+                WHERE School.name = "{}" AND School.city = "{}";'.format(school_name,school_city))
     book_data = cursor.fetchall()
     mydb.commit()
     if book_data:
@@ -281,6 +281,24 @@ def changePassword():
     cursor.execute('UPDATE Authentication SET password="{}" WHERE username="{}"'.format(password,username))
     mydb.commit()
     return flask.jsonify({'success':'success'})
+
+@app.route('/change_school',methods = ['PUT'])
+@cross_origin(headers = ['Content-Type'])
+def changeSchool():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+    school_name = data['new_school_name']
+    city = data['new_city']
+    type = data['role']
+
+    if type == 'Καθηγητής':
+        user_id = route_functions.fuser_username(username)
+        school_id = route_functions.fschool_name_city(school_name)
+        cursor.execute('UPDATE App_user SET App_user.school_id = {} WHERE App_user.user_id = {}'.format(school_id,user_id))
+        mydb.commit()
+        return flask.jsonify({"success":'success'})
+    else:
+        return flask.jsonidy({"success":'failure'})
 
 
 if __name__ == "__main__":

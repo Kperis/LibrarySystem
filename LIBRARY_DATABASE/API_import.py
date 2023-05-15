@@ -85,86 +85,92 @@ def list_authors(authores):
 
 
 No_of_books = 100
-response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
-#
-    # if i == 0:
-    #     response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
-    # elif i == 1:
-    #     response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
 
-data = response.json()
-#jprint(data)
-for i in range(No_of_books):
-    try:
-        categories = data['name']
-        authores = data['works'][i]['authors']
-        author = list_authors(authores)
-        print("NUMBER OF AUTHORS = ",len(author))
-        olid_id = data['works'][i]['availability']['openlibrary_edition']
-        print("ID = ",olid_id)
-        works_di = data['works'][i]['key']
-        response_works = requests.get("https://openlibrary.org{}.json".format(works_di))
-        response_id = requests.get("https://openlibrary.org/books/{}.json".format(olid_id))
-        response_id_json = response_id.json()
-        response_works_json = response_works.json()
-        #jprint(response_works_json)
+list_of_categories = ['science_fiction','fantasy','romance','mystery','drama','action_&_adventure','history']
+
+for i in range(len(list_of_categories)):
+
+
+    response = requests.get('https://openlibrary.org/subjects/{}.json?limit={}'.format(list_of_categories[i],No_of_books))
+    #
+        # if i == 0:
+        #     response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
+        # elif i == 1:
+        #     response = requests.get('https://openlibrary.org/subjects/juvenile_literature.json?limit={}'.format(No_of_books))
+
+    data = response.json()
+    #jprint(data)
+    for i in range(No_of_books//len(list_of_categories)):
         try:
-            title = response_id_json['title']
-        except:
-            print("no title found")
-        try:
-            publishers = response_id_json['publishers']
-        except:
-            publishers = "no publisher found"
-        try:
-            page_count = response_id_json['number_of_pages']
-        except:
-            print("no number of pages found")
-        try:
-            s_cover_path = "https://covers.openlibrary.org/b/OLID/{}-S.jpg".format(data['works'][i]['cover_edition_key'])
-            m_cover_path = "https://covers.openlibrary.org/b/OLID/{}-M.jpg".format(data['works'][i]['cover_edition_key'])
-            #print("https://covers.openlibrary.org/b/OLID/{}-L.jpg".format(data['works'][i]['cover_edition_key']))
-        except:
-            s_cover_path = "no small cover url found"
-            m_cover_path = "no medium cover url found"
-        try:
-            summary = response_works_json['description'][:699]
-        except:
-            summary = "no description found"
-        try:
-            subjects = response_works_json['subjects'][:10]
-        except:
-            print("no subjects found")
-        #categories , author, olid_id[2:len(olid_id)-1],title, publishers, page_count, cover_url, m_cover_url, summary, subjects
-        book_insertion = False
-        try:
-            Insert_Books(olid_id[2:len(olid_id)-1],page_count,publishers,title,summary,s_cover_path,m_cover_path)
-            book_insertion = True
+            categories = data['name']
+            authores = data['works'][i]['authors']
+            author = list_authors(authores)
+            print("NUMBER OF AUTHORS = ",len(author))
+            olid_id = data['works'][i]['availability']['openlibrary_edition']
+            print("ID = ",olid_id)
+            works_di = data['works'][i]['key']
+            response_works = requests.get("https://openlibrary.org{}.json".format(works_di))
+            response_id = requests.get("https://openlibrary.org/books/{}.json".format(olid_id))
+            response_id_json = response_id.json()
+            response_works_json = response_works.json()
+            #jprint(response_works_json)
+            try:
+                title = response_id_json['title']
+            except:
+                print("no title found")
+            try:
+                publishers = response_id_json['publishers']
+            except:
+                publishers = "no publisher found"
+            try:
+                page_count = response_id_json['number_of_pages']
+            except:
+                print("no number of pages found")
+            try:
+                s_cover_path = "https://covers.openlibrary.org/b/OLID/{}-S.jpg".format(data['works'][i]['cover_edition_key'])
+                m_cover_path = "https://covers.openlibrary.org/b/OLID/{}-M.jpg".format(data['works'][i]['cover_edition_key'])
+                #print("https://covers.openlibrary.org/b/OLID/{}-L.jpg".format(data['works'][i]['cover_edition_key']))
+            except:
+                s_cover_path = "no small cover url found"
+                m_cover_path = "no medium cover url found"
+            try:
+                summary = response_works_json['description'][:699]
+            except:
+                summary = "no description found"
+            try:
+                subjects = response_works_json['subjects'][:10]
+            except:
+                print("no subjects found")
+            #categories , author, olid_id[2:len(olid_id)-1],title, publishers, page_count, cover_url, m_cover_url, summary, subjects
+            book_insertion = False
+            try:
+                Insert_Books(olid_id[2:len(olid_id)-1],page_count,publishers,title,summary,s_cover_path,m_cover_path)
+                book_insertion = True
+            except:
+                pass
+            try:
+                if book_insertion == True:
+                    Insert_Stores(olid_id[2:len(olid_id)-1])
+            except:
+                pass
+            try:
+                if book_insertion == True:
+                    Insert_Categories(olid_id[2:len(olid_id)-1],categories)
+            except:
+                pass
+            try:
+                if book_insertion == True:
+                    Insert_Keywords(olid_id[2:len(olid_id)-1],subjects)
+            except:
+                pass
+            try:
+                if book_insertion == True:
+                    Insert_Authors(olid_id[2:len(olid_id)-1],author)
+            except:
+                pass
+            print("\n")
         except:
             pass
-        try:
-            if book_insertion == True:
-                Insert_Stores(olid_id[2:len(olid_id)-1])
-        except:
-            pass
-        try:
-            if book_insertion == True:
-                Insert_Categories(olid_id[2:len(olid_id)-1],categories)
-        except:
-            pass
-        try:
-            if book_insertion == True:
-                Insert_Keywords(olid_id[2:len(olid_id)-1],subjects)
-        except:
-            pass
-        try:
-            if book_insertion == True:
-                Insert_Authors(olid_id[2:len(olid_id)-1],author)
-        except:
-            pass
-        print("\n")
-    except:
-        pass
 
 print("END OF PROGRAMM")
 cursor.close()
