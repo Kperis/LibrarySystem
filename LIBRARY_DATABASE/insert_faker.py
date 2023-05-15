@@ -40,11 +40,9 @@ def Insert_Schools(N_Schools):
 
 #Προσθέτει στην βάση δεδομένων έναν Admin για κάθε σχολείο
 def Insert_Admins():
-    N = Number_of_Schools()
     cursor.execute('SELECT school_id FROM School ORDER BY RAND()')
     schools_ids = cursor.fetchall()
-    print(schools_ids)
-    for i in range(N):
+    for i in range(len(schools_ids)):
         user = user_provider(fake)
         school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
                                 {},NULL,"{}","{}",{},"Admin",0)'.format(schools_ids[i][0],user.get_first_name(),user.get_last_name(),user.get_age()))
@@ -54,13 +52,16 @@ def Insert_Admins():
 def Insert_Users(N_Users):
     N = Number_of_Schools()
 
+    cursor.execute('SELECT App_user.user_id,App_user.school_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
+    data = cursor.fetchall()
 
     for i in range(N_Users):
-        cursor.execute('SELECT user_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
-        admin_id = cursor.fetchall()[0][0]
+        var = random.randint(0,N-1)
+        admin_id = data[var][0]
+        school_id = data[var][1]
         user = user_provider(fake)
         school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                {},{},"{}","{}",{},"{}",0)'.format(random.randint(1,N),admin_id,user.get_first_name(),\
+                                {},{},"{}","{}",{},"{}",0)'.format(school_id,admin_id,user.get_first_name(),\
                                 user.get_last_name(),user.get_age(),user.get_type()))
         mydb.commit()
 def Insert_Authentication():
@@ -76,7 +77,7 @@ def Insert_Authentication():
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     
-    sql_file = open("./sql_schemas/drop_schema.sql")  
+    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
