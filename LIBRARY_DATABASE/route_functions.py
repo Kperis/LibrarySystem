@@ -70,30 +70,26 @@ def fborrow_username(username):
     return result
 
 def fborrow_school(username):
-    # cursor.execute('SELECT user_id\
-    #                 FROM App_user\
-    #                 JOIN Authentication\
-    #                 ON App_user.admin_id = Authentication.user_id\
-    #                 WHERE Authentication.username = "{}"'.format(username))
-    # admin_id = cursor.fetchall()[0][0]
-    # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name\
-    #                ,DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
-    #                 FROM Authentication\
-    #                 JOIN App_user\
-    #                 ON Authentication.user_id = App_user.user_id\
-    #                 JOIN Borrow\
-    #                 ON Borrow.user_id = App_user.user_id\
-    #                 JOIN Books\
-    #                 ON Books.isbn = Borrow.isbn\
-    #                 WHERE App_user.admin_id = {}'.format(admin_id))
     cursor.execute('SELECT user_id FROM Authentication WHERE username="{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT App_user.first_name,App_user.last_name,Books.title,Books.isbn,DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),\
-                    FROM App_user JOIN Borrow ON App_user.user_id=Borrow.user_id \
-                    JOIN Books ON Books.isbn=Borrow.isbn \
-                    WHERE App_user.admin_id={}'.format(admin_id))
+    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type\
+                   ,DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
+                    FROM Authentication\
+                    JOIN App_user\
+                    ON Authentication.user_id = App_user.user_id\
+                    JOIN Borrow\
+                    ON Borrow.user_id = App_user.user_id\
+                    JOIN Books\
+                    ON Books.isbn = Borrow.isbn\
+                    WHERE App_user.admin_id = {}'.format(admin_id))
+    
+    # cursor.execute('SELECT App_user.first_name,App_user.last_name,Books.title,Books.isbn,DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),\
+    #                 FROM App_user JOIN Borrow ON App_user.user_id=Borrow.user_id \
+    #                 JOIN Books ON Books.isbn=Borrow.isbn \
+    #                 WHERE App_user.admin_id={}'.format(admin_id))
     result = cursor.fetchall()
     mydb.commit()
+    print(result)
     return result
 def fbook_title(title):
     cursor.execute('SELECT Books.isbn FROM Books WHERE Books.title = "{}"'.format(title))
@@ -120,14 +116,18 @@ def frequest_username(username):
 def frequest_school(username):
     cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.isbn,Books.title,App_user.first_name,App_user.last_name,\
+    cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(admin_id))
+    school_id=cursor.fetchall()[0][0]
+    cursor.execute('SELECT Stores.copies,Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type,\
                     DATE_FORMAT(Request.date_of_request,"%m/%d/%Y")\
                     FROM App_user\
                     JOIN Request\
                     ON Request.user_id = App_user.user_id\
                     JOIN Books\
                     ON Books.isbn = Request.isbn\
-                    WHERE App_user.admin_id = {}'.format(admin_id))
+                    JOIN Stores ON Stores.isbn=Books.isbn\
+                    JOIN Authentication ON Authentication.user_id=App_user.user_id \
+                    WHERE App_user.admin_id = {} AND Stores.school_id={}' .format(admin_id,school_id))
     result = cursor.fetchall()
     print(result)
     mydb.commit()

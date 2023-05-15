@@ -1,0 +1,33 @@
+.borrow_box{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px auto auto 50px;
+    border: solid 1px white;
+    border-radius: 6px;
+    padding: 14px;
+}
+
+.borrow_box>p{
+    color:white;
+    font-size: 20px;
+    letter-spacing: 1px;
+    word-spacing: 4px;
+}
+
+.borrow_box>button{
+    width: 100px;
+    color: white;
+    background-color: rgb(93, 0, 200);
+    border-radius: 5px;
+    font-size: large;
+    padding: 6px;
+    transition: all linear 0.3s;
+}
+
+.borrow_box>button:hover{
+    transform: scale(1.1);
+}
+
+.borrow_box>button:active{
+    transform: scale(0.9);
+}

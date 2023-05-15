@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './UserInfo.css';
 
 const UserInfo = ({user}) => {
 
     const [changePass,setPass] = useState(false);
     const [newPass,setNewPass] = useState('');
+
 
     const onPasswordChange = () =>{
         setPass(true);

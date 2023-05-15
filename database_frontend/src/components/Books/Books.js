@@ -38,7 +38,6 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
 
     const Search = () => {
-        console.log(titlesearch);
         booklist = books.filter(book => {
             return book.title.toLowerCase().includes(titlesearch.toLowerCase());
         })    
