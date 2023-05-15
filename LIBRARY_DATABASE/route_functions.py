@@ -27,8 +27,8 @@ def print_aaa():
 
 def fuser_username(username):
     cursor.execute('SELECT user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
-    result = cursor.fetchall()[0][0]
-    return result
+    user_id = cursor.fetchall()[0][0]
+    return user_id
 def fschool_name_city(school_name,city):
     cursor.execute('SELECT school_id FROM School WHERE School.name = "{}" AND School.city = "{}"'.format(school_name,city))
     school_id = cursor.fetchall()[0][0]
@@ -115,7 +115,7 @@ def frequest_username(username):
 def frequest_school(username):
     cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.isbn,Books.title,Authentication.usename,App_user.first_name,App_user.last_name,\
+    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
                    Request.date_of_request\
                     FROM Authentication\
                     JOIN App_user\
