@@ -1,9 +1,16 @@
-.book{
+/* .book{
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-decoration: none;
     gap: 14px;
+} */
+
+.book_showcase{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 span.book_title{
@@ -23,4 +30,8 @@ span.book_title{
 
 .book_cover:hover{
     transform: scale(1.05);
+}
+
+.authors{
+    font-size: 16px;
 }

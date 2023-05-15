@@ -186,7 +186,6 @@ def delete_request(user_id,isbn):
     mydb.commit()
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]
-    print(school_id)
     cursor.execute('UPDATE Stores SET copies=copies-1 WHERE isbn={} AND school_id={}'.format(isbn,school_id))
     mydb.commit()
     print('done')

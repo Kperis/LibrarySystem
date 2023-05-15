@@ -2,11 +2,41 @@ import React,{ useEffect, useState} from 'react';
 import './Admin.css';
 import '../Books/Books.css';
 
-const Admin = ({book_list,borrow,user,borrow_list,update_count}) => {
+const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
     
     const [username, setUser] = useState('');
     const [title,setTitle] = useState('');
-    
+    const [delay_list,setDelayList] = useState([]);
+    const [array,setArr] = useState([]);
+    const [delShow,setDelShow] = useState(false);
+
+    useEffect(()=>{
+        if(borrow){
+            if(!delShow){
+                let temp = borrow_list.filter(book=>{
+                    return(book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()))
+                })
+                setArr(temp);
+            }
+            else{
+                let temp = borrow_list.filter(book =>{
+                    const date1 = new Date(book.acquire_date);
+                    const date2 = new Date();
+
+                    const diffTime = Math.abs(date2-date1);
+                    const diffDays = Math.ceil(diffTime / (1000*60*60*24));
+                    return diffDays > 7
+                })
+                setArr(temp);
+            }
+        }
+        else{
+            let temp = request_list.filter(book=>{
+                return(book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()))
+            })
+            setArr(temp);
+        }
+    },[title,username,count2,delShow])
 
     const onFilterUser = (event) =>{
         setUser(event.target.value);
@@ -15,10 +45,6 @@ const Admin = ({book_list,borrow,user,borrow_list,update_count}) => {
     const onFilterTitle = (event) =>{
         setTitle(event.target.value);
     }
-
-    const array = book_list.filter(book=>{
-        return(book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()))
-    })
 
     const onGrantReturn = (index) => {
         fetch('http://localhost:5000/borrow', {
@@ -95,6 +121,17 @@ const Admin = ({book_list,borrow,user,borrow_list,update_count}) => {
         }
     }
 
+    const displayDelay = () => {
+        if(delShow){
+            setDelShow(false);
+        }
+        else{
+            setDelShow(true);
+        }
+        
+    }
+
+
     return(
         <div>
             <div className='searchspace'>
@@ -103,14 +140,19 @@ const Admin = ({book_list,borrow,user,borrow_list,update_count}) => {
             </div>
             <div className='borrow_container'>
                 {borrow === true
-                ? (array.map((element,index) => {
-                    return(
-                        <div key={element.title} className='borrow_box'>
-                            <p className='borrow_text'>{`${element.first_name} ${element.last_name} (${element.role}): ${element.title} due return-> ${element.return_date}`}</p>
-                            <button className='Grant' onClick={() => onGrantReturn(index)} >Returned</button>
-                        </div>
-                    )
-                }))
+                ?   <div>
+                        <button onClick={() => displayDelay()}>Display delayed</button>
+                        {
+                        (array.map((element,index) => {
+                        return(
+                            <div key={element.title} className='borrow_box'>
+                                <p className='borrow_text'>{`${element.first_name} ${element.last_name} (${element.role}): ${element.title} due return-> ${element.return_date}`}</p>
+                                <button className='Grant' onClick={() => onGrantReturn(index)} >Returned</button>
+                            </div>
+                        )
+                        }))
+                        }
+                    </div>
                 :(array.map((element,index) => {
                     return(
                         <div key={element.title} className='borrow_box'>

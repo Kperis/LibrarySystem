@@ -12,11 +12,11 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
     useEffect(() =>{
         let temp = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase());
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors[0].some(author => {return author.toLowerCase().includes(authorsearch.toLowerCase())})
+            ;
         })
         setBooklist(temp);   
-    },[titlesearch,books])
-    
+    },[titlesearch,books,authorsearch])
 
     const onBookClicked2 = (isbn) =>{
         onBookClicked(isbn);
@@ -24,12 +24,10 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
     const onCategorySelect = (event) => {
         setCategory(event.target.value);
-        Search();
     }
 
     const onAuthorSearch = (event) => {
         setAuthorSearch(event.target.value);
-        Search();
     }
 
     const onTitleSearch = (event) => {
@@ -38,10 +36,10 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
 
     const Search = () => {
-        booklist = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase());
-        })    
-        return;
+        // booklist = books.filter(book => {
+        //     return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && ;
+        // })    
+        // return;
         // booklist = books.filter(book =>{
         //     return book.author.toLowerCase().includes(authorsearch.toLowerCase());
 
@@ -89,7 +87,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
                 booklist && booklist.map((book,index) => {
                     return(
                         <div key={book.isbn}>
-                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m}  title={book.title}/>
+                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book.authors[0]} title={book.title}/>
                         
                             {
                                 isonrequest === true
