@@ -1,11 +1,13 @@
-import React,{ useState} from 'react';
+import React,{ useEffect, useState} from 'react';
 
-const Admin = ({book_list,borrow}) => {
+const Admin = ({book_list,borrow,user}) => {
     
     const [username, setUser] = useState('');
     const [title,setTitle] = useState('');
 
-    
+    useEffect(()=>{
+        console.log(book_list);
+    },[])
 
     const onFilterUser = (event) =>{
         setUser(event.target.value);

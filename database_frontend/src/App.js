@@ -13,21 +13,20 @@ function App(){
   
   useEffect(()=>{
     
-    if(window.localStorage.getItem('isSignedIn') === null){
+    if(window.localStorage.getItem("isSignedIn") === null){
     }
     else{
-      loadUser(JSON.parse(window.localStorage.getItem('user')),'home');
+      loadUser(JSON.parse(window.localStorage.getItem("user")),"home");
     }
   },[])
 
   const onRouteChange = (route) => {
-    console.log(isSignedIn);
     if(isSignedIn){
-      setRoute(JSON.parse(window.localStorage.getItem('route')));
+      setRoute(JSON.parse(window.localStorage.getItem("route")));
     }
     else{
       setRoute(route);
-      window.localStorage.setItem('route',route);
+      window.localStorage.setItem("route",route);
     }
     
   }
@@ -38,15 +37,15 @@ function App(){
 
   const loadUser = (user,route) => {
     if(isSignedIn){
-      setUser(JSON.parse(window.localStorage.getItem('user')));
-      setRoute(JSON.parse(window.localStorage.getItem('route')));
+      setUser(JSON.parse(window.localStorage.getItem("user")));
+      setRoute(JSON.parse(window.localStorage.getItem("route")));
     }
     else{
       setUser(user);
       onRouteChange(route);
-      window.localStorage.setItem('user',JSON.stringify(user));
+      window.localStorage.setItem("user",JSON.stringify(user));
       setIsSignedIn(true);
-      window.localStorage.setItem('isSignedIn',true);
+      window.localStorage.setItem("isSignedIn",true);
     }
     
   }

@@ -87,10 +87,10 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
             </div>
             <div className='book_list'>
                 {
-                booklist.map((book,index) => {
+                booklist && booklist.map((book,index) => {
                     return(
-                        <div>
-                            <BookTemplate key={book.title} onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m}  title={book.title}/>
+                        <div key={book.isbn}>
+                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m}  title={book.title}/>
                         
                             {
                                 isonrequest === true

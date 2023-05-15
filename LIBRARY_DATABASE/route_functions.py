@@ -44,7 +44,7 @@ def fuser_flname(first_name,last_name):
 def fborrow_username(username):
     # user_id = fuser_username(username)
     # cursor.execute('SELECT ')
-
+    print('Checkpoint')
     cursor.execute('SELECT Books.isbn,Books.title,Books.m_cover_path,Authentication.username,App_user.first_name,App_user.last_name,\
                     DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
                     FROM Authentication\
@@ -57,7 +57,6 @@ def fborrow_username(username):
                     WHERE Authentication.username = "{}"'.format(username))
     result = cursor.fetchall()
     mydb.commit()
-    
     # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
     #                 Request.date_of_request\
     #                 FROM Authentication\
@@ -71,24 +70,30 @@ def fborrow_username(username):
     return result
 
 def fborrow_school(username):
-    cursor.execute('SELECT user_id\
-                    FROM App_user\
-                    JOIN Authentication\
-                    ON App_user.user_id = Authentication.user_id\
-                    WHERE Authentication.username = "{}"'.format(username))
+    # cursor.execute('SELECT user_id\
+    #                 FROM App_user\
+    #                 JOIN Authentication\
+    #                 ON App_user.admin_id = Authentication.user_id\
+    #                 WHERE Authentication.username = "{}"'.format(username))
+    # admin_id = cursor.fetchall()[0][0]
+    # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name\
+    #                ,DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
+    #                 FROM Authentication\
+    #                 JOIN App_user\
+    #                 ON Authentication.user_id = App_user.user_id\
+    #                 JOIN Borrow\
+    #                 ON Borrow.user_id = App_user.user_id\
+    #                 JOIN Books\
+    #                 ON Books.isbn = Borrow.isbn\
+    #                 WHERE App_user.admin_id = {}'.format(admin_id))
+    cursor.execute('SELECT user_id FROM Authentication WHERE username="{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name\
-                   ,return_date,acquire_date\
-                    FROM Authentication\
-                    JOIN App_user\
-                    ON Authentication.user_id = App_user.user_id\
-                    JOIN Borrow\
-                    ON Borrow.user_id = App_user.user_id\
-                    JOIN Books\
-                    ON Books.isbn = Borrow.isbn\
-                    WHERE App_user.admin_id = {}'.format(admin_id))
+    cursor.execute('SELECT App_user.first_name,App_user.last_name,Books.title,Books.isbn,DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),\
+                    FROM App_user JOIN Borrow ON App_user.user_id=Borrow.user_id \
+                    JOIN Books ON Books.isbn=Borrow.isbn \
+                    WHERE App_user.admin_id={}'.format(admin_id))
     result = cursor.fetchall()
-    
+    mydb.commit()
     return result
 def fbook_title(title):
     cursor.execute('SELECT Books.isbn FROM Books WHERE Books.title = "{}"'.format(title))
@@ -115,17 +120,17 @@ def frequest_username(username):
 def frequest_school(username):
     cursor.execute('SELECT Authentication.user_id FROM Authentication WHERE Authentication.username = "{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
-                   Request.date_of_request\
-                    FROM Authentication\
-                    JOIN App_user\
-                    ON Authentication.user_id = App_user.user_id\
+    cursor.execute('SELECT Books.isbn,Books.title,App_user.first_name,App_user.last_name,\
+                    DATE_FORMAT(Request.date_of_request,"%m/%d/%Y")\
+                    FROM App_user\
                     JOIN Request\
                     ON Request.user_id = App_user.user_id\
                     JOIN Books\
                     ON Books.isbn = Request.isbn\
                     WHERE App_user.admin_id = {}'.format(admin_id))
     result = cursor.fetchall()
+    print(result)
+    mydb.commit()
     return result
 def freview_isbn_approved(isbn):
     cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,App_user.first_name,App_user.last_name,Review.approved \

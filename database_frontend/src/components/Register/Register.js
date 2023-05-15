@@ -10,11 +10,10 @@ const Register = ({onRouteChange}) => {
     const [last_name, setLastName] = useState('');
     const [birthday, setBirthday] = useState('');
     const [role, setRole] = useState('');
-    const [school_name,setSchoolName] = useState('');
+    const [school_name,setSchoolName] = useState(0);
     const [school_list,setSchoolList] = useState([]);
 
     useEffect(() => {
-        console.log('hi');
         fetch('http://localhost:5000/register', {
             method: 'get',
             headers: {'Content-Type':'application/json'}
@@ -28,33 +27,34 @@ const Register = ({onRouteChange}) => {
 
 
     const onSubmitRegister = () =>{
-        if(username !== '' && password !== '' && first_name !== '' && last_name !== '' && birthday !== '' &&  role !== '' &&  school_name !== ''){
-        fetch('http://localhost:5000/register', {
-            method: 'post',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                username: username,
-                password:password,
-                first_name: first_name,
-                last_name: last_name,
-                birthday: birthday,
-                role:role,
-                school_name: school_name
+        if(username !== '' && password !== '' && first_name !== '' && last_name !== '' && birthday !== '' &&  role !== ''){
+            fetch('http://localhost:5000/register', {
+                method: 'post',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    username: username,
+                    password:password,
+                    first_name: first_name,
+                    last_name: last_name,
+                    birthday: birthday,
+                    role:role,
+                    school_name: school_list[school_name].name,
+                    city: school_list[school_name].city
+                })
+                
             })
-            
-        })
-        .then(response => response.json())
-        .then(response => console.log(response))
+            .then(response => response.json())
+            .then(response => console.log(response))
 
-        setUsername('');
-        setBirthday('');
-        setPassword('');
-        setLastName('');
-        setFirstName('');
-        setRole('');
+            setUsername('');
+            setBirthday('');
+            setPassword('');
+            setLastName('');
+            setFirstName('');
+            setRole('');
         }
         else{
-            console.log('fill everything');
+            alert('fill everything');
         }
         
     }
@@ -121,7 +121,7 @@ const Register = ({onRouteChange}) => {
                 <select onChange={onSelectSchool}>
                     {school_list.map((school,index) =>{
                         return(
-                            <option key={index} value={`${school}`} >{`${school}`}</option>
+                            <option key={index} value={index} >{`${school.name.concat(' ',school.city)}`}</option>
                         )
                     })
 
@@ -141,7 +141,7 @@ const Register = ({onRouteChange}) => {
                         className='radio_btn' 
                         type='radio' 
                         name='role'
-                        value='student'
+                        value='Mαθητής'
                         onChange={onRoleChange}
                         />
                     <label className='radio_label'>Student</label>
@@ -149,7 +149,7 @@ const Register = ({onRouteChange}) => {
                         className='radio_btn' 
                         type='radio' 
                         name='role'
-                        value='teacher'
+                        value='Καθηγητής'
                         onChange={onRoleChange}
                         />
                     <label className='radio_label'>Teacher</label>
@@ -157,7 +157,7 @@ const Register = ({onRouteChange}) => {
                         className='radio_btn' 
                         type='radio' 
                         name='role'
-                        value='admin'
+                        value='Admin'
                         onChange={onRoleChange}
                         />
                     <label className='radio_label'>Admin</label>
