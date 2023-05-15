@@ -182,7 +182,7 @@ def request():
         elif type == "Admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_school(username)
-            request_dict = [dict(zip(('isbn','title','username','first_name','last_name','date_of_request'),x)) for x in result]
+            request_dict = [dict(zip(('isbn','title','first_name','last_name','date_of_request'),x)) for x in result]
             return flask.jsonify(request_dict)
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
