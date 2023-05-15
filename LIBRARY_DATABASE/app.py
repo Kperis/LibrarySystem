@@ -10,6 +10,7 @@ import route_functions
 
 import json
 from datetime import date
+from datetime import datetime
 
 app = flask.Flask(__name__)
 cors = CORS(app,resources={
@@ -27,6 +28,21 @@ autocommit = True
 )
 
 cursor = mydb.cursor(buffered = True)
+def delete_outdated_requests():
+    today = date.today()
+    today.strftime("%Y/%m/%d")
+
+    cursor.execute('SELECT Request.request_id,Request.date_of_request FROM Request')
+    data = cursor.fetchall()
+    for i in range(len(data)):
+        acquire_date = data[i][1]
+        acquire_date.strftime("%Y/%m/%d")
+        difference = today - acquire_date
+
+        if difference.days > 7:
+            cursor.execute('DELETE FROM Request WHERE Request.request_id = {}'.format(data[i][0]))
+            mydb.commit()
+
 
 
 
@@ -296,13 +312,13 @@ def changeSchool():
         school_id = route_functions.fschool_name_city(school_name)
         cursor.execute('UPDATE App_user SET App_user.school_id = {} WHERE App_user.user_id = {}'.format(school_id,user_id))
         mydb.commit()
-        return flask.jsonify({"success":'success'})
+        return flask.jsonify({"success":'success'}) 
     else:
         return flask.jsonidy({"success":'failure'})
 
 
 if __name__ == "__main__":
     app.debug = True
+    delete_outdated_requests()
     app.run(debug = True, host="localhost", port = 5000)
-
 

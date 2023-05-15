@@ -21,7 +21,6 @@ fake = Faker('el_GR')
 
 cursor = mydb.cursor(buffered = True)
 
-
 #Βρίσκει τον αριθμό τον schools που υπάρχουν στο σύστημα 
 def Number_of_Schools():
     cursor.execute('SELECT COUNT(*) FROM School')
