@@ -124,6 +124,8 @@ const Home = ({user, onRouteChange,onSignout}) => {
             return a.isbn === isbn
         });
         window.localStorage.setItem("book",JSON.stringify(temp[0]));
+        console.log(requested);
+        console.log(borrowed);
     }
 
     const update_reviews = () =>{
@@ -193,7 +195,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                     }/>
                     <Route path='/requested' element={
                         user.role === 'Admin'
-                        ? <Admin book_list={requested} borrow={false} user={user} />
+                        ? <Admin book_list={requested} borrow_list={borrowed} borrow={false} user={user} />
                         : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>
 

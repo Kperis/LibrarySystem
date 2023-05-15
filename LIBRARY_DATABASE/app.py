@@ -144,7 +144,7 @@ def borrow():
             try:
                 result = route_functions.fborrow_school(username)
                 if result:
-                    borrow_dict = [dict(zip(('first_name','last_name','title','isbn','acquire_date','return_date'),x)) for x in result]
+                    borrow_dict = [dict(zip(('isbn','title','username','first_name','last_name','role','return_date','acquire_date'),x)) for x in result]
                     return flask.jsonify(borrow_dict)
                 else:
                     return flask.jsonify({'borrows':'none'})
@@ -182,7 +182,11 @@ def request():
         elif type == "Admin":
             # Στέλνω isbn,title,username,first_name,last_name,date_of_request
             result = route_functions.frequest_school(username)
-            return flask.jsonify(result)
+            if result:
+                request_dict = [dict(zip(('copies','isbn','title','username','first_name','last_name','role','date_of_request'),x)) for x in result]
+                return flask.jsonify(request_dict)
+            else:
+                return flask.jsonify({'requests':'none'})
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
         username = data['username']
