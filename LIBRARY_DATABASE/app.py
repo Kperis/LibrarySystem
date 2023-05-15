@@ -74,7 +74,7 @@ def sign_in():
     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
     try:
         user_id = cursor.fetchall()[0][0]
-        cursor.execute('SELECT Authentication.username,Authentication.password,School.name\
+        cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
                        ,App_user.first_name,App_user.last_name,App_user.type,App_user.age\
                         FROM Authentication JOIN App_user\
                         ON App_user.user_id = Authentication.user_id JOIN School\
@@ -82,7 +82,7 @@ def sign_in():
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
         mydb.commit()
-        return flask.jsonify({"username":result[0][0],"password":result[0][1],"school_name":result[0][2],"first_name":result[0][3],"last_name":result[0][4],"role":result[0][5],"age":result[0][6],"user_id":user_id})
+        return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id})
     except:
         print("no user found")
         return flask.jsonify({"result": "failure","data":0})
@@ -154,11 +154,8 @@ def borrow():
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
         username = data['username']
-        title = data['title']
-        isbn = route_functions.fbook_title(title)
+        isbn = data['isbn']
         user_id = route_functions.fuser_username(username)
-        print(user_id)
-        print(isbn)
         route_functions.delete_borrow(user_id,isbn)
         #ΥΠΑΡΧΕΙ ΕΝΑ ERROR επειδή για καποιο λόγω βιβλία με διαφορετικό isbn μπορεί να έχουν το ιδιο
         #τίτλο και η sql δεν ξεχωρίζει τα κεφαλαία γράμματα απο τα μικρά
@@ -211,11 +208,10 @@ def request_book():
 @cross_origin(headers=['Content-Type'])
 def get_reviews():
     data = flask.request.get_json(['body'])
-    isbn = data['isbn']
     type = data['role']
-    username = data['username']
-
     if type == "student":
+        isbn = data['isbn']
+        username = data['username']
         result = route_functions.freview_isbn_approved(isbn)
         if result:
             reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name','approved'),x))for x in result]
@@ -223,9 +219,10 @@ def get_reviews():
         else:
             return flask.jsonify({'reviews':'none'})
     elif type == "Admin":
+        username = data['username']
         school_id = route_functions.fschool_username(username)
         result = route_functions.freview_school(school_id)
-        reviews_dict = [dict(zip(('review_date','score','description','first_name','last_name','approved'),x))for x in result]
+        reviews_dict = [dict(zip(('review_date','score','description','username','first_name','last_name','approved','title','isbn'),x))for x in result]
         return flask.jsonify(reviews_dict)
 
 

@@ -6,6 +6,7 @@ import Book from '../Book/Book';
 import { Routes, Route } from 'react-router-dom';
 import UserInfo from '../UserInfo/UserInfo';
 import Admin from '../AdminCompononent/Admin';
+import Review_list from '../ReviewList/Review_list';
 
 
 
@@ -17,9 +18,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
     const [rev_count,setRevCount] = useState(0);
-    const [active_book,setActiveBook] = useState({});
-    const [reviews, setReviews] = useState([]);
-    const [hasReviewed, setHasReviewed] = useState(false);
+    
 
 
     useEffect(() => {
@@ -43,7 +42,8 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 'Content-Type':'application/json'
             },
             body: JSON.stringify({
-                school_name: user.school_name 
+                school_name: user.school_name,
+                city: user.city 
             })
         })
         .then(response => response.json())
@@ -124,8 +124,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
             return a.isbn === isbn
         });
         window.localStorage.setItem("book",JSON.stringify(temp[0]));
-        console.log(requested);
-        console.log(borrowed);
     }
 
     const update_reviews = () =>{
@@ -134,47 +132,10 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
     }
 
-    // const fetch_rev = async (isbn) =>{
-    //     await fetch('http://localhost:5000/reviews', {
-    //         method: 'post',
-    //         headers: {'Content-Type':'application/json'},
-    //         body: JSON.stringify({
-    //             isbn:isbn
-    //         })
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if(data?.reviews === 'none'){
-    //             setReviews([])
-    //         }
-    //         else{
-    //             setReviews(data);
-    //         }
-    //     })
-    //     .catch(err => console.log(err))
-
-    //     await fetch('http://localhost:5000/user_review', {
-    //         method: 'post',
-    //         headers: {'Content-Type':'application/json'},
-    //         body: JSON.stringify({
-    //             username: user?.username, 
-    //             isbn:isbn
-    //         })
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if(data.reviewed === 'yes'){
-    //             setHasReviewed(true);
-    //         }
-    //         else{
-    //             setHasReviewed(false);
-    //         }
-    //     })
-    // }
 
     return(
             <>
-                <Navigation onRouteChange={onRouteChange} onSignout={onSignout}/>
+                <Navigation onRouteChange={onRouteChange} onSignout={onSignout} user={user} />
                 <Routes>
                     <Route path='/' element={
                         <div>
@@ -183,20 +144,23 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book  reviews={reviews} hasReviewed={hasReviewed} rev_count={rev_count} hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
+                        <Book hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>
                     }/>
                     <Route path='/borrowed' element={
                         user.role === 'Admin'
-                        ? <Admin book_list={borrowed} borrow={true} user={user} />
+                        ? <Admin book_list={borrowed} update_count={update_request_count} borrow={true} user={user} />
                         : <Books books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                     }/>
                     <Route path='/requested' element={
                         user.role === 'Admin'
-                        ? <Admin book_list={requested} borrow_list={borrowed} borrow={false} user={user} />
+                        ? <Admin book_list={requested} update_count={update_request_count} borrow_list={borrowed} borrow={false} user={user} />
                         : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
+                    }/>
+                    <Route path='/reviews' element={
+                        <Review_list user={user}/>
                     }/>
 
                 </Routes>

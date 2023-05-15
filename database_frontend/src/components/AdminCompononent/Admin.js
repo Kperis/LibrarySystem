@@ -2,14 +2,11 @@ import React,{ useEffect, useState} from 'react';
 import './Admin.css';
 import '../Books/Books.css';
 
-const Admin = ({book_list,borrow,user,borrow_list}) => {
+const Admin = ({book_list,borrow,user,borrow_list,update_count}) => {
     
     const [username, setUser] = useState('');
     const [title,setTitle] = useState('');
-
-    // useEffect(()=>{
-    //     console.log(book_list)
-    // },[])
+    
 
     const onFilterUser = (event) =>{
         setUser(event.target.value);
@@ -24,16 +21,20 @@ const Admin = ({book_list,borrow,user,borrow_list}) => {
     })
 
     const onGrantReturn = (index) => {
-        const x = book_list.splice(index,index);
-        const y = x[0];
-        fetch('http://localhost:5000/return', {
+        fetch('http://localhost:5000/borrow', {
             method: 'put',
-            headers: {'Content-Type':'application/json'},
+            headers: {
+                'Content-Type' : 'application/json'
+            },
             body: JSON.stringify({
-                user_id: y.user_id,
-                isbn: y.isbn
+                isbn: array[index].isbn,
+                username: array[index].username
             })
         })
+        .then(response => response.json())
+        .then(data => console.log(data))   
+
+        update_count();
     }
 
     const onGrantRequest = (index) => {
@@ -41,31 +42,55 @@ const Admin = ({book_list,borrow,user,borrow_list}) => {
             alert('No copies left');
         }
         else{
-            borrow_list.map((a,i) =>{
-                if(a.username === array[index].username){
-                    const date1 = new Date();
-                    const date2 = new Date(a.acquire_date);
-                    const diffTime = Math.abs(date2-date1);
-                    const diffDays = Math.ceil(diffTime / (1000*60*60*24));
-                    if(diffDays > 7){
-                        alert('User has a book delayed and cannot borrow')
+            let canBorrow = false;
+            const temp = borrow_list.filter(a=>{
+                return a.username === array[index].username;
+            })
+            if(array[index].role.length === 7){
+                if(temp.length < 2){
+                    canBorrow = true;
+                }
+            }
+            else{
+                if(temp.length < 1){
+                    canBorrow = true;
+                }
+            }
+            if(canBorrow){
+                borrow_list.map((a,i) =>{
+                    if(a.username === array[index].username){
+                        const date1 = new Date();
+                        const date2 = new Date(a.acquire_date);
+                        const diffTime = Math.abs(date2-date1);
+                        const diffDays = Math.ceil(diffTime / (1000*60*60*24));
+                        if(diffDays > 7){
+                            alert('User has a book delayed and cannot borrow')
+                            canBorrow = false;
+                        }
                     }
-                    else{
+                })
+                if(canBorrow){
+                        console.log('ayoo');
                         fetch('http://localhost:5000/request', {
                             method: 'put',
                             headers: {
                                 'Content-Type' : 'application/json'
                             },
                             body: JSON.stringify({
-                                isbn: a.username,
-                                username: user?.username
+                                isbn: array[index].isbn,
+                                username: array[index].username
                             })
                         })
                         .then(response => response.json())
                         .then(data => console.log(data))   
-                    }
+
+                        update_count();
+                    
                 }
-            })
+            }
+            else{
+                alert('User is already on the borrow limit');
+            }
                
         }
     }
