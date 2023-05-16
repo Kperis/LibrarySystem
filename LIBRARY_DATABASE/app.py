@@ -91,14 +91,14 @@ def sign_in():
     try:
         user_id = cursor.fetchall()[0][0]
         cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age\
-                        FROM Authentication JOIN App_user\
-                        ON App_user.user_id = Authentication.user_id JOIN School\
-                        ON School.school_id = App_user.school_id\
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
+                        FROM Authentication JOIN App_user \
+                        ON App_user.user_id = Authentication.user_id JOIN School \
+                        ON School.school_id = App_user.school_id \
                         WHERE Authentication.user_id = {}'.format(user_id))
         result = cursor.fetchall()
         mydb.commit()
-        return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id})
+        return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8]})
     except:
         print("no user found")
         return flask.jsonify({"result": "failure","data":0})
@@ -131,8 +131,7 @@ def books():
             keywords = cursor.fetchall()
             book_dict[i]['keywords'] = keywords
 
-    #cursor.execute('SELECT Keywords.keyword FROM Keywords JOIN ')
-        print(book_dict)
+    #cursor.execute('SELECT Keywords.keyword FROM Keywords JOIN 
         return flask.jsonify(book_dict)
     else:
         return flask.jsonify({'books':'none'})
@@ -301,17 +300,28 @@ def changeSchool():
     data = flask.request.get_json(['body'])
     username = data['username']
     school_name = data['new_school_name']
+    old_city = data['old_city']
     city = data['new_city']
     type = data['role']
 
     if type == 'Καθηγητής':
         user_id = route_functions.fuser_username(username)
-        school_id = route_functions.fschool_name_city(school_name)
+        school_id = route_functions.fschool_name_city(school_name,old_city)
         cursor.execute('UPDATE App_user SET App_user.school_id = {} WHERE App_user.user_id = {}'.format(school_id,user_id))
         mydb.commit()
         return flask.jsonify({"success":'success'}) 
     else:
         return flask.jsonidy({"success":'failure'})
+
+@app.route('/mean_score',methods = ['POST'])
+@cross_origin(headers = ['Content-Type'])
+def mean_scores():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+
+    school_id = route_functions.fschool_username(username)
+    result = route_functions.fmean_score_user(school_id)
+    return flask.jsonify(result)
 
 
 if __name__ == "__main__":

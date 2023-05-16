@@ -162,6 +162,38 @@ def freview_school(school_id):
     mydb.commit()
     return result
 
+def fmean_score_user(school_id):
+    cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,Review.score \
+                   FROM Review \
+                   JOIN App_user \
+                   ON Review.user_is = App_user.user_id \
+                   JOIN School \
+                   ON School.school_id = App_user.school_id \
+                   WHERE School.school_id = {} AND Review.approved = 1'.format(school_id))
+    data = cursor.fetchall()
+    mydb.commit()
+    user_id_list = []
+    result = []
+    for item in data:
+        if user_id_list.count(item[0]) == 0:
+            user_id_list.append(item[0])
+            dictionary = {}
+            dictionary['user_id'] = item[0]
+            dictionary['first_name'] = item[1]
+            dictionary['last_name'] = item[2]
+            result.append(dictionary)
+
+    for i in range(len(user_id_list)):
+         result[i]['mean'] = 0
+    for item in data:
+        for i in range(len(result)):
+            if result['user_id'] == item[0]:
+                break
+        result[i]['mean'] += item[3]
+    return result    
+    
+    
+
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
                 VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,age,type,admin_id))
