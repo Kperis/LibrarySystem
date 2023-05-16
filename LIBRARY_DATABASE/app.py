@@ -323,6 +323,14 @@ def mean_scores():
     result = route_functions.fmean_score_user(school_id)
     return flask.jsonify(result)
 
+@app.route('/main_admin/all_borrows',methods = ['POST'])
+@cross_origin(headers = ['Content-Type'])
+def borrows_of_schools():
+    data = flask.request.get_json(['body'])
+    month = data['month']
+    result = route_functions.fallborrows_schools(month)
+    return flask.jsonify(result)
+
 
 if __name__ == "__main__":
     app.debug = True
