@@ -17,7 +17,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [requested,setRequested] = useState([]);
     const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
-    const [rev_count,setRevCount] = useState(0);
     const [count2,setCount2] = useState(0);
     
 
@@ -125,7 +124,8 @@ const Home = ({user, onRouteChange,onSignout}) => {
             return a.isbn === isbn
         });
         window.localStorage.setItem("book",JSON.stringify(temp[0]));
-        console.log(books);
+        console.log(requested);
+        console.log(borrowed);
     }
 
     const tab_change = () =>{
@@ -140,7 +140,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                     <Route path='/' element={
                         <div>
                             <Header first_name={user.first_name} last_name={user.last_name} school={user.school_name}/>
-                            <Books books={books} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
+                            <Books count2={count2} books={books} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                         </div>
                     } />
                     <Route path="/book" element={
@@ -152,12 +152,12 @@ const Home = ({user, onRouteChange,onSignout}) => {
                     <Route path='/borrowed' element={
                         user.role === 'Admin'
                         ? <Admin count2={count2} count={count} borrow_list={borrowed} request_list={requested} update_count={update_request_count} borrow={true} user={user} />
-                        : <Books books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
+                        : <Books count2={count2} books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                     }/>
                     <Route path='/requested' element={
                         user.role === 'Admin'
                         ? <Admin count={count} count2={count2} request_list={requested} update_count={update_request_count} borrow_list={borrowed} borrow={false} user={user} />
-                        : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
+                        : <Books count2={count2} books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>
                     <Route path='/reviews' element={
                         <Review_list user={user}/>

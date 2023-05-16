@@ -247,6 +247,11 @@ def delete_review(isbn,username):
     cursor.execute('DELETE FROM Review WHERE Review.isbn = {} AND Review.user_id = {}'.format(isbn,user_id))
     mydb.commit()
     return
+
+def delete_user_request(user_id,isbn):
+    cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
+    mydb.commit()
+    return
     
 def approve_review(isbn,username):
     user_id = fuser_username(username)

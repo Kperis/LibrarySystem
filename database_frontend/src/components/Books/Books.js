@@ -3,7 +3,7 @@ import './Books.css';
 import BookTemplate from '../BookTemplate/BookTemplate';
 
 
-const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
+const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
 
     const [category, setCategory] = useState('All');
     const [authorsearch, setAuthorSearch] = useState('');
@@ -12,11 +12,11 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
 
     useEffect(() =>{
         let temp = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors[0].some(author => {return author.toLowerCase().includes(authorsearch.toLowerCase())})
-            ;
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book?.authors[0].some(author => {return author.toLowerCase().includes(authorsearch.toLowerCase())});
         })
-        setBooklist(temp);   
-    },[titlesearch,books,authorsearch])
+        setBooklist(temp);
+        console.log('click');
+    },[titlesearch,books,authorsearch,count2])
 
     const onBookClicked2 = (isbn) =>{
         onBookClicked(isbn);
@@ -47,6 +47,13 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
     }
 
     const onCancelRequest = async (index) =>{
+        let role = 'ho'
+        if(user?.role === 'Admin'){
+            role = 'Admin';
+        }
+        else{
+            role = 'student';
+        } 
         let isbn = books[index].isbn;
         await fetch('http://localhost:5000/request', {
             method: 'put',
@@ -54,6 +61,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
                 'Content-Type' : 'application/json'
             },
             body: JSON.stringify({
+                role: role,
                 username: user.username,
                 isbn: isbn
             })
@@ -87,7 +95,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count}) => {
                 booklist && booklist.map((book,index) => {
                     return(
                         <div key={book.isbn}>
-                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book.authors[0]} title={book.title}/>
+                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book?.authors[0]} title={book.title}/>
                         
                             {
                                 isonrequest === true
