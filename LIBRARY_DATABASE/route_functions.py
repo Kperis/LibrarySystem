@@ -151,11 +151,7 @@ def fschool_username(username):
     return result
 def freview_school(school_id):
     cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,\
-<<<<<<< HEAD
-                   App_user.first_name,App_user.last_name,Review.approved,App_user.user_id \
-=======
                    Authentication.username,App_user.first_name,App_user.last_name,Review.approved,Books.title,Books.isbn \
->>>>>>> 7f1627fd9ed38782d5e2f13f4ec7daf5743587ce
                    FROM Review \
                    JOIN App_user \
                    ON App_user.user_id = Review.user_id \
