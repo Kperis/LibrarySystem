@@ -313,6 +313,16 @@ def changeSchool():
     else:
         return flask.jsonidy({"success":'failure'})
 
+@app.route('/mean_score',methods = ['POST'])
+@cross_origin(headers = ['Content-Type'])
+def mean_scores():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+
+    school_id = route_functions.fschool_username(username)
+    result = route_functions.fmean_score_user(school_id)
+    return flask.jsonify(result)
+
 
 if __name__ == "__main__":
     app.debug = True
