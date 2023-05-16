@@ -151,12 +151,12 @@ const Home = ({user, onRouteChange,onSignout}) => {
                     }/>
                     <Route path='/borrowed' element={
                         user.role === 'Admin'
-                        ? <Admin count2={count2} borrow_list={borrowed} request_list={requested} update_count={update_request_count} borrow={true} user={user} />
+                        ? <Admin count2={count2} count={count} borrow_list={borrowed} request_list={requested} update_count={update_request_count} borrow={true} user={user} />
                         : <Books books={borrowed} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
                     }/>
                     <Route path='/requested' element={
                         user.role === 'Admin'
-                        ? <Admin count2={count2} request_list={requested} update_count={update_request_count} borrow_list={borrowed} borrow={false} user={user} />
+                        ? <Admin count={count} count2={count2} request_list={requested} update_count={update_request_count} borrow_list={borrowed} borrow={false} user={user} />
                         : <Books books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>
                     <Route path='/reviews' element={

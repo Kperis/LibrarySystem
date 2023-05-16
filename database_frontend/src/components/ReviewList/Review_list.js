@@ -6,6 +6,8 @@ const Review_list = ({user}) =>{
 
     const [reviews,setReviews] = useState([]);
     const [count2,setCount2] = useState(0);
+    const [mean_score,setMeanScore] = useState([]);
+    const [showMean,setShowMean] = useState(false);
 
     useEffect(()=>{
         fetchRevs();
@@ -52,23 +54,59 @@ const Review_list = ({user}) =>{
         update_count();
     }
 
+
+    const onMeanScore = async () =>{
+        await fetch('http://localhost:5000/mean_score', {
+            method: 'post',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                username: user.username
+            })
+        })
+        .then(response => response.json())
+        .then(data => setMeanScore(data))
+
+        setShowMean(true);
+    }
+
     return(
         <div>
             <div className='review_box2'> 
+                <div className="average_score">
+                    <button onClick={() => onMeanScore()}>Show Average Review score per user</button>
+                    <button>Show Average Review score per category</button>
+                </div>
                     {
-                        reviews.map((review,index) => {
+                        !showMean
+                        ? reviews.map((review,index) => {
                             return(
-                                <div key={index} className="review_container2">
-                                    <div>
-                                        <Reviews className='review_to_approve' title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
+                                <div key={index}>
+                                    <div className="review_container2">
+                                        <div>
+                                            <Reviews className='review_to_approve' title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
+                                        </div>
+                                        <button onClick={() => onApproveReview(1,review.isbn,review.username)}>Approve</button>
+                                        <button onClick={() => onApproveReview(0,review.isbn,review.username)}>Reject</button>
                                     </div>
-                                    <button onClick={() => onApproveReview(1,review.isbn,review.username)}>Approve</button>
-                                    <button onClick={() => onApproveReview(0,review.isbn,review.username)}>Reject</button>
+                                </div>
+                            );
+                        })
+
+                        : mean_score.map((review,index) => {
+                            return(
+                                <div key={index}>
+                                    <div  className="review_container2">
+                                        <div>
+                                            <Reviews className='review_to_approve'  submited_by={review.first_name.concat(' ',review.last_name)} show_title={false} score={showMean.mean} />
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         })
                     }
-                    </div>
+            </div>
         </div>
     )
 }

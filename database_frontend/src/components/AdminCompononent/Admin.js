@@ -2,11 +2,11 @@ import React,{ useEffect, useState} from 'react';
 import './Admin.css';
 import '../Books/Books.css';
 
-const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
+const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count}) => {
     
     const [username, setUser] = useState('');
     const [title,setTitle] = useState('');
-    const [delay_list,setDelayList] = useState([]);
+    // const [delay_list,setDelayList] = useState([]);
     const [array,setArr] = useState([]);
     const [delShow,setDelShow] = useState(false);
 
@@ -36,7 +36,7 @@ const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
             })
             setArr(temp);
         }
-    },[title,username,count2,delShow])
+    },[title,username,count2,delShow,count,request_list,borrow_list])
 
     const onFilterUser = (event) =>{
         setUser(event.target.value);
@@ -46,8 +46,8 @@ const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
         setTitle(event.target.value);
     }
 
-    const onGrantReturn = (index) => {
-        fetch('http://localhost:5000/borrow', {
+    const onGrantReturn = async (index) => {
+        await fetch('http://localhost:5000/borrow', {
             method: 'put',
             headers: {
                 'Content-Type' : 'application/json'
@@ -63,7 +63,7 @@ const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
         update_count();
     }
 
-    const onGrantRequest = (index) => {
+    const onGrantRequest = async (index) => {
         if(array[index].copies === 0){
             alert('No copies left');
         }
@@ -97,7 +97,7 @@ const Admin = ({count2,request_list,borrow,user,borrow_list,update_count}) => {
                 })
                 if(canBorrow){
                         console.log('ayoo');
-                        fetch('http://localhost:5000/request', {
+                        await fetch('http://localhost:5000/request', {
                             method: 'put',
                             headers: {
                                 'Content-Type' : 'application/json'
