@@ -37,3 +37,25 @@
 .review_container2>div{
     width: 1000px;
 }
+
+.average_score>button{
+    height: 50px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    width: fit-content;
+    text-align: center;
+    color: white;
+    background-color: rgb(219, 31, 97);
+    font-size: 14px;
+    border: solid 2px #000000;
+    border-radius: 6px;
+    -webkit-box-shadow: 3px 3px 4px 1px #000000;
+    -moz-box-shadow: 3px 3px 4px 1px #000000;
+    box-shadow: 3px 3px 4px 1px #000000;
+    transition: all linear 0.2s;
+}
+
+.average_score > button:active{
+    color: #000000;
+    transform: scale(0.9);
+}
