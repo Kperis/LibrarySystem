@@ -261,7 +261,7 @@ def fteachers_category(category):
             result.append(str(data[i][0])+str(data[i][1]))
     return result
 
-def no_borrows_authors():
+def fno_borrows_authors():
     author_ids = []
     used_authors_ids = []
     unused_authors_ids = []
@@ -296,6 +296,52 @@ def no_borrows_authors():
         dir['full_name'] = str(name_data[0][0])+' '+str(name_data[0][1])
         result.append(dir)
     return result
+
+def ffive_less_topauthor():
+    result = []
+    result_ids = []
+    author_ids = []
+    highest_author = 0
+    cursor.execute('SELECT Authors.author_id FROM Authors')
+    data = cursor.fetchall()
+    mydb.commit()
+
+    for item in data:
+        if author_ids.count(item[0]) == 0:
+            author_ids.append(item[0])
+
+    for id in author_ids:
+        cursor.execute('SELECT COUNT(Books.isbn) \
+                       FROM Books \
+                       JOIN Authors \
+                       ON Authors.isbn = Books.isbn \
+                       WHERE Authors.author_id = {}'.format(id))
+        var = cursor.fetchall()
+        if var[0][0] > highest_author:
+            highest_author = var[0][0]
+    
+    for id in author_ids:
+        cursor.execute('SELECT COUNT(Books.isbn) \
+                FROM Books \
+                JOIN Authors \
+                ON Authors.isbn = Books.isbn \
+                WHERE Authors.author_id = {}'.format(id))
+        data = cursor.fetchall()
+        if data[0][0] < highest_author - 5:
+            result_ids.append(data[0][0])
+
+    for id in result_ids:
+        cursor.execute('SELECT Authors.first_name, Authors.last_name \
+                       FROM Authors \
+                       WHERE Authors.author_id = {}\
+                       LIMIT 1'.format(id))
+        data = cursor.fetchall()
+        dir = {}
+        dir['full_name'] = str(data[0][0])+' '+str(data[0][1])
+        result.append(dir)
+    return result
+    
+
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
                 VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,age,type,admin_id))

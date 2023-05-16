@@ -369,9 +369,14 @@ def main_admin_category():
 @cross_origin(headers = ['Content-Type'])
 def no_borrows_author():
 
-    result = route_functions.no_borrows_authors()
+    result = route_functions.fno_borrows_authors()
     return flask.jsonify(result)
 
+@app.route('/main_admin/5_less_top',methods = ['GET'])
+@cross_origin(headers = ['Content-Type'])
+def five_less_top():
+    result = route_functions.ffive_less_topauthor()
+    return flask.jsonify(result)
 
 if __name__ == "__main__":
     app.debug = True
