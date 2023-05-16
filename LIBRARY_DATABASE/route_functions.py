@@ -225,6 +225,42 @@ def fallborrows_schools(month):
         result.append(dir)
     return result
 
+def fauthors_categories(category):
+    result = []
+    cursor.execute('SELECT Authors.first_name,Authors.last_name \
+                   FROM Authors \
+                   JOIN Books \
+                   ON Books.isbn = Authors.isbn \
+                   JOIN Categories \
+                   ON Categories.isbn = Books.isbn \
+                   WHERE Categories.category = "{}"'.format(category))
+    data = cursor.fetchall()
+
+    for i in range(len(data)):
+        if result.count(str(data[i][0])+ str(data[i][1])) == 0:
+            result.append(str(data[i][0])+ str(data[i][1]))
+    return result
+
+def fteachers_category(category):
+    result = []
+    today = datetime.date.today()
+    year = today.year
+
+    cursor.execute('SELECT App_user.first_name,App_user.last_name \
+                   FROM App_user \
+                   JOIN Borrow \
+                   ON Borrow.user_id = App_user.user_id \
+                   JOIN Books \
+                   ON Books.isbn = Borrow.isbn \
+                   JOIN Categories \
+                   ON Categories.isbn = Books.isbn \
+                   WHERE Categories.category = "{}" AND YEAR(Borrow.acquire_date) = {} '.format(category,year))
+    data = cursor.fetchall()
+    for i in range(len(data)):
+        if result.count(str(data[i][0])+str(data[i][1])) == 0:
+            result.append(str(data[i][0])+str(data[i][1]))
+    return result
+
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
