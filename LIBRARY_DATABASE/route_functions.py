@@ -194,11 +194,36 @@ def fmean_score_user(school_id):
         result[i]['mean'] += item[3]
     return result    
     
-def fallborrows_schools():
+def fallborrows_schools(month):
+    months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+    num_month = 0
+    for i in range(len(months)):
+        if month == months[i]:
+            num_month = i+1
+            break
+
     cursor.execute('SELECT School.school_id FROM School')
     school_ids = cursor.fetchall()
+    mydb.commit()
+
+    result = []
+
     for i in range(len(school_ids)):
-        pass
+        cursor.execute('SELECT COUNT(School.school_id),School.name \
+                       FROM School \
+                       JOIN App_user \
+                       ON School.school_id = App_user.school_id \
+                       JOIN Borrows \
+                       ON Borrows.user_id = App_user.user_id \
+                       WHERE School.school_id = {} AND MONTH(Borrows.acquire_date) = {}'.format(school_ids[i][0],num_month))
+        count_name = cursor.fetchall()
+        mydb.commit()
+        dir = {}
+        dir['school_id'] = school_ids[i]
+        dir['count'] = count_name[0][0]
+        dir['name'] = count_name[0][0]
+        result.append(dir)
+    return result
 
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
