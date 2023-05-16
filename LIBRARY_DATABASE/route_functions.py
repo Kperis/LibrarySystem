@@ -209,22 +209,138 @@ def fallborrows_schools(month):
     result = []
 
     for i in range(len(school_ids)):
-        cursor.execute('SELECT COUNT(School.school_id),School.name \
+        cursor.execute('SELECT COUNT(School.school_id),School.name,School.city \
                        FROM School \
                        JOIN App_user \
                        ON School.school_id = App_user.school_id \
-                       JOIN Borrows \
-                       ON Borrows.user_id = App_user.user_id \
-                       WHERE School.school_id = {} AND MONTH(Borrows.acquire_date) = {}'.format(school_ids[i][0],num_month))
+                       JOIN Borrow \
+                       ON Borrow.user_id = App_user.user_id \
+                       WHERE School.school_id = {} AND MONTH(Borrow.acquire_date) = {}'.format(school_ids[i][0],num_month))
         count_name = cursor.fetchall()
         mydb.commit()
         dir = {}
-        dir['school_id'] = school_ids[i]
+        dir['school_id'] = school_ids[i][0]
         dir['count'] = count_name[0][0]
-        dir['name'] = count_name[0][0]
+        dir['name'] = str(count_name[0][1])+' '+str(count_name[0][2])
         result.append(dir)
     return result
 
+def fauthors_categories(category):
+    result = []
+    cursor.execute('SELECT Authors.first_name,Authors.last_name \
+                   FROM Authors \
+                   JOIN Books \
+                   ON Books.isbn = Authors.isbn \
+                   JOIN Categories \
+                   ON Categories.isbn = Books.isbn \
+                   WHERE Categories.category = "{}"'.format(category))
+    data = cursor.fetchall()
+
+    for i in range(len(data)):
+        if result.count(str(data[i][0])+ str(data[i][1])) == 0:
+            result.append(str(data[i][0])+ str(data[i][1]))
+    return result
+
+def fteachers_category(category):
+    result = []
+    today = datetime.date.today()
+    year = today.year
+
+    cursor.execute('SELECT App_user.first_name,App_user.last_name \
+                   FROM App_user \
+                   JOIN Borrow \
+                   ON Borrow.user_id = App_user.user_id \
+                   JOIN Books \
+                   ON Books.isbn = Borrow.isbn \
+                   JOIN Categories \
+                   ON Categories.isbn = Books.isbn \
+                   WHERE Categories.category = "{}" AND YEAR(Borrow.acquire_date) = {} AND App_user.type = "Καθηγητής"'.format(category,year))
+    data = cursor.fetchall()
+    for i in range(len(data)):
+        if result.count(str(data[i][0])+str(data[i][1])) == 0:
+            result.append(str(data[i][0])+str(data[i][1]))
+    return result
+
+def fno_borrows_authors():
+    author_ids = []
+    used_authors_ids = []
+    unused_authors_ids = []
+    result = []
+    cursor.execute('SELECT Authors.author_id FROM Authors')
+    data = cursor.fetchall()
+    mydb.commit()
+    for i in range(len(data)):
+        if author_ids.count(data[i][0]) == 0:
+            author_ids.append(data[i][0])
+    cursor.execute('SELECT Authors.author_id \
+                   FROM Authors \
+                   JOIN Books \
+                   ON Books.isbn = Authors.isbn \
+                   JOIN Borrow \
+                   ON Borrow.isbn = Books.isbn')
+    data_2 = cursor.fetchall()
+    mydb.commit()
+    for i in range(len(data_2)):
+        if used_authors_ids.count(data_2[i][0]) == 0:
+            used_authors_ids.append(data_2[i][0])
+    for id in author_ids:
+        if used_authors_ids.count(id) == 0:
+            unused_authors_ids.append(id)
+    for i in range(len(unused_authors_ids)):
+        cursor.execute('SELECT Authors.first_name,Authors.last_name \
+                       FROM Authors \
+                       WHERE Authors.author_id = {} \
+                       LIMIT 1'.format(unused_authors_ids[i]))
+        name_data = cursor.fetchall()
+        dir = {}
+        dir['full_name'] = str(name_data[0][0])+' '+str(name_data[0][1])
+        result.append(dir)
+    return result
+
+def ffive_less_topauthor():
+    result = []
+    result_ids = []
+    author_ids = []
+    highest_author = 0
+    cursor.execute('SELECT Authors.author_id FROM Authors')
+    data = cursor.fetchall()
+    mydb.commit()
+
+    for item in data:
+        if author_ids.count(item[0]) == 0:
+            author_ids.append(item[0])
+
+    for id in author_ids:
+        cursor.execute('SELECT COUNT(Books.isbn) \
+                       FROM Books \
+                       JOIN Authors \
+                       ON Authors.isbn = Books.isbn \
+                       WHERE Authors.author_id = {}'.format(id))
+        var = cursor.fetchall()
+        if var[0][0] > highest_author:
+            highest_author = var[0][0]
+    
+    for id in author_ids:
+        cursor.execute('SELECT COUNT(Books.isbn) \
+                FROM Books \
+                JOIN Authors \
+                ON Authors.isbn = Books.isbn \
+                WHERE Authors.author_id = {}'.format(id))
+        data = cursor.fetchall()
+        if data[0][0] < highest_author - 5:
+            result_ids.append(data[0][0])
+
+    for id in result_ids:
+        cursor.execute('SELECT Authors.first_name, Authors.last_name \
+                       FROM Authors \
+                       WHERE Authors.author_id = {}\
+                       LIMIT 1'.format(id))
+        data = cursor.fetchall()
+        dir = {}
+        dir['full_name'] = str(data[0][0])+' '+str(data[0][1])
+        result.append(dir)
+    return result
+    
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \

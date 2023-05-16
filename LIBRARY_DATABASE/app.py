@@ -358,6 +358,32 @@ def borrows_of_schools():
     result = route_functions.fallborrows_schools(month)
     return flask.jsonify(result)
 
+@app.route('/main_admin/category_search',methods = ['POST'])
+@cross_origin(headers = ['Content-Type'])
+def main_admin_category():
+    data = flask.request.get_json(['body'])
+    
+    category = data['category']
+
+    authors = route_functions.fauthors_categories(category)
+    teachers = route_functions.fteachers_category(category)
+    result = {}
+    result['authors'] = authors
+    result['teachers'] = teachers
+    return flask.jsonify(result)
+
+@app.route('/main_admin/no_borrow_author',methods = ['GET'])
+@cross_origin(headers = ['Content-Type'])
+def no_borrows_author():
+
+    result = route_functions.fno_borrows_authors()
+    return flask.jsonify(result)
+
+@app.route('/main_admin/5_less_top',methods = ['GET'])
+@cross_origin(headers = ['Content-Type'])
+def five_less_top():
+    result = route_functions.ffive_less_topauthor()
+    return flask.jsonify(result)
 
 if __name__ == "__main__":
     app.debug = True
