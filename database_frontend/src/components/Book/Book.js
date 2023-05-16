@@ -234,7 +234,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                     {
                         reviews.map((review,index) => {
                             return(
-                                <Reviews key={index} show_title={false} title={''} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} score={review.score} desc={review.description}/>
+                                <Reviews key={index} show_desc={true} show_title={false} title={''} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} score={review.score} desc={review.description}/>
                             );
                         })
                     }
