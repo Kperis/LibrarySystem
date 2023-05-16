@@ -151,10 +151,16 @@ def fschool_username(username):
     return result
 def freview_school(school_id):
     cursor.execute('SELECT DATE_FORMAT(Review.date_of_review,"%m/%d/%Y"),Review.score,Review.description,\
+<<<<<<< HEAD
                    App_user.first_name,App_user.last_name,Review.approved,App_user.user_id \
+=======
+                   Authentication.username,App_user.first_name,App_user.last_name,Review.approved,Books.title,Books.isbn \
+>>>>>>> 7f1627fd9ed38782d5e2f13f4ec7daf5743587ce
                    FROM Review \
                    JOIN App_user \
                    ON App_user.user_id = Review.user_id \
+                   JOIN Authentication ON Authentication.user_id=App_user.user_id \
+                   JOIN Books ON Books.isbn=Review.isbn \
                    WHERE App_user.school_id = {} AND Review.approved = 0'.format(school_id))
     result = cursor.fetchall()
     mydb.commit()
@@ -204,8 +210,19 @@ def insert_authentication(user_id,username,password):
 def delete_borrow(user_id,isbn):
     cursor.execute('DELETE FROM Borrow WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
     mydb.commit()
+    cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
+    school_id = cursor.fetchall()[0][0]
+    cursor.execute('UPDATE Stores SET copies=copies+1 WHERE isbn={} AND school_id={}'.format(isbn,school_id))
+    mydb.commit()
+    return
 def delete_request(user_id,isbn):
     cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
+    mydb.commit()
+    cursor.execute('INSERT INTO Borrow(isbn,user_id,return_date,acquire_date) VALUES({},{},CURDATE(),CURDATE())'.format(isbn,user_id))
+    mydb.commit()
+    cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
+    school_id = cursor.fetchall()[0][0]
+    cursor.execute('UPDATE Stores SET copies=copies-1 WHERE isbn={} AND school_id={}'.format(isbn,school_id))
     mydb.commit()
     print('done')
     return
@@ -223,12 +240,16 @@ def delete_request(user_id,isbn):
     #                 WHERE Stores.isbn = {} AND Stores.school_id = {}'.format(data[0][0],isbn,data[0][1]))
     # mydb.commit()
 def delete_review(isbn,username):
-    cursor.execute('DELETE FROM Review WHERE Review.isbn = {} AND Review.username = "{}"'.format(isbn,username))
+    user_id = fuser_username(username)
+    cursor.execute('DELETE FROM Review WHERE Review.isbn = {} AND Review.user_id = {}'.format(isbn,user_id))
     mydb.commit()
+    return
     
 def approve_review(isbn,username):
+    user_id = fuser_username(username)
     cursor.execute('UPDATE Review \
                    SET Review.approved = 1 \
-                   WHERE Review.isbn = {} AND Review.username = "{}"'.format(isbn,username))
+                   WHERE Review.isbn = {} AND Review.user_id = {}'.format(isbn,user_id))
     mydb.commit()
+    return
 

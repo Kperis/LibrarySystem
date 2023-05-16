@@ -31,3 +31,22 @@
 .borrow_box>button:active{
     transform: scale(0.9);
 }
+
+.borrow_container > div > button{
+    height: 50px;
+    width: 100px;
+    color: white;
+    background-color: rgb(219, 31, 97);
+    font-size: 14px;
+    border: solid 2px #000000;
+    border-radius: 6px;
+    -webkit-box-shadow: 3px 3px 4px 1px #000000;
+    -moz-box-shadow: 3px 3px 4px 1px #000000;
+    box-shadow: 3px 3px 4px 1px #000000;
+    transition: all linear 0.2s;
+}
+
+.borrow_container > div > button:active{
+    color: #000000;
+    transform: scale(0.9);
+}
