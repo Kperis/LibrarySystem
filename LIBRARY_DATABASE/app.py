@@ -149,6 +149,14 @@ def borrow():
             result = route_functions.fborrow_username(username)
             if result:
                 borrow_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','return_date','acquire_date'),x)) for x in result]
+                for i in range(len(borrow_dict)):
+                    cursor.execute('SELECT CONCAT(Authors.first_name," ",Authors.last_name) FROM Authors WHERE Authors.isbn = {}'.format(borrow_dict[i]['isbn']))
+                    authors = cursor.fetchall()
+                    borrow_dict[i]['authors'] = authors
+                for i in range(len(borrow_dict)):
+                    cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(borrow_dict[i]['isbn']))
+                    keywords = cursor.fetchall()
+                    borrow_dict[i]['keywords'] = keywords
                 return flask.jsonify(borrow_dict)
             else:
                 return flask.jsonify({'borrows':'none'})
@@ -164,7 +172,6 @@ def borrow():
                 else:
                     return flask.jsonify({'borrows':'none'})
             except:
-                print("hello from here")
                 return flask.jsonify({"result": "fail"})
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
@@ -188,6 +195,14 @@ def request():
             result = route_functions.frequest_username(username)
             if result:
                 request_dict = [dict(zip(('isbn','title','cover_m','username','first_name','last_name','date_of_request'),x)) for x in result]
+                for i in range(len(request_dict)):
+                    cursor.execute('SELECT CONCAT(Authors.first_name," ",Authors.last_name) FROM Authors WHERE Authors.isbn = {}'.format(request_dict[i]['isbn']))
+                    authors = cursor.fetchall()
+                    request_dict[i]['authors'] = authors
+                for i in range(len(request_dict)):
+                    cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(request_dict[i]['isbn']))
+                    keywords = cursor.fetchall()
+                    request_dict[i]['keywords'] = keywords
                 return flask.jsonify(request_dict)
             else:
                 return flask.jsonify({'requests':'none'})
@@ -203,9 +218,14 @@ def request():
         data = flask.request.get_json(['body'])
         username = data['username']
         isbn = data['isbn']
+        type = data['role']
         user_id = route_functions.fuser_username(username)
-        route_functions.delete_request(user_id,isbn)
-        return flask.jsonify({"delete":"successful"})
+        if type == 'Admin':
+            route_functions.delete_request(user_id,isbn)
+            return flask.jsonify({"delete":"successful"})
+        else:
+            route_functions.delete_user_request(user_id,isbn)
+            return flask.jsonify({'delete':'success'})
 
 
 @app.route('/book_request',methods = ['POST'])

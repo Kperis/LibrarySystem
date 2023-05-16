@@ -104,6 +104,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                             },
                             body: JSON.stringify({
                                 isbn: array[index].isbn,
+                                role: 'Admin',
                                 username: array[index].username
                             })
                         })
