@@ -68,7 +68,12 @@ const Review_list = ({user}) =>{
         .then(response => response.json())
         .then(data => setMeanScore(data))
 
-        setShowMean(true);
+        if(showMean){
+            setShowMean(false);
+        }
+        else{
+            setShowMean(true);
+        }
     }
 
     return(
@@ -85,7 +90,7 @@ const Review_list = ({user}) =>{
                                 <div key={index}>
                                     <div className="review_container2">
                                         <div>
-                                            <Reviews className='review_to_approve' title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
+                                            <Reviews className='review_to_approve' show_desc={true} title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
                                         </div>
                                         <button onClick={() => onApproveReview(1,review.isbn,review.username)}>Approve</button>
                                         <button onClick={() => onApproveReview(0,review.isbn,review.username)}>Reject</button>
@@ -99,7 +104,7 @@ const Review_list = ({user}) =>{
                                 <div key={index}>
                                     <div  className="review_container2">
                                         <div>
-                                            <Reviews className='review_to_approve'  submited_by={review.first_name.concat(' ',review.last_name)} show_title={false} score={showMean.mean} />
+                                            <Reviews className='review_to_approve'  submited_by={review.first_name.concat(' ',review.last_name)} show_desc={false} show_title={false} score={review.mean} />
                                         </div>
                                     </div>
                                 </div>
