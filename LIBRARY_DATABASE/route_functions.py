@@ -166,7 +166,7 @@ def fmean_score_user(school_id):
     cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,Review.score \
                    FROM Review \
                    JOIN App_user \
-                   ON Review.user_is = App_user.user_id \
+                   ON Review.user_id = App_user.user_id \
                    JOIN School \
                    ON School.school_id = App_user.school_id \
                    WHERE School.school_id = {} AND Review.approved = 1'.format(school_id))
@@ -185,14 +185,21 @@ def fmean_score_user(school_id):
 
     for i in range(len(user_id_list)):
          result[i]['mean'] = 0
+         result[i]['number'] = 0
     for item in data:
         for i in range(len(result)):
-            if result['user_id'] == item[0]:
+            if result[i]['user_id'] == item[0]:
                 break
+        result[i]['number'] += 1
         result[i]['mean'] += item[3]
     return result    
     
-    
+def fallborrows_schools():
+    cursor.execute('SELECT School.school_id FROM School')
+    school_ids = cursor.fetchall()
+    for i in range(len(school_ids)):
+        pass
+
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
