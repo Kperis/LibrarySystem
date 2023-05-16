@@ -23,7 +23,12 @@ const SignIn = ({loadUser, onRouteChange}) => {
         .then(data => data.json())
         .then(user => {
             if(user.user_id){
-                loadUser(user,'home');
+                if(user.role === 'Main_Admin'){
+                    loadUser(user,'Main_Admin');
+                }
+                else{
+                    loadUser(user,'home');
+                }
             }
             else{
                 alert('Invalid username/password');

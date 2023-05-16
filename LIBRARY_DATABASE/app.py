@@ -88,8 +88,8 @@ def sign_in():
     username = data['username']
     password = data['password']
     cursor.execute('SELECT user_id FROM Authentication WHERE username = "{}" AND password = "{}"'.format(username, password))
+    user_id = cursor.fetchall()[0][0]
     try:
-        user_id = cursor.fetchall()[0][0]
         cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
                        ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
                         FROM Authentication JOIN App_user \
@@ -100,8 +100,15 @@ def sign_in():
         mydb.commit()
         return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8]})
     except:
-        print("no user found")
-        return flask.jsonify({"result": "failure","data":0})
+        cursor.execute('SELECT Authentication.username\
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
+                       FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE Authentication.user_id={}'.format(user_id))
+        result = cursor.fetchall()
+        if result:
+            return flask.jsonify({'username':result[0][0],'first_name':result[0][1],'last_name':result[0][2],'role':result[0][3],'age':result[0][4],'approved':result[0][5],'user_id':user_id})
+        else:
+            return flask.jsonify({"result": "failure","data":0})
+    return flask.jsonify({"result": "failure","data":0})
     # else:
     #     return 1
 
