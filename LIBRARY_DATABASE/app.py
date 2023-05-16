@@ -365,6 +365,13 @@ def main_admin_category():
     result['teachers'] = teachers
     return flask.jsonify(result)
 
+@app.route('/main_admin/no_borrow_author',methods = ['GET'])
+@cross_origin(headers = ['Content-Type'])
+def no_borrows_author():
+
+    result = route_functions.no_borrows_authors()
+    return flask.jsonify(result)
+
 
 if __name__ == "__main__":
     app.debug = True
