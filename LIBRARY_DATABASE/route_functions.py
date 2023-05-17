@@ -195,7 +195,7 @@ def fmean_score_user(school_id):
     return result    
     
 def fallborrows_schools(month):
-    months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+    months = ['January','February','March','April','May','June','July','August','September','October','November','December','all']
     num_month = 0
     for i in range(len(months)):
         if month == months[i]:
@@ -351,8 +351,8 @@ def insert_authentication(user_id,username,password):
     cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'.format(user_id,username,password))
     mydb.commit()
 
-def delete_borrow(user_id,isbn):
-    cursor.execute('DELETE FROM Borrow WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
+def notactive_borrow(user_id,isbn):
+    cursor.execute('UPDATE Borrow SET Borrow.active = 0 WHERE user_id={} AND isbn={}'.format(user_id,isbn))
     mydb.commit()
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]
@@ -362,7 +362,7 @@ def delete_borrow(user_id,isbn):
 def delete_request(user_id,isbn):
     cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
     mydb.commit()
-    cursor.execute('INSERT INTO Borrow(isbn,user_id,return_date,acquire_date) VALUES({},{},CURDATE(),CURDATE())'.format(isbn,user_id))
+    cursor.execute('INSERT INTO Borrow(isbn,user_id,acquire_date,active) VALUES({},{},CURDATE(),1)'.format(isbn,user_id))
     mydb.commit()
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]

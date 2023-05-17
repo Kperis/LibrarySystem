@@ -185,7 +185,7 @@ def borrow():
         username = data['username']
         isbn = data['isbn']
         user_id = route_functions.fuser_username(username)
-        route_functions.delete_borrow(user_id,isbn)
+        route_functions.notactive_borrow(user_id,isbn)
         #ΥΠΑΡΧΕΙ ΕΝΑ ERROR επειδή για καποιο λόγω βιβλία με διαφορετικό isbn μπορεί να έχουν το ιδιο
         #τίτλο και η sql δεν ξεχωρίζει τα κεφαλαία γράμματα απο τα μικρά
         return flask.jsonify({"delete":"success"})
