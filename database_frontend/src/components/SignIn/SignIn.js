@@ -22,7 +22,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
         })
         .then(data => data.json())
         .then(user => {
-            if(user.user_id){
+            if(user.user_id && user.approved===1){
                 if(user.role === 'Main_Admin'){
                     loadUser(user,'Main_Admin');
                 }

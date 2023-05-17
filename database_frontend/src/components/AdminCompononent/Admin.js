@@ -46,8 +46,8 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
         setTitle(event.target.value);
     }
 
-    const onGrantReturn = async (index) => {
-        await fetch('http://localhost:5000/borrow', {
+    const onGrantReturn = (index) => {
+        fetch('http://localhost:5000/borrow', {
             method: 'put',
             headers: {
                 'Content-Type' : 'application/json'
@@ -58,12 +58,12 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
             })
         })
         .then(response => response.json())
-        .then(data => console.log(data))   
+        .then(data => update_count())   
 
-        update_count();
+        
     }
 
-    const onGrantRequest = async (index) => {
+    const onGrantRequest = (index) => {
         if(array[index].copies === 0){
             alert('No copies left');
         }
@@ -97,7 +97,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                 })
                 if(canBorrow){
                         console.log('ayoo');
-                        await fetch('http://localhost:5000/request', {
+                        fetch('http://localhost:5000/request', {
                             method: 'put',
                             headers: {
                                 'Content-Type' : 'application/json'
@@ -109,10 +109,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                             })
                         })
                         .then(response => response.json())
-                        .then(data => console.log(data))   
-
-                        update_count();
-                    
+                        .then(data => update_count()) 
                 }
             }
             else{

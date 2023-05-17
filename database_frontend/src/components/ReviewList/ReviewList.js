@@ -1,8 +1,8 @@
 import React,{useState,useEffect} from "react";
 import Reviews from "../Reviews/Reviews";
-import './Review_list.css';
+import './ReviewList.css';
 
-const Review_list = ({user}) =>{
+const ReviewList = ({user,should_load}) =>{
 
     const [reviews,setReviews] = useState([]);
     const [count2,setCount2] = useState(0);
@@ -11,37 +11,38 @@ const Review_list = ({user}) =>{
 
     useEffect(()=>{
         fetchRevs();
-    },[count2])
+    },[count2,should_load])
 
     useEffect(()=>{
 
     },[showMean])
 
-    const fetchRevs = async () =>{
-
-        await fetch('http://localhost:5000/reviews', {
-            method: 'post',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            body: JSON.stringify({
-                role: 'Admin',
-                username: user.username
+    const fetchRevs = () =>{
+        if(should_load){
+            fetch('http://localhost:5000/reviews', {
+                method: 'post',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({
+                    role: 'Admin',
+                    username: user.username
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            setReviews(data);
-            console.log(data);
-        })
+            .then(response => response.json())
+            .then(data => {
+                setReviews(data);
+                console.log(data);
+            })
+    }
     }
 
     const update_count = () =>{{
         setCount2(count2+1);
     }}
 
-    const onApproveReview = async (approve,isbn,username) => {
-        await fetch('http://localhost:5000/accept_review', {
+    const onApproveReview = (approve,isbn,username) => {
+        fetch('http://localhost:5000/accept_review', {
             method: 'post',
             headers: {
                 'Content-Type' : 'application/json'
@@ -53,14 +54,14 @@ const Review_list = ({user}) =>{
             })
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => update_count())
 
-        update_count();
+        
     }
 
 
-    const onMeanScore = async () =>{
-        await fetch('http://localhost:5000/mean_score', {
+    const onMeanScore = () =>{
+        fetch('http://localhost:5000/mean_score', {
             method: 'post',
             headers: {
                 'Content-Type' : 'application/json'
@@ -124,4 +125,4 @@ const Review_list = ({user}) =>{
     )
 }
 
-export default Review_list;
+export default ReviewList;

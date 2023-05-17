@@ -15,7 +15,6 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
             return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book?.authors[0].some(author => {return author.toLowerCase().includes(authorsearch.toLowerCase())});
         })
         setBooklist(temp);
-        console.log('click');
     },[titlesearch,books,authorsearch,count2])
 
     const onBookClicked2 = (isbn) =>{
@@ -34,19 +33,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
         setTitleSearch(event.target.value);
     }
 
-
-    const Search = () => {
-        // booklist = books.filter(book => {
-        //     return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && ;
-        // })    
-        // return;
-        // booklist = books.filter(book =>{
-        //     return book.author.toLowerCase().includes(authorsearch.toLowerCase());
-
-        // })
-    }
-
-    const onCancelRequest = async (index) =>{
+    const onCancelRequest = (index) =>{
         let role = 'ho'
         if(user?.role === 'Admin'){
             role = 'Admin';
@@ -55,7 +42,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
             role = 'student';
         } 
         let isbn = books[index].isbn;
-        await fetch('http://localhost:5000/request', {
+        fetch('http://localhost:5000/request', {
             method: 'put',
             headers: {
                 'Content-Type' : 'application/json'
@@ -67,9 +54,9 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
             })
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => update_count())
 
-        update_count();
+        
 
     }
     

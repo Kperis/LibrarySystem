@@ -24,6 +24,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
             setReviews(JSON.parse(window.localStorage.getItem("reviews")));
             setHasReviewed(JSON.parse(window.localStorage.getItem("hasReviewed")));
         }
+        console.log(book);
 
         return () =>{
             window.localStorage.removeItem("reviews");
@@ -32,17 +33,9 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
         
     },[refetch])
 
-    const fetchreviews = async () =>{
+    const fetchreviews = () =>{
 
-        // let role = 'ho'
-        // if(user?.role === 'Admin'){
-        //     role = 'Admin';
-        // }
-        // else{
-        //     role = 'student';
-        // } 
-
-        await fetch('http://localhost:5000/reviews', {
+        fetch('http://localhost:5000/reviews', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
@@ -61,45 +54,48 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                 setReviews(data);
                 window.localStorage.setItem("reviews",JSON.stringify(data));
             }
+
+            fetch('http://localhost:5000/user_review', {
+                method: 'post',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    username: user?.username, 
+                    isbn:book?.isbn
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.reviewed === 'yes'){
+                    setHasReviewed(true);
+                    window.localStorage.setItem("hasReviewed",true);
+                }
+            })
         })
         .catch(err => console.log(err))
 
-        await fetch('http://localhost:5000/user_review', {
+    }
+
+
+    const onSubmitReview = () =>{
+        
+        fetch('http://localhost:5000/submit_review', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
-                username: user?.username, 
-                isbn:book?.isbn
+                username: user.username,
+                isbn: book.isbn,
+                score: likert,
+                description: reviewDescription
             })
         })
         .then(response => response.json())
         .then(data => {
-            if(data.reviewed === 'yes'){
-                setHasReviewed(true);
-                window.localStorage.setItem("hasReviewed",true);
-            }
+            setHasReviewed(true);
+            window.localStorage.setItem("hasReviewed",true);
+            setRefetch(1);
         })
-    }
 
-
-    const onSubmitReview = async () =>{
         
-        await fetch('http://localhost:5000/submit_review', {
-        method: 'post',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-            username: user.username,
-            isbn: book.isbn,
-            score: likert,
-            description: reviewDescription
-        })
-        })
-        .then(response => response.json())
-        .then(data => console.log(data))
-
-        setHasReviewed(true);
-        window.localStorage.setItem("hasReviewed",true);
-        setRefetch(1);
     }
 
     const onReviewChange = (event) => {
@@ -111,7 +107,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
     }
 
 
-    const onRequestBook = async () =>{
+    const onRequestBook = () =>{
         if(!clicked){
             let hasRequested = false;
             let hasBorrowed = false;
@@ -135,7 +131,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
             
             if(user.role.length === 7){
                 if(requested.length < 2 && !hasDelayed && !hasRequested && !hasBorrowed){
-                    await fetch('http://localhost:5000/book_request', {
+                    fetch('http://localhost:5000/book_request', {
                         method: 'post',
                         headers: {
                             'Content-Type':'application/json'
@@ -146,9 +142,8 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                         })
                         })
                     .then(response => response.json())
-                    .then(data => console.log(data))
+                    .then(data => update_count())
                     
-                    update_count();
                     alert('Book requested');
                 }
                 else{
@@ -157,7 +152,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
             }
             else{
                 if(requested.length < 1 && !hasDelayed && !hasRequested && !hasBorrowed){
-                    await fetch('http://localhost:5000/book_request', {
+                    fetch('http://localhost:5000/book_request', {
                         method: 'post',
                         headers: {'Content-Type':'application/json'},
                         body: JSON.stringify({
@@ -166,9 +161,9 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                         })
                     })
                     .then(response => response.json())
-                    .then(data => console.log(data))
+                    .then(data =>  update_count())
 
-                    update_count();
+                   
                     alert('Book requested');
                 }
                 else{
@@ -195,7 +190,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count}) =>{
                         <p>{`${book.keywords}`}</p>
                     </li>
                     <li className='rest'>
-                        <p>Author(s): {`${book.author}`}</p>
+                        <p>Author(s): {`${book.authors}`}</p>
                     </li>
                     <li className='rest'>
                         <p>{`Categories: ${book.category}`}</p>

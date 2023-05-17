@@ -1,0 +1,42 @@
+.users_container{
+    max-width: 80%;
+    height: auto;
+    margin: 40px auto 40px auto;
+    display: flex;
+    gap: 10px;
+   flex-direction: column;
+   flex-wrap: nowrap;
+}
+
+.user_container{
+    border: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 20px;
+    color: whitesmoke;
+}
+
+.user_container > button{
+    width: 80px;
+    height: 40px;
+    background-color: red;
+    border: 1px solid black;
+    border-radius: 10px;
+    transition: all linear 0.3s;
+}
+
+.user_container > button:nth-of-type(1){
+    background-color: rgb(38, 207, 38);
+}
+
+.user_container > button:nth-of-type(2){
+    background-color: rgb(255, 0, 0);
+}
+
+.user_container > button:active{
+    transform: scale(0.85);
+}

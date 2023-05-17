@@ -22,7 +22,7 @@ const UserInfo = ({user}) => {
             return;
         }
         else{
-            await fetch('http://localhost:5000/change_password', {
+            fetch('http://localhost:5000/change_password', {
                 method: 'put',
                 headers: {
                     'Accept': 'application/json',
@@ -36,7 +36,6 @@ const UserInfo = ({user}) => {
             .then(data => console.log(data))
 
             setPass(false);
-            return;
         }
     }
 

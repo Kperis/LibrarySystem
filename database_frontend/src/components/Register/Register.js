@@ -28,6 +28,7 @@ const Register = ({onRouteChange}) => {
 
     const onSubmitRegister = () =>{
         if(username !== '' && password !== '' && first_name !== '' && last_name !== '' && birthday !== '' &&  role !== ''){
+
             fetch('http://localhost:5000/register', {
                 method: 'post',
                 headers: {'Content-Type':'application/json'},
@@ -141,7 +142,7 @@ const Register = ({onRouteChange}) => {
                         className='radio_btn' 
                         type='radio' 
                         name='role'
-                        value='Mαθητής'
+                        value='student'
                         onChange={onRoleChange}
                         />
                     <label className='radio_label'>Student</label>
@@ -149,7 +150,7 @@ const Register = ({onRouteChange}) => {
                         className='radio_btn' 
                         type='radio' 
                         name='role'
-                        value='Καθηγητής'
+                        value='teacher'
                         onChange={onRoleChange}
                         />
                     <label className='radio_label'>Teacher</label>

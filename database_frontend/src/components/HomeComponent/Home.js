@@ -6,7 +6,8 @@ import Book from '../Book/Book';
 import { Routes, Route } from 'react-router-dom';
 import UserInfo from '../UserInfo/UserInfo';
 import Admin from '../AdminCompononent/Admin';
-import Review_list from '../ReviewList/Review_list';
+import ReviewList from '../ReviewList/ReviewList';
+import Approve from '../Approve/Approve';
 
 
 
@@ -18,25 +19,19 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
     const [count2,setCount2] = useState(0);
-    
-
+    const [should_load,setShouldLoad] = useState(false);
+    const [should_load2,setShouldLoad2] = useState(false);
 
     useEffect(() => {
         fetchOther();  
-    }, [count])
+    }, [count,should_load2])
 
-   
-    const fetchOther = async () => {
-        // console.log(user.role)
-        let role = 'ho'
-        if(user?.role === 'Admin'){
-            role = 'Admin';
-        }
-        else{
-            role = 'student';
-        } 
+    useEffect(()=>{
+        fetchBooks();
+    },[])
 
-        await fetch('http://localhost:5000/books',{
+    const fetchBooks = () =>{
+        fetch('http://localhost:5000/books',{
             method: 'post',
             headers: {
                 'Content-Type':'application/json'
@@ -48,70 +43,83 @@ const Home = ({user, onRouteChange,onSignout}) => {
         })
         .then(response => response.json())
         .then(data => {
-            if(data?.books === 'none'){
+            if(data.books === 'none'){
                 setBooks([]);
             }
             else{
                 setBooks(data);
             }
-            
+            setShouldLoad2(true);
         })
         .catch(err => console.log(err));
+    }
 
-        await fetch('http://localhost:5000/borrow', {
-            method: 'post',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            body: JSON.stringify({
-                role: role,
-                username: user?.username
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data?.borrows === 'none'){
-                setBorrowed([]);
+   
+    const fetchOther = () => {
+        // console.log(user.role)
+        if(should_load2){
+            let role = 'ho'
+            if(user?.role === 'Admin'){
+                role = 'Admin';
             }
             else{
-                setBorrowed(data);
-            }
-            
-        })
+                role = 'student';
+            } 
 
-        await fetch('http://localhost:5000/request', {
-            method: 'post',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            body: JSON.stringify({
-                role: role,
-                username: user?.username
+            fetch('http://localhost:5000/borrow', {
+                method: 'post',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({
+                    role: role,
+                    username: user?.username
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data?.requests === 'none'){
-                setRequested([]);
-            }
-            else{
-                setRequested(data);
-            }
-            
-        })
-        
-        borrowed.forEach(element => {
-            const date1 = new Date(element.acquire_date);
-            const date2 = new Date(element.return_date);
+            .then(response => response.json())
+            .then(data => {
+                if(data?.borrows === 'none'){
+                    setBorrowed([]);
+                }
+                else{
+                    setBorrowed(data);
+                }
+                
+                fetch('http://localhost:5000/request', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    },
+                    body: JSON.stringify({
+                        role: role,
+                        username: user?.username
+                    })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data?.requests === 'none'){
+                            setRequested([]);
+                        }
+                        else{
+                            setRequested(data);
+                        }
+                        
+                        borrowed.forEach(element => {
+                            const date1 = new Date(element.acquire_date);
+                            const date2 = new Date(element.return_date);
+                
+                            const diffTime = Math.abs(date2-date1);
+                            const diffDays = Math.ceil(diffTime / (1000*60*60*24));
+                            if(diffDays > 7){
+                                setDelayedReturn(true);
+                            }
+                            
+                        });
 
-            const diffTime = Math.abs(date2-date1);
-            const diffDays = Math.ceil(diffTime / (1000*60*60*24));
-            if(diffDays > 7){
-                setDelayedReturn(true);
-            }
-            
-        });
-
+                        setShouldLoad(true);
+            })
+            })
+    }
         
     }
 
@@ -160,9 +168,11 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         : <Books count2={count2} books={requested} user={user} onBookClicked={onBookClicked} isonrequest={true} update_count={update_request_count}/>
                     }/>
                     <Route path='/reviews' element={
-                        <Review_list user={user}/>
+                        <ReviewList user={user} should_load={should_load} />
                     }/>
-
+                    <Route path='/user_approve' element={
+                        <Approve user={user} should_load={should_load}/>
+                    }/>
                 </Routes>
             </>
     );

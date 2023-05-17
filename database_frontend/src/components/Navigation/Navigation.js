@@ -14,6 +14,11 @@ const Navigation = ({onRouteChange,onSignout,user,tab_change}) => {
                 ?   <NavLink to='/reviews' className = 'navbuttons'>Reviews</NavLink>   
                 :   <div></div>
             }
+            {
+                user.role === 'Admin'
+                ?   <NavLink to='/user_approve' className = 'navbuttons'>Approve users</NavLink>  
+                :   <div></div>
+            }
             <p className = 'navbuttons signout' onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
         </div>
     );

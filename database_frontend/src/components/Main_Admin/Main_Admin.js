@@ -2,15 +2,35 @@ import React, { useEffect, useState } from "react";
 import Main_Admin_Queries from "../Main_Admin_Queries/Main_Admin_Queries";
 import './Main_Admin.css';
 import '../Navigation/Navigation.css'
+import Approve from "../Approve/Approve";
 
 
 const Main_Admin = ({user,onSignout,onRouteChange}) =>{
 
     const [route2,setRoute2] = useState('main');
+    const [userList,setUserList] = useState([]);
 
     useEffect(()=>{
-        console.log(user);
+        fetchUsers();
     },[])
+
+    const fetchUsers = () =>{
+        fetch('http://localhost:5000/user_approve', {
+                method: 'post',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    username: user.username,
+                    role: user.role
+                })
+            })
+            .then(response2 => response2.json())
+            .then(data2 => {
+                setUserList(data2);
+                console.log(data2);
+            })
+    }
 
     const Query1 = () => {
         setRoute2('query');
@@ -49,7 +69,8 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     return(
         <div>
             <div className="Nav_p">
-                <p onClick={()=> Query1()}>Approve Admins</p>
+                <p onClick={()=> setRoute2('main')}>Home</p>
+                <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
                 <p onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
             </div>
             {route2 === 'main'
@@ -82,7 +103,10 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                             </li>
                         </ul>
                     </div>
-                    :   <Main_Admin_Queries />
+                    :   (route2==='query'
+                        ?   <Main_Admin_Queries />
+                        :   <Approve user={user} should_load={true}/>
+                        )
             }
            
         </div>
