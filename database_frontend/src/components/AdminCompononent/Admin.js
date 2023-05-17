@@ -143,7 +143,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                         {
                         (array.map((element,index) => {
                         return(
-                            <div key={element.title} className='borrow_box'>
+                            <div key={element.borrow_id} className='borrow_box'>
                                 <p className='borrow_text'>{`${element.first_name} ${element.last_name} (${element.role}): ${element.title} due return-> ${element.return_date}`}</p>
                                 <button className='Grant' onClick={() => onGrantReturn(index)} >Returned</button>
                             </div>
@@ -153,7 +153,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                     </div>
                 :(array.map((element,index) => {
                     return(
-                        <div key={element.title} className='borrow_box'>
+                        <div key={element.request_id} className='borrow_box'>
                             <p>{`${element.first_name} ${element.last_name} (${element?.role}): ${element.title} request date-> ${element.date_of_request}`}</p>
                             <button onClick={()=> onGrantRequest(index)}>Grant</button>
                         </div>

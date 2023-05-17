@@ -13,7 +13,6 @@ const SignIn = ({loadUser, onRouteChange}) => {
         fetch('http://localhost:5000/signin', {
             method: 'post',
             headers: {
-                'Accept': 'application/json',
                 'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: username,
@@ -22,7 +21,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
         })
         .then(data => data.json())
         .then(user => {
-            if(user.user_id && user.approved===1){
+            if(user?.user_id && user.approved===1){
                 if(user.role === 'Main_Admin'){
                     loadUser(user,'Main_Admin');
                 }

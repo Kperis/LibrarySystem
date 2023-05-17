@@ -56,7 +56,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
    
     const fetchOther = () => {
-        // console.log(user.role)
+        console.log('hehehe');
         if(should_load2){
             let role = 'ho'
             if(user?.role === 'Admin'){

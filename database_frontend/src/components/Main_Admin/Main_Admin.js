@@ -33,7 +33,17 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query1 = () => {
-        setRoute2('query');
+        fetch('http://localhost:5000/main_admin/all_borrows',{
+            method: 'post',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                month:'May'
+            })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
     }
 
     const Query2 = () => {

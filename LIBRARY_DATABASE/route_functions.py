@@ -44,7 +44,6 @@ def fuser_flname(first_name,last_name):
 def fborrow_username(username):
     # user_id = fuser_username(username)
     # cursor.execute('SELECT ')
-    print('Checkpoint')
     cursor.execute('SELECT Books.isbn,Books.title,Books.m_cover_path,Authentication.username,App_user.first_name,App_user.last_name,\
                     DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
                     FROM Authentication\
@@ -54,7 +53,7 @@ def fborrow_username(username):
                     ON Borrow.user_id = App_user.user_id\
                     JOIN Books\
                     ON Books.isbn = Borrow.isbn\
-                    WHERE Authentication.username = "{}"'.format(username))
+                    WHERE Authentication.username = "{}" AND Borrow.active=1'.format(username))
     result = cursor.fetchall()
     mydb.commit()
     # cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,\
@@ -72,7 +71,7 @@ def fborrow_username(username):
 def fborrow_school(username):
     cursor.execute('SELECT user_id FROM Authentication WHERE username="{}"'.format(username))
     admin_id = cursor.fetchall()[0][0]
-    cursor.execute('SELECT Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type\
+    cursor.execute('SELECT Borrow.borrow_id,Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type\
                    ,DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y")\
                     FROM Authentication\
                     JOIN App_user\
@@ -81,7 +80,7 @@ def fborrow_school(username):
                     ON Borrow.user_id = App_user.user_id\
                     JOIN Books\
                     ON Books.isbn = Borrow.isbn\
-                    WHERE App_user.admin_id = {}'.format(admin_id))
+                    WHERE App_user.admin_id = {} AND Borrow.active=1'.format(admin_id))
     
     # cursor.execute('SELECT App_user.first_name,App_user.last_name,Books.title,Books.isbn,DATE_FORMAT(Borrow.acquire_date,"%m/%d/%Y"),DATE_FORMAT(Borrow.return_date,"%m/%d/%Y"),\
     #                 FROM App_user JOIN Borrow ON App_user.user_id=Borrow.user_id \
@@ -89,11 +88,9 @@ def fborrow_school(username):
     #                 WHERE App_user.admin_id={}'.format(admin_id))
     result = cursor.fetchall()
     mydb.commit()
-    print(result)
     return result
 def fbook_title(title):
     cursor.execute('SELECT Books.isbn FROM Books WHERE Books.title = "{}"'.format(title))
-
     result = cursor.fetchall()[0][0]
     return result
 def frequest_username(username):
@@ -118,7 +115,7 @@ def frequest_school(username):
     admin_id = cursor.fetchall()[0][0]
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(admin_id))
     school_id=cursor.fetchall()[0][0]
-    cursor.execute('SELECT Stores.copies,Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type,\
+    cursor.execute('SELECT Request.request_id,Stores.copies,Books.isbn,Books.title,Authentication.username,App_user.first_name,App_user.last_name,App_user.type,\
                     DATE_FORMAT(Request.date_of_request,"%m/%d/%Y")\
                     FROM App_user\
                     JOIN Request\
@@ -346,10 +343,12 @@ def insert_user(school_id,first_name,last_name,age,type,admin_id):
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
                 VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,age,type,admin_id))
     mydb.commit()
-    
+    return
+
 def insert_authentication(user_id,username,password):
     cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'.format(user_id,username,password))
     mydb.commit()
+    return
 
 def notactive_borrow(user_id,isbn):
     cursor.execute('UPDATE Borrow SET Borrow.active = 0 WHERE user_id={} AND isbn={}'.format(user_id,isbn))
@@ -362,13 +361,12 @@ def notactive_borrow(user_id,isbn):
 def delete_request(user_id,isbn):
     cursor.execute('DELETE FROM Request WHERE user_id = {} AND isbn = {}'.format(user_id,isbn))
     mydb.commit()
-    cursor.execute('INSERT INTO Borrow(isbn,user_id,acquire_date,active) VALUES({},{},CURDATE(),1)'.format(isbn,user_id))
+    cursor.execute('INSERT INTO Borrow(isbn,user_id,acquire_date,return_date,active) VALUES({},{},CURDATE(),CURDATE(),1)'.format(isbn,user_id))
     mydb.commit()
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]
     cursor.execute('UPDATE Stores SET copies=copies-1 WHERE isbn={} AND school_id={}'.format(isbn,school_id))
     mydb.commit()
-    print('done')
     return
     # cursor.fetchall()
     # cursor.execute('SELECT Stores.copies,Stores.school_id\
