@@ -1,7 +1,95 @@
-SELECT School.name,App_user.first_name,App_user.last_name
-FROM School 
-JOIN App_user
+--1.1 Main_Admin
+SELECT School.name,School.school_id,COUNT(*) AS count_ev
+FROM Borrow
+INNER JOIN Books
+ON Books.isbn = Borrow.isbn
+INNER JOIN App_user
+ON App_user.user_id = Borrow.user_id
+INNER JOIN School
 ON School.school_id = App_user.school_id
-JOIN Authentication 
-ON Authentication.auth_id = App_user.user_id;
+WHERE MONTH(Borrow.acquire_date) = 5
+GROUP BY School.school_id;
 
+--1.2 Main_Admin
+SELECT Authors.first_name,Authors.last_name,Count(*)
+FROM Authors
+INNER JOIN Books
+ON Books.isbn = Authors.isbn
+INNER JOIN Categories
+ON Books.isbn = Categories.isbn
+WHERE Categories.category = "science fiction"
+GROUP BY Authors.first_name,Authors.last_name;
+
+SELECT CONCAT(App_user.first_name," ",App_user.last_name),Count(*)
+FROM App_user
+INNER JOIN Borrow
+ON Borrow.user_id = App_user.user_id
+INNER JOIN Books
+ON Books.isbn = Borrow.isbn
+INNER JOIN Categories
+ON Categories.isbn = Books.isbn
+WHERE Categories.category = "romance" AND App_user.type = "Καθηγητής"
+GROUP BY App_user.first_name,App_user.last_name;
+
+--1.3 Main_Admin
+SELECT CONCAT(App_user.first_name," ",App_user.last_name)
+FROM App_user
+INNER JOIN Borrow
+ON Borrow.user_id = App_user.user_id
+INNER JOIN Books
+ON Books.isbn = Borrow.isbn
+WHERE App_user.age < 40 AND App_user.type = "Καθηγητής"
+GROUP BY App_user.first_name,App_user.last_name
+HAVING COUNT(*) > 20 LIMIT 10;
+
+--1.4 Main_Admin
+SELECT first_name,last_name,isbn FROM (
+SELECT Authors.first_name,Authors.last_name,Borrow.isbn
+FROM Authors
+INNER JOIN Books
+ON Books.isbn = Authors.isbn
+LEFT JOIN Borrow
+ON Borrow.isbn = Books.isbn
+WHERE Borrow.isbn IS NULL
+) o
+WHERE CONCAT(o.first_name," ",o.last_name) NOT IN (
+SELECT CONCAT(Authors.first_name," ",Authors.last_name)
+FROM Authors
+INNER JOIN Books
+ON Books.isbn = Authors.isbn
+LEFT JOIN Borrow
+ON Borrow.isbn = Books.isbn
+WHERE Borrow.isbn IS NOT NULL)
+GROUP BY first_name,last_name;
+
+--1.5 Main_Admin
+SELECT App_user.first_name,App_user.last_name,o.count_ev
+FROM App_user
+JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date
+      FROM App_user
+      INNER JOIN School
+      ON School.school_id = App_user.school_id
+      INNER JOIN Borrow
+      ON Borrow.user_id = App_user.user_id
+      GROUP BY App_user.admin_id
+      HAVING COUNT(*) > 0) o
+ON App_user.user_id = o.admin_id
+WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = 2023
+ORDER BY o.count_ev;
+
+--1.7 Main_Admin
+SELECT CONCAT(first_name," ",last_name)
+FROM
+        (SELECT Authors.first_name,Authors.last_name,COUNT(*) AS count_ev,
+        (SELECT MAX(o.count_ev) 
+                FROM (  SELECT Authors.first_name,Authors.last_name,COUNT(*) AS count_ev
+                        FROM Authors
+                        INNER JOIN Books
+                        ON Books.isbn = Authors.isbn
+                        GROUP BY Authors.first_name,Authors.last_name) o ) AS max_value
+        FROM Authors
+        INNER JOIN Books
+        ON Books.isbn = Authors.isbn
+        GROUP BY Authors.first_name,Authors.last_name
+) o
+WHERE o.count_ev <= o.max_value - 5;

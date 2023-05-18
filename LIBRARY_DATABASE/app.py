@@ -420,41 +420,59 @@ def approve_user():
 
 
 
-@app.route('/main_admin/all_borrows',methods = ['POST'])
+@app.route('/main_admin/all_borrows',methods = ['POST'])#3.1
 @cross_origin(headers = ['Content-Type'])
 def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
-    data = route_functions.fallborrows_schools_2(month)
+    data = route_functions.fallborrows_schools(month)
     result = [dict(zip(('name','school_id','count'),x)) for x in data]
     return flask.jsonify(result)
 
-@app.route('/main_admin/category_search',methods = ['POST'])
+@app.route('/main_admin/category_search',methods = ['POST'])#3.2
 @cross_origin(headers = ['Content-Type'])
 def main_admin_category():
     data = flask.request.get_json(['body'])
     
     category = data['category']
 
-    authors = route_functions.fauthors_categories_2(category)
-    teachers = route_functions.fteachers_category_2(category)
+    authors = route_functions.fauthors_categories(category)
+    teachers = route_functions.fteachers_category(category)
     result = {}
     result['authors'] = authors
     result['teachers'] = teachers
     return flask.jsonify(result)
 
-@app.route('/main_admin/no_borrow_author',methods = ['GET'])
+@app.route('/main_admin/no_borrow_author',methods = ['GET'])#3.4
 @cross_origin(headers = ['Content-Type'])
 def no_borrows_author():
 
     result = route_functions.fno_borrows_authors()
-    return flask.jsonify(result)
+    dir = {"result":result}
+    return flask.jsonify(dir)
 
-@app.route('/main_admin/5_less_top',methods = ['GET'])
+@app.route('/main_admin/5_less_top',methods = ['GET'])#3.7
 @cross_origin(headers = ['Content-Type'])
 def five_less_top():
     result = route_functions.ffive_less_topauthor()
+    dir = {"result":result}
+    return flask.jsonify(dir)
+
+@app.route('/main_admin/top_teachers',methods = ['GET'])#3.3
+@cross_origin(headers = ['Content-Type'])
+def top_teachers():
+    result = route_functions.top_teachers()
+    dir = {"result":result}
+    return flask.jsonify(dir)
+
+@app.route('/main_admin/same_borrows_admin',methods = ['GET'])#3.5
+@cross_origin(headers = ['Content-Type'])
+def same_borrows_admin():
+    result = route_functions.same_borrows_admin()
     return flask.jsonify(result)
+
+
+
 
 if __name__ == "__main__":
     app.debug = True
