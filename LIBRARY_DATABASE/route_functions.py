@@ -222,6 +222,27 @@ def fallborrows_schools(month):
         result.append(dir)
     return result
 
+def fallborrows_schools_2(month):
+    months = ['January','February','March','April','May','June','July','August','September','October','November','December','all']
+    num_month = 0
+    for i in range(len(months)):
+        if month == months[i]:
+            num_month = i+1
+            break
+    cursor.execute('SELECT School.name,School.school_id,COUNT(*) AS count_ev \
+                    FROM Borrow \
+                    INNER JOIN Books \
+                    ON Books.isbn = Borrow.isbn \
+                    INNER JOIN App_user \
+                    ON App_user.user_id = Borrow.user_id \
+                    INNER JOIN School \
+                    ON School.school_id = App_user.school_id \
+                    WHERE MONTH(Borrow.acquire_date) = {} \
+                    GROUP BY School.school_id;'.format(num_month))
+    result = cursor.fetchall()
+    return result
+
+
 def fauthors_categories(category):
     result = []
     cursor.execute('SELECT Authors.first_name,Authors.last_name \
@@ -237,13 +258,29 @@ def fauthors_categories(category):
         if result.count(str(data[i][0])+ str(data[i][1])) == 0:
             result.append(str(data[i][0])+ str(data[i][1]))
     return result
+def fauthors_categories_2(category):
+    result = []
+    cursor.execute('SELECT Authors.first_name,Authors.last_name \
+                    FROM Authors \
+                    INNER JOIN Books \
+                    ON Books.isbn = Authors.isbn \
+                    INNER JOIN Categories \
+                    ON Books.isbn = Categories.isbn \
+                    WHERE Categories.category = "{}" \
+                    GROUP BY Authors.first_name,Authors.last_name;'.format(category))
+    data = cursor.fetchall()
+
+    for item in data:
+        result.append(str(item[0])+' '+str(item[1]))
+
+    return result
 
 def fteachers_category(category):
     result = []
     today = datetime.date.today()
     year = today.year
 
-    cursor.execute('SELECT App_user.first_name,App_user.last_name \
+    cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name) \
                    FROM App_user \
                    JOIN Borrow \
                    ON Borrow.user_id = App_user.user_id \
@@ -256,6 +293,25 @@ def fteachers_category(category):
     for i in range(len(data)):
         if result.count(str(data[i][0])+str(data[i][1])) == 0:
             result.append(str(data[i][0])+str(data[i][1]))
+    return result
+
+def fteachers_category_2(category):
+    result = []
+    cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name) \
+                    FROM App_user \
+                    INNER JOIN Borrow \
+                    ON Borrow.user_id = App_user.user_id \
+                    INNER JOIN Books \
+                    ON Books.isbn = Borrow.isbn \
+                    INNER JOIN Categories \
+                    ON Categories.isbn = Books.isbn \
+                    WHERE Categories.category = "{}" AND App_user.type = "Καθηγητής" \
+                    GROUP BY App_user.first_name,App_user.last_name;'.format(category))
+    data = cursor.fetchall()
+
+    for item in data:
+        result.append(item[0])
+
     return result
 
 def fno_borrows_authors():

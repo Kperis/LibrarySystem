@@ -425,7 +425,8 @@ def approve_user():
 def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
-    result = route_functions.fallborrows_schools(month)
+    data = route_functions.fallborrows_schools_2(month)
+    result = [dict(zip(('name','school_id','count'),x)) for x in data]
     return flask.jsonify(result)
 
 @app.route('/main_admin/category_search',methods = ['POST'])
@@ -435,8 +436,8 @@ def main_admin_category():
     
     category = data['category']
 
-    authors = route_functions.fauthors_categories(category)
-    teachers = route_functions.fteachers_category(category)
+    authors = route_functions.fauthors_categories_2(category)
+    teachers = route_functions.fteachers_category_2(category)
     result = {}
     result['authors'] = authors
     result['teachers'] = teachers
