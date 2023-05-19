@@ -76,7 +76,7 @@ def Insert_Authentication():
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     
-    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
+    sql_file = open("./sql_schemas/drop_schema.sql")  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)

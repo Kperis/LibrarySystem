@@ -534,8 +534,12 @@ def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
     data = route_functions.fallborrows_schools(month)
-    result = [dict(zip(('name','school_id','count'),x)) for x in data]
-    return flask.jsonify(result)
+    mydb.commit()
+    if data:
+        result = [dict(zip(('name','city','school_id','count'),x)) for x in data]
+        return flask.jsonify(result)
+    else:
+        return flask.jsonify({'borrows':'none'})
 
 @app.route('/main_admin/category_search',methods = ['POST'])#3.2
 @cross_origin(headers = ['Content-Type'])

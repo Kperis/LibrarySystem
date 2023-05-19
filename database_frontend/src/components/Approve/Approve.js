@@ -26,7 +26,14 @@ const Approve = ({user,should_load}) => {
             })
             .then(response2 => response2.json())
             .then(data2 => {
-                setUserList(data2);
+                if(data2.new_users === 'none'){
+                    alert('no new users');
+                    setUserList([]);
+                }
+                else{
+                    setUserList(data2);
+                }
+                
             })
         }
         

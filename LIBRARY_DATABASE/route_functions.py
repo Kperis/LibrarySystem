@@ -229,18 +229,33 @@ def fallborrows_schools(month):
         if month == months[i]:
             num_month = i+1
             break
-    cursor.execute('SELECT School.name,School.school_id,COUNT(*) AS count_ev \
-                    FROM Borrow \
-                    INNER JOIN Books \
-                    ON Books.isbn = Borrow.isbn \
-                    INNER JOIN App_user \
-                    ON App_user.user_id = Borrow.user_id \
-                    INNER JOIN School \
-                    ON School.school_id = App_user.school_id \
-                    WHERE MONTH(Borrow.acquire_date) = {} \
-                    GROUP BY School.school_id;'.format(num_month))
-    result = cursor.fetchall()
-    return result
+    if month == 'all':
+        cursor.execute('SELECT School.name,School.city,School.school_id,COUNT(*) AS count_ev \
+                        FROM Borrow \
+                        INNER JOIN Books \
+                        ON Books.isbn = Borrow.isbn \
+                        INNER JOIN App_user \
+                        ON App_user.user_id = Borrow.user_id \
+                        INNER JOIN School \
+                        ON School.school_id = App_user.school_id \
+                        WHERE YEAR(Borrow.acquire_date) = YEAR(CURDATE()) \
+                        GROUP BY School.school_id;')
+        result = cursor.fetchall()
+        return result
+
+    else:    
+        cursor.execute('SELECT School.name,School.city,School.school_id,COUNT(*) AS count_ev \
+                        FROM Borrow \
+                        INNER JOIN Books \
+                        ON Books.isbn = Borrow.isbn \
+                        INNER JOIN App_user \
+                        ON App_user.user_id = Borrow.user_id \
+                        INNER JOIN School \
+                        ON School.school_id = App_user.school_id \
+                        WHERE MONTH(Borrow.acquire_date) = {} \
+                        GROUP BY School.school_id;'.format(num_month))
+        result = cursor.fetchall()
+        return result
 
 
 # def fauthors_categories(category):
