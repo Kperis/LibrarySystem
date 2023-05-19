@@ -12,13 +12,15 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
 
     useEffect(() =>{
         let temp = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book?.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())});
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())});
         })
         setBooklist(temp);
+        console.log(temp);
     },[titlesearch,books,authorsearch,count2])
 
     const onBookClicked2 = (isbn) =>{
         onBookClicked(isbn);
+        
     }
 
     const onCategorySelect = (event) => {
@@ -79,9 +81,9 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
             </div>
             <div className='book_list'>
                 {
-                booklist && booklist.map((book,index) => {
+                booklist.map((book,index) => {
                     return(
-                        <div key={book.isbn}>
+                        <div key={index}>
                             <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book?.authors} title={book.title}/>
                         
                             {
