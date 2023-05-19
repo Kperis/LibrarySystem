@@ -7,7 +7,7 @@ from flask_mysqldb import MySQL
 from flask_cors import CORS,cross_origin
 # from flask import jsonify
 import route_functions
-
+import random
 import json
 from datetime import date
 from datetime import datetime
@@ -71,7 +71,7 @@ def register():
         route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],role,admin_id)
         user_id = route_functions.fuser_flname(data['first_name'],data['last_name'])
         route_functions.insert_authentication(user_id,data['username'],data['password'])
-
+        mydb.commit()
         return {"data":"monument"}
     else:
         print("ERROR")
@@ -93,14 +93,14 @@ def sign_in():
         result1 = cursor.fetchall()[0][0]
         if result1 != 'Main_Admin':
             cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card \
                         FROM Authentication JOIN App_user \
                         ON App_user.user_id = Authentication.user_id JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE Authentication.user_id = {} AND App_user.approved=1'.format(user_id))
             result = cursor.fetchall()
             if result:
-                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8]})
+                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9]})
             else:
                 return flask.jsonify({'user':'none'})
         else:
@@ -386,6 +386,7 @@ def approve_user():
             user_id = route_functions.fuser_username(username)
             cursor.execute('SELECT App_user.first_name,App_user.last_name,App_user.age,App_user.type,Authentication.username FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE App_user.admin_id={} AND App_user.approved=0'.format(user_id))
             result = cursor.fetchall()
+            mydb.commit()
             if result:
                 users_dict = [dict(zip(('first_name','last_name','age','role','username'),x)) for x in result]
                 return flask.jsonify(users_dict)
@@ -397,6 +398,7 @@ def approve_user():
                             FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id \
                             JOIN School ON App_user.school_id=School.school_id WHERE App_user.type="Admin" AND App_user.approved=0')
             result = cursor.fetchall()
+            mydb.commit()
             if result:
                 users_dict = [dict(zip(('first_name','last_name','age','role','username','school_name','school_city'),x)) for x in result]
                 return flask.jsonify(users_dict)
@@ -405,19 +407,31 @@ def approve_user():
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
         username = data['username']
-        user_id = route_functions.fuser_username(username)
+        role = data['role']
         approve = data['approve']
+        user_id = route_functions.fuser_username(username)
         if approve == 1:
             cursor.execute('UPDATE App_user SET approved=1 WHERE user_id={}'.format(user_id))
             mydb.commit()
+            if role == 'Admin':
+                found = False
+                while found==False:
+                    card = random.randint(10**7,10**8-1)
+                    cursor.execute('SELECT * FROM App_user WHERE card={}'.format(card))
+                    temp_list = cursor.fetchall()
+                    if temp_list:
+                        continue
+                    else:
+                        found == True
+                        cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
+                        mydb.commit()
+                        break
+                return flask.jsonify({"user":"activated"})
             return flask.jsonify({"user":"activated"})
         else:
             cursor.execute('DELETE FROM App_user WHERE user_id={}'.format(user_id))
             mydb.commit()
             return flask.jsonify({"user":"deleted"})
-
-
-
 
 
 

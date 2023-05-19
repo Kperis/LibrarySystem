@@ -41,7 +41,8 @@ const Approve = ({user,should_load}) => {
                 },
                 body: JSON.stringify({
                     username:username,
-                    approve: 1
+                    approve: 1,
+                    role:user.role
                 })
             })
             .then(response => response.json())
@@ -55,7 +56,8 @@ const Approve = ({user,should_load}) => {
                 },
                 body: JSON.stringify({
                     username: username,
-                    approve: 0
+                    approve: 0,
+                    role:user.role
                 })
             })
             .then(response => response.json())

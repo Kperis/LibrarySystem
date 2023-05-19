@@ -28,7 +28,6 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
             .then(response2 => response2.json())
             .then(data2 => {
                 setUserList(data2);
-                console.log(data2);
             })
     }
 
