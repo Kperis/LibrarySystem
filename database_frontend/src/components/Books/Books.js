@@ -12,7 +12,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
 
     useEffect(() =>{
         let temp = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book?.authors[0].some(author => {return author.toLowerCase().includes(authorsearch.toLowerCase())});
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book?.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())});
         })
         setBooklist(temp);
     },[titlesearch,books,authorsearch,count2])
@@ -82,7 +82,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
                 booklist && booklist.map((book,index) => {
                     return(
                         <div key={book.isbn}>
-                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book?.authors[0]} title={book.title}/>
+                            <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book?.authors} title={book.title}/>
                         
                             {
                                 isonrequest === true

@@ -1,0 +1,20 @@
+.add_book{
+    margin: 0px auto 60px auto;
+    width: 160px;
+    height: 60px;
+    border: 2px solid black;
+    border-radius: 6px;
+    color: white;
+    background-color: crimson;
+    font-size: 16px;
+    transition: all linear 0.2s;
+}
+
+.add_book:hover{
+    color: rgb(6, 6, 94);
+    transform: scale(1.05);
+}
+
+.add_book:active{
+    transform: scale(0.9);
+}

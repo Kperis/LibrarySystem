@@ -91,7 +91,6 @@ def sign_in():
         user_id = cursor.fetchall()[0][0]
         cursor.execute('SELECT type FROM App_user WHERE user_id={}'.format(user_id))
         result1 = cursor.fetchall()[0][0]
-        print(result1)
         if result1 != 'Main_Admin':
             cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
                        ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
@@ -105,7 +104,6 @@ def sign_in():
             else:
                 return flask.jsonify({'user':'none'})
         else:
-            print(user_id)
             cursor.execute('SELECT Authentication.username\
                         ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
                         FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE Authentication.user_id={}'.format(user_id))
@@ -418,6 +416,97 @@ def approve_user():
             mydb.commit()
             return flask.jsonify({"user":"deleted"})
 
+
+
+@app.route('/edit_book',methods = ['POST','PUT'])
+def edit_book():
+    if flask.request.method == 'POST':
+        data = flask.request.get_json(['body'])
+        cover = data['cover']
+        title = data['title']
+        summary = data['summary']
+        keywords = data['keywords']
+        categories = data['categories']
+        authors = data['authors']
+        publisher = data['publisher']
+        copies = data['copies']
+        isbn = data['isbn']
+        page_count = data['page_count']
+        username = data['username']
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+        school_id = cursor.fetchall()[0][0]
+        cursor.execute('SELECT * FROM Books WHERE isbn={}'.format(isbn))
+        result = cursor.fetchall()
+        if result:
+            cursor.execute('INSERT INTO Stores(school_id,isbn,copies) VALUES({},{},{})'.format(school_id,isbn,copies))
+            mydb.commit()
+            return flask.jsonify({'book':'existed'})
+        else:
+            cursor.execute('INSERT INTO Books(isbn,page_count,publisher,title,summary,m_cover_path) VALUES({},"{}","{}","{}","{}","{}")'.format(isbn,page_count,publisher,title,summary,cover))
+            mydb.commit()
+            cursor.execute('INSERT INTO Stores(school_id,isbn,copies) VALUES({},{},{})'.format(school_id,isbn,copies))
+            mydb.commit()
+            for x in authors:
+                x = x.lstrip()
+                temp = x.split(' ')
+                cursor.execute('INSERT INTO Authors(isbn,first_name,last_name) VALUES({},"{}","{}")'.format(isbn,temp[0],temp[1]))
+                mydb.commit()
+            cursor.execute('INSERT INTO Keywords(isbn,keyword) VALUES({},"{}")'.format(isbn,keywords))
+            mydb.commit()
+            cursor.execute('INSERT INTO Categories(isbn,category) VALUES({},"{}")'.format(isbn,categories))
+            mydb.commit()
+            return flask.jsonify({'book':'added'})
+    elif flask.request.method == 'PUT':
+        data = flask.request.get_json(['body'])
+        cover = data['cover']
+        title = data['title']
+        summary = data['summary']
+        keywords = data['keywords']
+        categories = data['categories']
+        authors = data['authors']
+        publisher = data['publisher']
+        copies = data['copies']
+        isbn = data['isbn']
+        page_count = data['page_count']
+        username = data['username']
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+        school_id = cursor.fetchall()[0][0]
+        cursor.execute('UPDATE Books SET title="{}",summary="{}",page_count={},m_cover_path="{}",publisher="{}" WHERE Books.isbn={}'.format(title,summary,page_count,cover,publisher,isbn))
+        mydb.commit()
+        cursor.execute('UPDATE Stores SET copies={} WHERE school_id={} AND isbn={}'.format(copies,school_id,isbn))
+        mydb.commit()
+        cursor.execute('DELETE FROM Authors WHERE isbn={}'.format(isbn))
+        cursor.execute('DELETE FROM Categories WHERE isbn={}'.format(isbn))
+        cursor.execute('DELETE FROM Keywords WHERE isbn={}'.format(isbn))
+        for x in authors:
+            x = x.lstrip()
+            temp = x.split(' ')
+            cursor.execute('INSERT INTO Authors(isbn,first_name,last_name) VALUES({},"{}","{}")'.format(isbn,temp[0],temp[1]))
+            mydb.commit()
+        cursor.execute('INSERT INTO Keywords(isbn,keyword) VALUES({},"{}")'.format(isbn,keywords))
+        mydb.commit()
+        cursor.execute('INSERT INTO Categories(isbn,category) VALUES({},"{}")'.format(isbn,categories))
+        mydb.commit()
+        return flask.jsonify({'book':'edited'})
+    
+
+
+@app.route('/book_remove', methods = ['PUT'])
+def delete_book():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+    isbn = data['isbn']
+    cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+    school_id = cursor.fetchall()[0][0]
+    cursor.execute('DELETE FROM Stores WHERE school_id={} AND isbn={}'.format(school_id,isbn))
+    mydb.commit()
+    return flask.jsonify({'delete':'success'})
 
 
 @app.route('/main_admin/all_borrows',methods = ['POST'])
