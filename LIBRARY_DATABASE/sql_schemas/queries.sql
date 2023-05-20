@@ -93,3 +93,28 @@ FROM
         GROUP BY Authors.first_name,Authors.last_name
 ) o
 WHERE o.count_ev <= o.max_value - 5;
+
+
+--1.6 Main Admin
+SELECT l.first_category,l.second_category,count_combination
+FROM (
+        SELECT o.user_id AS user_id_1,k.user_id AS user_id_2,CONCAT(o.category," ",k.category) AS category_comb,COUNT(*) as count_combination,o.category AS first_category,k.category AS second_category
+        FROM (
+                SELECT Borrow.isbn,Borrow.user_id,Categories.category,Borrow.borrow_id
+                FROM Borrow
+                INNER JOIN Books
+                ON Books.isbn = Borrow.isbn
+                INNER JOIN Categories
+                ON Categories.isbn = Books.isbn) o
+        INNER JOIN (
+                SELECT Borrow.isbn,Borrow.user_id,Categories.category,Borrow.borrow_id
+                FROM Borrow
+                INNER JOIN Books
+                ON Books.isbn = Borrow.isbn
+                INNER JOIN Categories
+                ON Categories.isbn = Books.isbn) k
+        ON o.isbn = k.isbn
+        WHERE o.category != k.category
+        GROUP BY category_comb) l
+ORDER BY count_combination DESC
+LIMIT 6;
