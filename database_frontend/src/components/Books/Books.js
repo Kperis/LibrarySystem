@@ -15,7 +15,6 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
             return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())});
         })
         setBooklist(temp);
-        console.log(temp);
     },[titlesearch,books,authorsearch,count2])
 
     const onBookClicked2 = (isbn) =>{
@@ -83,7 +82,7 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
                 {
                 booklist.map((book,index) => {
                     return(
-                        <div key={index}>
+                        <div key={book.isbn}>
                             <BookTemplate onBookClicked2={onBookClicked2} index={index} isbn={book.isbn} cover={book.cover_m} authors={book?.authors} title={book.title}/>
                         
                             {

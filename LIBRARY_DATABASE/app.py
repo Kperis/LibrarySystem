@@ -434,6 +434,27 @@ def approve_user():
             return flask.jsonify({"user":"deleted"})
 
 
+@app.route('/user_ban',methods = ['POST','PUT'])
+def ban_user():
+    if flask.request.method == 'POST':
+        data = flask.request.get_json(['body'])
+        username = data['username']
+        user_id = route_functions.fuser_username(username)
+        cursor.execute('SELECT App_user.first_name,App_user.last_name,App_user.age,App_user.type,Authentication.username FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE App_user.admin_id={} AND App_user.approved=1'.format(user_id))
+        result = cursor.fetchall()
+        mydb.commit()
+        if result:
+            users_dict = [dict(zip(('first_name','last_name','age','role','username'),x)) for x in result]
+            return flask.jsonify(users_dict)
+        else:
+            return flask.jsonify({'users':'none'})
+    elif flask.request.method == 'PUT':
+        data = flask.request.get_json(['body'])
+        username = data['username']
+        user_id = route_functions.fuser_username(username)
+        cursor.execute('UPDATE App_user SET approved=0 WHERE user_id={}'.format(user_id))
+        mydb.commit()
+        return flask.jsonify({'ban':'success'})
 
 
 
