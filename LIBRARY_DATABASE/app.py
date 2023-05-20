@@ -583,7 +583,12 @@ def same_borrows_admin():
     result = route_functions.same_borrows_admin()
     return flask.jsonify(result)
 
-
+@app.route('/main_admin/top_3_category_combinations',methods = ['GET'])#3.6
+@cross_origin(headers = ['Content-Type'])
+def top_three_comb():
+    result = route_functions.top_three_comb()
+    dir = {"result":result}
+    return dir
 
 
 if __name__ == "__main__":

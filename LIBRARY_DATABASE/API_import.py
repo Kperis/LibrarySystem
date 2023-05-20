@@ -14,6 +14,32 @@ database = "schooldatabasev4"
 
 cursor = mydb.cursor(buffered = True)
 
+def random_category_inserter(category):
+    random_categories = []
+    random_categories.append(category)
+    list_of_categories = ['science fiction','fantasy','romance','mystery','drama','action & adventure','history']
+    if category == 'science fiction':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [0,50,10,5,10,25,0])[0])
+    elif category == 'fantasy':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [10,0,20,20,15,35,0])[0])
+    elif category == 'romance':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [10,20,0,20,40,10,0])[0])
+    elif category == 'mystery':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [10,20,10,0,40,15,5])[0])
+    elif category == 'drama':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [10,20,40,10,0,15,5])[0])
+    elif category == 'action_&_adventure':
+        for i in range(random.randint(0,2)):
+            random_categories.append(random.choices(list_of_categories,weights = [40,30,5,15,10,0,0])[0])
+    else:
+        print("nothing of the above")
+    return random_categories
+
 def jprint(obj):
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
@@ -45,11 +71,13 @@ def Insert_Stores(isbn):
         print("error in store insert")
 
 def Insert_Categories(isbn,Categories):
-    try:
-        cursor.execute('INSERT INTO Categories (isbn,category) VALUES ({},"{}")'.format(isbn,Categories))
-        mydb.commit()
-    except:
-        print("error in category insert")
+    random_categories = random_category_inserter(Categories)
+    for category in random_categories:
+        try:
+            cursor.execute('INSERT INTO Categories (isbn,category) VALUES ({},"{}")'.format(isbn,category))
+            mydb.commit()
+        except:
+            print("error in category insert")
 
 def Insert_Keywords(isbn,keyword):
     for i in range(len(keyword)):
@@ -84,14 +112,15 @@ def list_authors(authores):
     return author_names
 
 
-No_of_books = 100
+No_of_books = 200
 
 list_of_categories = ['science_fiction','fantasy','romance','mystery','drama','action_&_adventure','history']
 
 for i in range(len(list_of_categories)):
 
+    var = No_of_books//len(list_of_categories)
 
-    response = requests.get('https://openlibrary.org/subjects/{}.json?limit={}'.format(list_of_categories[i],No_of_books))
+    response = requests.get('https://openlibrary.org/subjects/{}.json?limit={}'.format(list_of_categories[i],var))
     #
         # if i == 0:
         #     response = requests.get('https://openlibrary.org/subjects/science_fiction.json?limit={}'.format(No_of_books))
@@ -100,7 +129,7 @@ for i in range(len(list_of_categories)):
 
     data = response.json()
     #jprint(data)
-    for i in range(No_of_books//len(list_of_categories)):
+    for i in range(var):
         try:
             categories = data['name']
             authores = data['works'][i]['authors']
