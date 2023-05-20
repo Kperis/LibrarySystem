@@ -112,7 +112,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                     </div>
                     :   (route2==='query'
                         ?   <Main_Admin_Queries showSelect={showSelect} query={query} resetQuery={resetQuery}/>
-                        :   <Approve user={user} should_load={true}/>
+                        :   <Approve user={user} should_load={true} banMode={false}/>
                         )
             }
            

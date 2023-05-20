@@ -35,6 +35,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [editCopies,setEditCopies] = useState(0);
     const [editIsbn,setEditIsbn] = useState(0);
     const [editPageCount,setEditPageCount] = useState(0);
+    const [banMode,setBanMode] = useState(false);
  
     const checkList = ['Fantasy','Sci-fi','Romance','Mystery','Drama','Action','Historical'];
 
@@ -147,7 +148,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
             return a.isbn === isbn
         });
         window.localStorage.setItem("book",JSON.stringify(temp[0]));
-        console.log(books);
     }
 
     const checkboxed = (event) =>{
@@ -164,6 +164,15 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
     const tab_change = () =>{
         setCount2(count2+1);
+    }
+
+    const tab_approve_change = (bool) =>{
+        if(bool){
+            setBanMode(true);
+        }
+        else{
+            setBanMode(false);
+        }
     }
 
     const editBook = ()=>{
@@ -266,7 +275,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
     return(
             <>
-                <Navigation onRouteChange={onRouteChange} onSignout={onSignout} user={user} tab_change={tab_change} />
+                <Navigation onRouteChange={onRouteChange} onSignout={onSignout} user={user} tab_change={tab_change} tab_approve_change={tab_approve_change}/>
                 <Routes>
                     <Route path='/' element={
                         <div>
@@ -324,7 +333,10 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         <ReviewList user={user} should_load={should_load} />
                     }/>
                     <Route path='/user_approve' element={
-                        <Approve user={user} should_load={should_load}/>
+                        <Approve user={user} should_load={should_load} banMode={banMode}/>
+                    }/>
+                    <Route path='/user_ban' element={
+                        <Approve user={user} should_load={should_load} banMode={banMode}/>
                     }/>
                 </Routes>
             </>
