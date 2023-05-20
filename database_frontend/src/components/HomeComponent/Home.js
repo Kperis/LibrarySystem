@@ -8,6 +8,8 @@ import UserInfo from '../UserInfo/UserInfo';
 import Admin from '../AdminCompononent/Admin';
 import ReviewList from '../ReviewList/ReviewList';
 import Approve from '../Approve/Approve';
+import './Home.css';
+
 
 
 
@@ -21,6 +23,20 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [count2,setCount2] = useState(0);
     const [should_load,setShouldLoad] = useState(false);
     const [should_load2,setShouldLoad2] = useState(false);
+    const [book_edit,setBookEdit] = useState(false);
+    const [editMode,setEditMode] = useState(false);
+    const [editTitle,setEditTitle] = useState('');
+    const [editSummary,setEditSummary] = useState('');
+    const [editAuthors,setEditAuthors] = useState([]);
+    const [editKeywords,setEditKeywords] = useState([]);
+    const [editCover,setEditCover] = useState('');
+    const [editCategories,setEditCategories] = useState([]);
+    const [editPublisher,setEditPublisher] = useState('');
+    const [editCopies,setEditCopies] = useState(0);
+    const [editIsbn,setEditIsbn] = useState(0);
+    const [editPageCount,setEditPageCount] = useState(0);
+ 
+    const checkList = ['Fantasy','Sci-fi','Romance','Mystery','Drama','Action','Historical'];
 
     useEffect(() => {
         fetchOther();  
@@ -28,7 +44,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
     useEffect(()=>{
         fetchBooks();
-    },[])
+    },[book_edit])
 
     const fetchBooks = () =>{
         fetch('http://localhost:5000/books',{
@@ -56,7 +72,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
 
    
     const fetchOther = () => {
-        console.log('hehehe');
         if(should_load2){
             let role = 'ho'
             if(user?.role === 'Admin'){
@@ -132,12 +147,120 @@ const Home = ({user, onRouteChange,onSignout}) => {
             return a.isbn === isbn
         });
         window.localStorage.setItem("book",JSON.stringify(temp[0]));
-        console.log(requested);
-        console.log(borrowed);
+        console.log(books);
     }
+
+    const checkboxed = (event) =>{
+        let updatedList = [...editCategories];
+        if(event.target.checked){
+            updatedList = [...editCategories,event.target.value];
+        }
+        else{
+            updatedList.splice(editCategories.indexOf(event.target.value),1);
+        }
+        setEditCategories(updatedList);
+    }
+
 
     const tab_change = () =>{
         setCount2(count2+1);
+    }
+
+    const editBook = ()=>{
+        setBookEdit(!book_edit);
+    }
+
+    const onAddBook = () =>{
+        setEditMode(true);
+    }
+
+    const onEditSummary = (event)=>{
+        setEditSummary(event.target.value);
+    }
+
+    const onEditCover = (event)=>{
+        setEditCover(event.target.value);
+    }
+
+    const onEditKeywords = (event)=>{
+        setEditKeywords(event.target.value.split(','));
+    }
+
+    const onEditAuthors = (event)=>{
+        setEditAuthors(event.target.value.split(','));
+    }
+
+    const onEditTitle = (event)=>{
+        setEditTitle(event.target.value);
+    }
+
+    const onEditPublisher = (event) =>{
+        setEditPublisher(event.target.value);
+    }
+
+    const onEditCopies = (event) =>{
+        setEditCopies(Number(event.target.value));
+    }
+
+    const onEditPageCount = (event) =>{
+        setEditPageCount(Number(event.target.value));
+    }
+
+    const onEditIsbn = (event) =>{
+        setEditIsbn(Number(event.target.value));
+    }
+
+    const onCancelBook= () =>{
+        setEditAuthors([]);
+        setEditCategories([]);
+        setEditCover('');
+        setEditSummary('');
+        setEditTitle('');
+        setEditKeywords([]);
+        setEditPublisher('');
+        setEditCopies(0);
+        setEditIsbn(0);
+        setEditPageCount(0);
+        setEditMode(false);
+    }
+
+
+    const onSubmitBook = () =>{
+        if(editAuthors.length > 0 && editCategories.length > 0 && editKeywords.length > 0 && editCover !== '' && editTitle !== '' && editSummary !== '' && editPublisher !== ''){
+            fetch('http://localhost:5000/edit_book', {
+                        method: 'post',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({
+                            title: editTitle,
+                            summary: editSummary,
+                            cover:editCover,
+                            keywords: editKeywords,
+                            authors: editAuthors,
+                            categories: editCategories,
+                            publisher: editPublisher,
+                            copies: editCopies,
+                            page_count: editPageCount,
+                            isbn: editIsbn,
+                            username: user.username
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data =>  {
+                        if(data.book === 'existed'){
+                            editBook();
+                            onCancelBook();
+                            alert('Book already exists in database. Imported in school library. If you wish to edit info then select book and hit edit.')
+                        }
+                        else{
+                            editBook();
+                            onCancelBook();
+                        }
+                        
+                    })
+        }
+        else{
+            alert('Fill everything properly')
+        }
     }
 
 
@@ -149,10 +272,40 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         <div>
                             <Header first_name={user.first_name} last_name={user.last_name} school={user.school_name}/>
                             <Books count2={count2} books={books} user={user} onBookClicked={onBookClicked} isonrequest={false} update_count={update_request_count}/>
+                            {user.role === 'Admin'
+                            ?   (!editMode
+                                ?   <button className='add_book' onClick={()=> onAddBook()}>Add Book</button>
+                                :   <div className='edit_info'>
+                                        <input placeholder='Insert title...' onChange={onEditTitle}/>
+                                        <input placeholder='Insert cover url...' onChange={onEditCover}/>
+                                        <input placeholder='Insert short summary...' onChange={onEditSummary}/>
+                                        <input placeholder='Insert a few keywords...' onChange={onEditKeywords}/>
+                                        <input placeholder='Insert Author(s) name...' onChange={onEditAuthors}/> 
+                                        <div>
+                                            {
+                                                checkList.map((element,index)=>(
+                                                    <div key={index} className='checkboxes'>
+                                                        <input type='checkbox' value={element} onChange={checkboxed}/>
+                                                        <label>{element}</label>
+                                                    </div>
+                                                )
+                                                )
+                                            }
+                                        </div>
+                                        <input placeholder='Insert publisher...' onChange={onEditPublisher}/>
+                                        <input placeholder='Insert copies...' onChange={onEditCopies}/>
+                                        <input placeholder='Insert isbn...' onChange={onEditIsbn}/>
+                                        <input placeholder='Insert Page count ...' onChange={onEditPageCount}/>
+                                        <button onClick={() => onSubmitBook()}>Submit</button>
+                                        <button onClick={()=> onCancelBook()}>Cancel</button>
+                                    </div>
+                                )
+                            :   <div></div>
+                            }
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book hasDelayed={delayed_return} requested={requested} update_count={update_request_count} borrowed={borrowed} />
+                        <Book hasDelayed={delayed_return} editBook={editBook} requested={requested} update_count={update_request_count} borrowed={borrowed} />
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>

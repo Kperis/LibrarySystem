@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import './UserInfo.css';
+import logo from '../../Resources/expectation.png';
 
 const UserInfo = ({user}) => {
 
     const [changePass,setPass] = useState(false);
     const [newPass,setNewPass] = useState('');
-
 
     const onPasswordChange = () =>{
         setPass(true);
@@ -39,9 +39,23 @@ const UserInfo = ({user}) => {
         }
     }
 
+    const onCancelPassChange = () =>{
+        setNewPass('');
+        setPass(false);
+    }
+
     return(
         <div className="userinfo_container">
             <ul className="userinfo">
+                {user.card !== null
+                ?   <div>
+                        <img src={logo}/>
+                        <li>
+                            <p>{`User Card id: ${user.card}`}</p>
+                        </li>
+                    </div>
+                :   <div></div>
+                }
                 <li >
                     <p>{`First Name: ${user.first_name}`}</p>
                 </li>
@@ -59,7 +73,8 @@ const UserInfo = ({user}) => {
                     changePass
                     ? <div>
                         <input onChange={onNewPassChange} type='text' placeholder='Enter new password' />
-                        <input type='submit' onClick={onSubmitPass}/>
+                        <input type='submit' onClick={() => onSubmitPass()}/>
+                        <button onClick={() =>onCancelPassChange()}>Cancel</button>
                     </div>
                     : <div></div>
                 }

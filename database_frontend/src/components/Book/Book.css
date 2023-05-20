@@ -118,6 +118,8 @@ span.review_header{
 }
 
 .book_info > img{
+    max-width: 400px;
+    max-height: 620px;
     border: solid 1px rgb(190, 190, 190);
     border-radius: 10px;
     -webkit-box-shadow: 3px 3px 20px 4px #000000;
@@ -131,4 +133,45 @@ p.rest{
     font-size: 22px;
     text-decoration: underline;
     font-weight: bold;
+}
+
+.remove_book{
+    height: fit-content;
+    justify-self: center;
+    align-self: center;
+}
+
+.edit_info{
+    margin: 0px auto 10px auto;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 400px;
+}
+
+.edit_info > input{
+    width: 400px;
+    padding: 6px;
+}
+
+.edit_info > div{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.edit_info > div > label{
+    color: white;
+}
+
+.checkboxes{
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
 }

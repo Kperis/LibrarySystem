@@ -7,9 +7,10 @@ const BookTemplate = ({onBookClicked2,index,title,cover,isbn,authors}) => {
     const [author_names,setAuthorNames] = useState('');
 
     useEffect(()=>{
-        for(let i=0; i<authors.length ;i++){
-            setAuthorNames(author_names.concat(authors[i]))
-        }
+        // for(let i=0; i<authors.length ;i++){
+        //     setAuthorNames(author_names.concat(authors[i][0]))
+        // }
+        setAuthorNames(authors);
     },[])
 
     return(

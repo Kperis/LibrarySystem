@@ -26,7 +26,14 @@ const Approve = ({user,should_load}) => {
             })
             .then(response2 => response2.json())
             .then(data2 => {
-                setUserList(data2);
+                if(data2.new_users === 'none'){
+                    alert('no new users');
+                    setUserList([]);
+                }
+                else{
+                    setUserList(data2);
+                }
+                
             })
         }
         
@@ -41,7 +48,8 @@ const Approve = ({user,should_load}) => {
                 },
                 body: JSON.stringify({
                     username:username,
-                    approve: 1
+                    approve: 1,
+                    role:user.role
                 })
             })
             .then(response => response.json())
@@ -55,7 +63,8 @@ const Approve = ({user,should_load}) => {
                 },
                 body: JSON.stringify({
                     username: username,
-                    approve: 0
+                    approve: 0,
+                    role:user.role
                 })
             })
             .then(response => response.json())

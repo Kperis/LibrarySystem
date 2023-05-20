@@ -9,6 +9,8 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
 
     const [route2,setRoute2] = useState('main');
     const [userList,setUserList] = useState([]);
+    const [showSelect,setShowSelect] = useState(false);
+    const [query,setQuery] = useState(0);
 
     useEffect(()=>{
         fetchUsers();
@@ -28,22 +30,13 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
             .then(response2 => response2.json())
             .then(data2 => {
                 setUserList(data2);
-                console.log(data2);
             })
     }
 
     const Query1 = () => {
-        fetch('http://localhost:5000/main_admin/all_borrows',{
-            method: 'post',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                month:'May'
-            })
-        })
-        .then(response => response.json())
-        .then(data => console.log(data))
+        setShowSelect(true);
+        setQuery(1);
+        setRoute2('query');
     }
 
     const Query2 = () => {
@@ -76,10 +69,14 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
 
+    const resetQuery = ()=>{
+        setQuery(0);
+    }
+
     return(
         <div>
             <div className="Nav_p">
-                <p onClick={()=> setRoute2('main')}>Home</p>
+                <p onClick={()=> {setRoute2('main'); setShowSelect(false)}}>Home</p>
                 <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
                 <p onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
             </div>
@@ -114,7 +111,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                         </ul>
                     </div>
                     :   (route2==='query'
-                        ?   <Main_Admin_Queries />
+                        ?   <Main_Admin_Queries showSelect={showSelect} query={query} resetQuery={resetQuery}/>
                         :   <Approve user={user} should_load={true}/>
                         )
             }

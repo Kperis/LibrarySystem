@@ -7,7 +7,7 @@ from flask_mysqldb import MySQL
 from flask_cors import CORS,cross_origin
 # from flask import jsonify
 import route_functions
-
+import random
 import json
 from datetime import date
 from datetime import datetime
@@ -71,7 +71,7 @@ def register():
         route_functions.insert_user(school_id,data['first_name'],data['last_name'],data['birthday'].split('-')[0],role,admin_id)
         user_id = route_functions.fuser_flname(data['first_name'],data['last_name'])
         route_functions.insert_authentication(user_id,data['username'],data['password'])
-
+        mydb.commit()
         return {"data":"monument"}
     else:
         print("ERROR")
@@ -91,21 +91,19 @@ def sign_in():
         user_id = cursor.fetchall()[0][0]
         cursor.execute('SELECT type FROM App_user WHERE user_id={}'.format(user_id))
         result1 = cursor.fetchall()[0][0]
-        print(result1)
         if result1 != 'Main_Admin':
             cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card \
                         FROM Authentication JOIN App_user \
                         ON App_user.user_id = Authentication.user_id JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE Authentication.user_id = {} AND App_user.approved=1'.format(user_id))
             result = cursor.fetchall()
             if result:
-                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8]})
+                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9]})
             else:
                 return flask.jsonify({'user':'none'})
         else:
-            print(user_id)
             cursor.execute('SELECT Authentication.username\
                         ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
                         FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE Authentication.user_id={}'.format(user_id))
@@ -388,6 +386,7 @@ def approve_user():
             user_id = route_functions.fuser_username(username)
             cursor.execute('SELECT App_user.first_name,App_user.last_name,App_user.age,App_user.type,Authentication.username FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE App_user.admin_id={} AND App_user.approved=0'.format(user_id))
             result = cursor.fetchall()
+            mydb.commit()
             if result:
                 users_dict = [dict(zip(('first_name','last_name','age','role','username'),x)) for x in result]
                 return flask.jsonify(users_dict)
@@ -399,6 +398,7 @@ def approve_user():
                             FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id \
                             JOIN School ON App_user.school_id=School.school_id WHERE App_user.type="Admin" AND App_user.approved=0')
             result = cursor.fetchall()
+            mydb.commit()
             if result:
                 users_dict = [dict(zip(('first_name','last_name','age','role','username','school_name','school_city'),x)) for x in result]
                 return flask.jsonify(users_dict)
@@ -407,11 +407,26 @@ def approve_user():
     elif flask.request.method == 'PUT':
         data = flask.request.get_json(['body'])
         username = data['username']
-        user_id = route_functions.fuser_username(username)
+        role = data['role']
         approve = data['approve']
+        user_id = route_functions.fuser_username(username)
         if approve == 1:
             cursor.execute('UPDATE App_user SET approved=1 WHERE user_id={}'.format(user_id))
             mydb.commit()
+            if role == 'Admin':
+                found = False
+                while found==False:
+                    card = random.randint(10**7,10**8-1)
+                    cursor.execute('SELECT * FROM App_user WHERE card={}'.format(card))
+                    temp_list = cursor.fetchall()
+                    if temp_list:
+                        continue
+                    else:
+                        found == True
+                        cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
+                        mydb.commit()
+                        break
+                return flask.jsonify({"user":"activated"})
             return flask.jsonify({"user":"activated"})
         else:
             cursor.execute('DELETE FROM App_user WHERE user_id={}'.format(user_id))
@@ -420,14 +435,111 @@ def approve_user():
 
 
 
-@app.route('/main_admin/all_borrows',methods = ['POST'])#3.1
+
+
+@app.route('/edit_book',methods = ['POST','PUT'])
+def edit_book():
+    if flask.request.method == 'POST':
+        data = flask.request.get_json(['body'])
+        cover = data['cover']
+        title = data['title']
+        summary = data['summary']
+        keywords = data['keywords']
+        categories = data['categories']
+        authors = data['authors']
+        publisher = data['publisher']
+        copies = data['copies']
+        isbn = data['isbn']
+        page_count = data['page_count']
+        username = data['username']
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+        school_id = cursor.fetchall()[0][0]
+        cursor.execute('SELECT * FROM Books WHERE isbn={}'.format(isbn))
+        result = cursor.fetchall()
+        if result:
+            cursor.execute('INSERT INTO Stores(school_id,isbn,copies) VALUES({},{},{})'.format(school_id,isbn,copies))
+            mydb.commit()
+            return flask.jsonify({'book':'existed'})
+        else:
+            cursor.execute('INSERT INTO Books(isbn,page_count,publisher,title,summary,m_cover_path) VALUES({},"{}","{}","{}","{}","{}")'.format(isbn,page_count,publisher,title,summary,cover))
+            mydb.commit()
+            cursor.execute('INSERT INTO Stores(school_id,isbn,copies) VALUES({},{},{})'.format(school_id,isbn,copies))
+            mydb.commit()
+            for x in authors:
+                x = x.lstrip()
+                temp = x.split(' ')
+                cursor.execute('INSERT INTO Authors(isbn,first_name,last_name) VALUES({},"{}","{}")'.format(isbn,temp[0],temp[1]))
+                mydb.commit()
+            cursor.execute('INSERT INTO Keywords(isbn,keyword) VALUES({},"{}")'.format(isbn,keywords))
+            mydb.commit()
+            cursor.execute('INSERT INTO Categories(isbn,category) VALUES({},"{}")'.format(isbn,categories))
+            mydb.commit()
+            return flask.jsonify({'book':'added'})
+    elif flask.request.method == 'PUT':
+        data = flask.request.get_json(['body'])
+        cover = data['cover']
+        title = data['title']
+        summary = data['summary']
+        keywords = data['keywords']
+        categories = data['categories']
+        authors = data['authors']
+        publisher = data['publisher']
+        copies = data['copies']
+        isbn = data['isbn']
+        page_count = data['page_count']
+        username = data['username']
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        keywords = ','.join(keywords)
+        categories = ','.join(categories)
+        cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+        school_id = cursor.fetchall()[0][0]
+        cursor.execute('UPDATE Books SET title="{}",summary="{}",page_count={},m_cover_path="{}",publisher="{}" WHERE Books.isbn={}'.format(title,summary,page_count,cover,publisher,isbn))
+        mydb.commit()
+        cursor.execute('UPDATE Stores SET copies={} WHERE school_id={} AND isbn={}'.format(copies,school_id,isbn))
+        mydb.commit()
+        cursor.execute('DELETE FROM Authors WHERE isbn={}'.format(isbn))
+        cursor.execute('DELETE FROM Categories WHERE isbn={}'.format(isbn))
+        cursor.execute('DELETE FROM Keywords WHERE isbn={}'.format(isbn))
+        for x in authors:
+            x = x.lstrip()
+            temp = x.split(' ')
+            cursor.execute('INSERT INTO Authors(isbn,first_name,last_name) VALUES({},"{}","{}")'.format(isbn,temp[0],temp[1]))
+            mydb.commit()
+        cursor.execute('INSERT INTO Keywords(isbn,keyword) VALUES({},"{}")'.format(isbn,keywords))
+        mydb.commit()
+        cursor.execute('INSERT INTO Categories(isbn,category) VALUES({},"{}")'.format(isbn,categories))
+        mydb.commit()
+        return flask.jsonify({'book':'edited'})
+    
+
+
+@app.route('/book_remove', methods = ['PUT'])
+def delete_book():
+    data = flask.request.get_json(['body'])
+    username = data['username']
+    isbn = data['isbn']
+    cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
+    school_id = cursor.fetchall()[0][0]
+    cursor.execute('DELETE FROM Stores WHERE school_id={} AND isbn={}'.format(school_id,isbn))
+    mydb.commit()
+    return flask.jsonify({'delete':'success'})
+
+
+@app.route('/main_admin/all_borrows',methods = ['POST'])
 @cross_origin(headers = ['Content-Type'])
 def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
     data = route_functions.fallborrows_schools(month)
-    result = [dict(zip(('name','school_id','count'),x)) for x in data]
-    return flask.jsonify(result)
+    mydb.commit()
+    if data:
+        result = [dict(zip(('name','city','school_id','count'),x)) for x in data]
+        return flask.jsonify(result)
+    else:
+        return flask.jsonify({'borrows':'none'})
 
 @app.route('/main_admin/category_search',methods = ['POST'])#3.2
 @cross_origin(headers = ['Content-Type'])
