@@ -69,6 +69,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
 
 
     const Query8 = () => {
+        setQuery(8);
         setRoute2('query');
     }
 

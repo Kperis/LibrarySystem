@@ -114,7 +114,8 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    setData(data.result);
+                    // console.log(data);
                     
                 })
                 break;
@@ -161,24 +162,12 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 break;
             case 8:
-            fetch('http://localhost:5000/main_admin/all_borrows',{
-                method: 'post',
-                headers: {
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify({
-                    month: month
-                })
+            fetch('http://localhost:5000/main_admin/5_less_top',{
+                method: 'get'
             })
             .then(response => response.json())
             .then(data => {
-                if(data?.borrow === 'none'){
-                    setData([]);
-                }
-                else{
-                    setData(data);
-                }
-                
+                setData(data.result);
             })
             break;
             default:
