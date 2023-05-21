@@ -25,7 +25,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
 
                     const diffTime = Math.abs(date2-date1);
                     const diffDays = Math.ceil(diffTime / (1000*60*60*24));
-                    return diffDays > 7
+                    return (diffDays > 7 && book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()))
                 })
                 setArr(temp);
             }

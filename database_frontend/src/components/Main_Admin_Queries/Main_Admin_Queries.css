@@ -1,0 +1,15 @@
+.queries_container{
+    display: flex;
+    gap: 18px;
+    border: 1px solid white;
+    border-radius: 6px;
+    width: 60%;
+    height: 60px;
+    text-align: center;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 20px;
+    padding: 20px;
+    margin: 20px auto 0px auto;
+    color: rgb(227, 179, 91);
+}

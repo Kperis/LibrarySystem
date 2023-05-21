@@ -557,7 +557,7 @@ def borrows_of_schools():
     data = route_functions.fallborrows_schools(month)
     mydb.commit()
     if data:
-        result = [dict(zip(('name','city','school_id','count'),x)) for x in data]
+        result = [dict(zip(('info1','info2','info4','info3'),x)) for x in data]
         return flask.jsonify(result)
     else:
         return flask.jsonify({'borrows':'none'})
