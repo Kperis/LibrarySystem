@@ -404,7 +404,7 @@ def fno_borrows_authors():
                     GROUP BY first_name,last_name;')
     data = cursor.fetchall()
     for item in data:
-        result.append(item[0])
+        result.append(str(item[0])+' '+str(item[1]))
     return result
 def same_borrows_admin():
 
