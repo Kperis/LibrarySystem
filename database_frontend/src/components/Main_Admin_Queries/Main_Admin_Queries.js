@@ -141,24 +141,12 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
             })
             break;
             case 7:
-                fetch('http://localhost:5000/main_admin/all_borrows',{
-                    method: 'post',
-                    headers: {
-                        'Content-Type':'application/json'
-                    },
-                    body: JSON.stringify({
-                        month: month
-                    })
+                fetch('http://localhost:5000/main_admin/top_3_category_combinations',{
+                    method: 'get'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if(data?.borrow === 'none'){
-                        setData([]);
-                    }
-                    else{
-                        setData(data);
-                    }
-                    
+                    console.log(data);
                 })
                 break;
             case 8:

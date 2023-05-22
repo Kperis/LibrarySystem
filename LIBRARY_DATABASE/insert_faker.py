@@ -97,7 +97,7 @@ def create_objects(N_Schools,N_Users):
     Insert_Users(N_Users)
     Insert_Authentication()
 
-create_objects(10,100)
+create_objects(4,50)
 
 #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 

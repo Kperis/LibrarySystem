@@ -112,7 +112,7 @@ def list_authors(authores):
     return author_names
 
 
-No_of_books = 200
+No_of_books = 300
 
 list_of_categories = ['science_fiction','fantasy','romance','mystery','drama','action_&_adventure','history']
 
