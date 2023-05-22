@@ -239,7 +239,7 @@ def fallborrows_schools(month):
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE YEAR(Borrow.acquire_date) = YEAR(CURDATE()) \
-                        GROUP BY School.school_id;')
+                        GROUP BY School.school_id ORDER BY count_ev DESC;')
         result = cursor.fetchall()
         return result
 
@@ -253,7 +253,7 @@ def fallborrows_schools(month):
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE MONTH(Borrow.acquire_date) = {} \
-                        GROUP BY School.school_id;'.format(num_month))
+                        GROUP BY School.school_id ORDER BY count_ev DESC;'.format(num_month))
         result = cursor.fetchall()
         return result
 
@@ -338,7 +338,7 @@ def top_teachers():
                     INNER JOIN Books \
                     ON Books.isbn = Borrow.isbn \
                     WHERE App_user.age < 40 AND App_user.type = "Καθηγητής" \
-                    GROUP BY App_user.first_name,App_user.last_name \
+                    GROUP BY App_user.first_name,App_user.last_name ORDER BY count_borrows DESC\
                     LIMIT 10;')
     data = cursor.fetchall()
     for item in data:
