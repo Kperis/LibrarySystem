@@ -89,23 +89,11 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 break;
             case 4:
                 fetch('http://localhost:5000/main_admin/top_teachers',{
-                    method: 'post',
-                    headers: {
-                        'Content-Type':'application/json'
-                    },
-                    body: JSON.stringify({
-                        month: month
-                    })
+                    method: 'get'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if(data?.borrow === 'none'){
-                        setData([]);
-                    }
-                    else{
-                        setData(data);
-                    }
-                    
+                    console.log(data);
                 })
                 break;
             case 5:
@@ -146,7 +134,7 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    setData(data.result);
                 })
                 break;
             case 8:

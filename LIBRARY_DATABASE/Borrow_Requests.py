@@ -17,8 +17,8 @@ database = "schooldatabasev4"
 cursor = mydb.cursor(buffered = True)
 
 
-for i in range(60):
-    cursor.execute('SELECT * FROM App_user WHERE type="Μαθητής" ORDER BY RAND() LIMIT 1')
+for i in range(80):
+    cursor.execute('SELECT * FROM App_user WHERE type="Μαθητής" OR type="Καθηγητής" ORDER BY RAND() LIMIT 1')
     result = cursor.fetchall()[0]
     user_id = result[0]
     school_id = result[1]
