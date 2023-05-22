@@ -32,7 +32,7 @@ WHERE Categories.category = "romance" AND App_user.type = "Καθηγητής"
 GROUP BY App_user.first_name,App_user.last_name;
 
 --1.3 Main_Admin
-SELECT CONCAT(App_user.first_name," ",App_user.last_name)
+SELECT CONCAT(App_user.first_name," ",App_user.last_name),COUNT(*) AS count_borrows
 FROM App_user
 INNER JOIN Borrow
 ON Borrow.user_id = App_user.user_id
@@ -40,7 +40,7 @@ INNER JOIN Books
 ON Books.isbn = Borrow.isbn
 WHERE App_user.age < 40 AND App_user.type = "Καθηγητής"
 GROUP BY App_user.first_name,App_user.last_name
-HAVING COUNT(*) > 20 LIMIT 10;
+LIMIT 10;
 
 --1.4 Main_Admin
 SELECT first_name,last_name,isbn FROM (

@@ -331,7 +331,7 @@ def fteachers_category(category):
 
 def top_teachers():
     result = []
-    cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name) \
+    cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name) ,COUNT(*) AS count_borrows\
                     FROM App_user \
                     INNER JOIN Borrow \
                     ON Borrow.user_id = App_user.user_id \
@@ -339,10 +339,10 @@ def top_teachers():
                     ON Books.isbn = Borrow.isbn \
                     WHERE App_user.age < 40 AND App_user.type = "Καθηγητής" \
                     GROUP BY App_user.first_name,App_user.last_name \
-                    HAVING COUNT(*) > 20 LIMIT 10;')
+                    LIMIT 10;')
     data = cursor.fetchall()
     for item in data:
-        result.append(item[0])
+        result.append(str(item[0])+' '+str(item[1]))
     return result
 
 
