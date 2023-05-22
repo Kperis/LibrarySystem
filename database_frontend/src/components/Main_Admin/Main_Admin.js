@@ -9,7 +9,8 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
 
     const [route2,setRoute2] = useState('main');
     const [userList,setUserList] = useState([]);
-    const [showSelect,setShowSelect] = useState(false);
+    const [showMonths,setShowMonths] = useState(false);
+    const [showCategories,setShowCategories] = useState(false);
     const [query,setQuery] = useState(0);
 
     useEffect(()=>{
@@ -34,12 +35,14 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query1 = () => {
-        setShowSelect(true);
+        setShowMonths(true);
         setQuery(1);
         setRoute2('query');
     }
 
     const Query2 = () => {
+        setShowCategories(true);
+        setQuery(2);
         setRoute2('query');
     }
 
@@ -52,6 +55,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query5 = () => {
+        setQuery(5);
         setRoute2('query');
     }
 
@@ -65,6 +69,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
 
 
     const Query8 = () => {
+        setQuery(8);
         setRoute2('query');
     }
 
@@ -76,7 +81,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     return(
         <div>
             <div className="Nav_p">
-                <p onClick={()=> {setRoute2('main'); setShowSelect(false)}}>Home</p>
+                <p onClick={()=> {setRoute2('main'); setShowCategories(false); setShowMonths(false); }}>Home</p>
                 <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
                 <p onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
             </div>
@@ -111,7 +116,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                         </ul>
                     </div>
                     :   (route2==='query'
-                        ?   <Main_Admin_Queries showSelect={showSelect} query={query} resetQuery={resetQuery}/>
+                        ?   <Main_Admin_Queries showMonths={showMonths} showCategories={showCategories} query={query} resetQuery={resetQuery}/>
                         :   <Approve user={user} should_load={true} banMode={false}/>
                         )
             }
