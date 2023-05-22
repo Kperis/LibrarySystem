@@ -517,7 +517,7 @@ def top_three_comb():
                                     ON Books.isbn = Borrow.isbn \
                                     INNER JOIN Categories \
                                     ON Categories.isbn = Books.isbn) k \
-                            ON o.isbn = k.isbn \
+                            ON o.borrow_id = k.borrow_id \
                             WHERE o.category != k.category \
                             GROUP BY category_comb) l \
                     ORDER BY count_combination DESC \
