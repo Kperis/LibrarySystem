@@ -1,4 +1,5 @@
 import React, { useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 
 const SignIn = ({loadUser, onRouteChange}) => {
@@ -7,7 +8,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
-    
+    const navigate = useNavigate();
 
     const onSubmitSignin = () =>{
         fetch('http://localhost:5000/signin', {
@@ -24,9 +25,11 @@ const SignIn = ({loadUser, onRouteChange}) => {
             if(user?.user_id && user.approved===1){
                 if(user.role === 'Main_Admin'){
                     loadUser(user,'Main_Admin');
+                    navigate('/');
                 }
                 else{
                     loadUser(user,'home');
+                    navigate('/');
                 }
             }
             else{

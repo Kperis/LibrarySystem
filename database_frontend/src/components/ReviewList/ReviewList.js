@@ -8,6 +8,7 @@ const ReviewList = ({user,should_load}) =>{
     const [count2,setCount2] = useState(0);
     const [mean_score,setMeanScore] = useState([]);
     const [showMean,setShowMean] = useState(false);
+    const [showCat, setShowCat] = useState(false);
 
     useEffect(()=>{
         fetchRevs();
@@ -15,7 +16,7 @@ const ReviewList = ({user,should_load}) =>{
 
     useEffect(()=>{
 
-    },[showMean])
+    },[showMean,showCat])
 
     const fetchRevs = () =>{
         if(should_load){
@@ -32,7 +33,6 @@ const ReviewList = ({user,should_load}) =>{
             .then(response => response.json())
             .then(data => {
                 setReviews(data);
-                console.log(data);
             })
     }
     }
@@ -72,11 +72,14 @@ const ReviewList = ({user,should_load}) =>{
         })
         .then(response => response.json())
         .then(data => {
-            setMeanScore(data)
-            console.log(data);
+            setMeanScore(data);
         })
 
-        if(showMean){
+        if(showCat){
+            setShowCat(false);
+            setShowMean(true);
+        }
+        else if(showMean){
             setShowMean(false);
         }
         else{
@@ -85,21 +88,43 @@ const ReviewList = ({user,should_load}) =>{
     
     }
 
+    const onMeanScoreCategory = () =>{
+        fetch('http://localhost:5000/mean_score_category', {
+            method: 'get'
+        })
+        .then(response => response.json())
+        .then(data => {
+            setMeanScore(data);
+            if(showMean){
+                setShowMean(false);
+                setShowCat(true);
+            }
+            else if(showCat) {
+                setShowCat(false);
+            }
+            else{
+                setShowCat(true);
+            }
+        })
+
+    }
+
+
     return(
         <div>
             <div className='review_box2'> 
                 <div className="average_score">
                     <button onClick={() => onMeanScore()}>Show Average Review score per user</button>
-                    <button>Show Average Review score per category</button>
+                    <button onClick={() => onMeanScoreCategory()} >Show Average Review score per category</button>
                 </div>
                     {
-                        !showMean
+                        !showMean && !showCat
                         ? reviews.map((review,index) => {
                             return(
                                 <div key={index}>
                                     <div className="review_container2">
                                         <div>
-                                            <Reviews className='review_to_approve' showMeanBool={showMean} show_desc={true} title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
+                                            <Reviews className='review_to_approve' show_desc={true} title={review.title} date={review.review_date} submited_by={review.first_name.concat(' ',review.last_name)} show_title={true} score={review.score} desc={review.description}/>
                                         </div>
                                         <button onClick={() => onApproveReview(1,review.isbn,review.username)}>Approve</button>
                                         <button onClick={() => onApproveReview(0,review.isbn,review.username)}>Reject</button>
@@ -113,7 +138,7 @@ const ReviewList = ({user,should_load}) =>{
                                 <div key={index}>
                                     <div  className="review_container2">
                                         <div>
-                                            <Reviews className='review_to_approve' showMeanBool={showMean}  submited_by={review.first_name.concat(' ',review.last_name)} show_desc={false} show_title={false} score={review.mean} number={review.number}/>
+                                            <Reviews className='review_to_approve' showCat={showCat} category={review.first_name} submited_by={review?.first_name.concat(' ',review?.last_name)} show_desc={false} show_title={false} score={review?.mean}/>
                                         </div>
                                     </div>
                                 </div>

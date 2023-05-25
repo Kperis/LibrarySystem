@@ -160,36 +160,36 @@ def freview_school(school_id):
     return result
 
 def fmean_score_user(school_id):
-    cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,Review.score \
+    cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,ROUND(AVG(Review.score),2) \
                    FROM Review \
                    JOIN App_user \
                    ON Review.user_id = App_user.user_id \
                    JOIN School \
                    ON School.school_id = App_user.school_id \
-                   WHERE School.school_id = {} AND Review.approved = 1'.format(school_id))
+                   WHERE School.school_id = {} AND Review.approved = 1 GROUP BY App_user.user_id'.format(school_id))
     data = cursor.fetchall()
     mydb.commit()
-    user_id_list = []
-    result = []
-    for item in data:
-        if user_id_list.count(item[0]) == 0:
-            user_id_list.append(item[0])
-            dictionary = {}
-            dictionary['user_id'] = item[0]
-            dictionary['first_name'] = item[1]
-            dictionary['last_name'] = item[2]
-            result.append(dictionary)
+    # user_id_list = []
+    # result = []
+    # for item in data:
+    #     if user_id_list.count(item[0]) == 0:
+    #         user_id_list.append(item[0])
+    #         dictionary = {}
+    #         dictionary['user_id'] = item[0]
+    #         dictionary['first_name'] = item[1]
+    #         dictionary['last_name'] = item[2]
+    #         result.append(dictionary)
 
-    for i in range(len(user_id_list)):
-         result[i]['mean'] = 0
-         result[i]['number'] = 0
-    for item in data:
-        for i in range(len(result)):
-            if result[i]['user_id'] == item[0]:
-                break
-        result[i]['number'] += 1
-        result[i]['mean'] += item[3]
-    return result    
+    # for i in range(len(user_id_list)):
+    #      result[i]['mean'] = 0
+    #      result[i]['number'] = 0
+    # for item in data:
+    #     for i in range(len(result)):
+    #         if result[i]['user_id'] == item[0]:
+    #             break
+    #     result[i]['number'] += 1
+    #     result[i]['mean'] += item[3]
+    return data    
     
 # def fallborrows_schools(month):
 #     months = ['January','February','March','April','May','June','July','August','September','October','November','December','all']
@@ -419,7 +419,7 @@ def same_borrows_admin():
                         GROUP BY App_user.admin_id \
                         HAVING COUNT(*) > 0) o \
                     ON App_user.user_id = o.admin_id \
-                    WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = 2023 \
+                    WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = YEAR(CURDATE()) \
                     ORDER BY o.count_ev;')
     data = cursor.fetchall()
     num = 0

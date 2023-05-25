@@ -114,31 +114,9 @@ def sign_in():
                 return flask.jsonify({"result": "failure","data":0})
     except:
         return flask.jsonify({'user':'none'})
-    try:
-        cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
-                        FROM Authentication JOIN App_user \
-                        ON App_user.user_id = Authentication.user_id JOIN School \
-                        ON School.school_id = App_user.school_id \
-                        WHERE Authentication.user_id = {} AND App_user.approved=1'.format(user_id))
-        result = cursor.fetchall()
-        if result:
-            return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8]})
-        else:
-            return flask.jsonify({'user':'none'})
-    except:
-        print(user_id)
-        cursor.execute('SELECT Authentication.username\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved \
-                       FROM Authentication JOIN App_user ON App_user.user_id=Authentication.user_id WHERE Authentication.user_id={}'.format(user_id))
-        result = cursor.fetchall()
-        if result:
-            return flask.jsonify({'username':result[0][0],'first_name':result[0][1],'last_name':result[0][2],'role':result[0][3],'age':result[0][4],'approved':result[0][5],'user_id':user_id})
-        else:
-            return flask.jsonify({"result": "failure","data":0})
-    return flask.jsonify({"result": "failure","data":0})
-    # else:
-    #     return 1
+   
+
+
 
 @app.route('/books',methods = ['POST'])
 @cross_origin(headers=['Content-Type'])
@@ -164,8 +142,10 @@ def books():
             cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(book_dict[i]['isbn']))
             keywords = cursor.fetchall()
             book_dict[i]['keywords'] = keywords
-
-    #cursor.execute('SELECT Keywords.keyword FROM Keywords JOIN 
+        for i in range(len(book_dict)):
+            cursor.execute('SELECT Categories.category FROM Categories WHERE isbn = {}'.format(book_dict[i]['isbn']))
+            category = cursor.fetchall()
+            book_dict[i]['category'] = category
         return flask.jsonify(book_dict)
     else:
         return flask.jsonify({'books':'none'})
@@ -191,6 +171,10 @@ def borrow():
                     cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(borrow_dict[i]['isbn']))
                     keywords = cursor.fetchall()
                     borrow_dict[i]['keywords'] = keywords
+                for i in range(len(borrow_dict)):
+                    cursor.execute('SELECT Categories.category FROM Categories WHERE isbn = {}'.format(borrow_dict[i]['isbn']))
+                    category = cursor.fetchall()
+                    borrow_dict[i]['category'] = category
                 return flask.jsonify(borrow_dict)
             else:
                 return flask.jsonify({'borrows':'none'})
@@ -237,6 +221,10 @@ def request():
                     cursor.execute('SELECT Keywords.keyword FROM Keywords WHERE isbn = {}'.format(request_dict[i]['isbn']))
                     keywords = cursor.fetchall()
                     request_dict[i]['keywords'] = keywords
+                for i in range(len(request_dict)):
+                    cursor.execute('SELECT Categories.category FROM Categories WHERE isbn = {}'.format(request_dict[i]['isbn']))
+                    category = cursor.fetchall()
+                    request_dict[i]['category'] = category
                 return flask.jsonify(request_dict)
             else:
                 return flask.jsonify({'requests':'none'})
@@ -371,10 +359,29 @@ def changeSchool():
 def mean_scores():
     data = flask.request.get_json(['body'])
     username = data['username']
-
     school_id = route_functions.fschool_username(username)
     result = route_functions.fmean_score_user(school_id)
-    return flask.jsonify(result)
+    print(result)
+    if result:
+        reviews_dict = [dict(zip(('user_id','first_name','last_name','mean'),x))for x in result]
+        return flask.jsonify(reviews_dict)
+    else:
+        return flask.jsonify({'none':'none'})
+
+
+@app.route('/mean_score_category',methods = ['GET'])
+@cross_origin(headers = ['Content-Type'])
+def mean_score_cat():
+    cursor.execute('SELECT Categories.category, ROUND(AVG(Review.score),2) AS AR \
+                    FROM Categories JOIN Review ON Review.isbn=Categories.isbn \
+                    WHERE Review.approved=1 GROUP BY Categories.category ORDER BY AR DESC')
+    data = cursor.fetchall()
+    if data:
+        reviews_dict = [dict(zip(('first_name','mean'),x))for x in data]
+        return reviews_dict
+    else:
+        return flask.jsonify({'none':'none'})
+
 
 @app.route('/user_approve',methods = ['POST','PUT'])
 def approve_user():
