@@ -1,17 +1,16 @@
 import React from "react";
 import './Reviews.css'
 
-const Reviews = ({score, submited_by, desc,show_title,title,show_desc,number,showMeanBool}) =>{
+const Reviews = ({score, submited_by, desc,show_title,title,show_desc, showCat, category}) =>{
 
     return(
         <div className="review">
             <div>
-                <span>{`${submited_by}:`}</span>
-                {
-                    showMeanBool
-                    ? <span>{`${(score/number).toFixed(2)}`}</span>
-                    : <span>{`${score}`}</span>
-                }   
+                {showCat
+                    ?   <span>{`${category}`}</span>
+                    :   <span>{`${submited_by}:`}</span>
+                }
+                <span>{`${score}`}</span>
                 {
                     show_title
                     ?   <span>{`${title}`}</span>

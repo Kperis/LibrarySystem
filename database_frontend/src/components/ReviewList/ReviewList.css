@@ -1,6 +1,6 @@
 .review_box2{
     width: 1400px;
-    margin: 50px auto auto 40px;
+    margin: 50px auto 40px auto;
 }
 
 .review_container2{
@@ -36,6 +36,10 @@
 
 .review_container2>div{
     width: 1000px;
+}
+
+.average_score{
+    margin: 0px auto 0px auto;
 }
 
 .average_score>button{

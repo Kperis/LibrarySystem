@@ -148,36 +148,36 @@ def freview_school(school_id):
     return result
 
 def fmean_score_user(school_id):
-    cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,Review.score \
+    cursor.execute('SELECT App_user.user_id,App_user.first_name,App_user.last_name,ROUND(AVG(Review.score),2) \
                    FROM Review \
                    JOIN App_user \
                    ON Review.user_id = App_user.user_id \
                    JOIN School \
                    ON School.school_id = App_user.school_id \
-                   WHERE School.school_id = {} AND Review.approved = 1'.format(school_id))
+                   WHERE School.school_id = {} AND Review.approved = 1 GROUP BY App_user.user_id'.format(school_id))
     data = cursor.fetchall()
     mydb.commit()
-    user_id_list = []
-    result = []
-    for item in data:
-        if user_id_list.count(item[0]) == 0:
-            user_id_list.append(item[0])
-            dictionary = {}
-            dictionary['user_id'] = item[0]
-            dictionary['first_name'] = item[1]
-            dictionary['last_name'] = item[2]
-            result.append(dictionary)
+    # user_id_list = []
+    # result = []
+    # for item in data:
+    #     if user_id_list.count(item[0]) == 0:
+    #         user_id_list.append(item[0])
+    #         dictionary = {}
+    #         dictionary['user_id'] = item[0]
+    #         dictionary['first_name'] = item[1]
+    #         dictionary['last_name'] = item[2]
+    #         result.append(dictionary)
 
-    for i in range(len(user_id_list)):
-         result[i]['mean'] = 0
-         result[i]['number'] = 0
-    for item in data:
-        for i in range(len(result)):
-            if result[i]['user_id'] == item[0]:
-                break
-        result[i]['number'] += 1
-        result[i]['mean'] += item[3]
-    return result    
+    # for i in range(len(user_id_list)):
+    #      result[i]['mean'] = 0
+    #      result[i]['number'] = 0
+    # for item in data:
+    #     for i in range(len(result)):
+    #         if result[i]['user_id'] == item[0]:
+    #             break
+    #     result[i]['number'] += 1
+    #     result[i]['mean'] += item[3]
+    return data    
     
 
 
@@ -198,7 +198,7 @@ def fallborrows_schools(month):
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE YEAR(Borrow.acquire_date) = YEAR(CURDATE()) \
-                        GROUP BY School.school_id;')
+                        GROUP BY School.school_id ORDER BY count_ev DESC;')
         result = cursor.fetchall()
         return result
 
@@ -212,7 +212,7 @@ def fallborrows_schools(month):
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
                         WHERE MONTH(Borrow.acquire_date) = {} \
-                        GROUP BY School.school_id;'.format(num_month))
+                        GROUP BY School.school_id ORDER BY count_ev DESC;'.format(num_month))
         result = cursor.fetchall()
         return result
 
@@ -265,7 +265,7 @@ def top_teachers():
                     INNER JOIN Books \
                     ON Books.isbn = Borrow.isbn \
                     WHERE App_user.age < 40 AND App_user.type = "Καθηγητής" \
-                    GROUP BY App_user.first_name,App_user.last_name \
+                    GROUP BY App_user.first_name,App_user.last_name ORDER BY count_borrows DESC\
                     LIMIT 10;')
     data = cursor.fetchall()
     for item in data:
@@ -312,7 +312,11 @@ def same_borrows_admin():
                         GROUP BY App_user.admin_id \
                         HAVING COUNT(*) > 0) o \
                     ON App_user.user_id = o.admin_id \
+<<<<<<< HEAD
                     WHERE o.count_ev > 0 AND YEAR(o.acquire_date) = 2023 \
+=======
+                    WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = YEAR(CURDATE()) \
+>>>>>>> b2b20163178a304e972d91393c7de94b57499453
                     ORDER BY o.count_ev;')
     data = cursor.fetchall()
     num = 0

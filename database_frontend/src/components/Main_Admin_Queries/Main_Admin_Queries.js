@@ -47,7 +47,7 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if(data?.borrow === 'none'){
+                    if(data?.borrows === 'none'){
                         setData([]);
                     }
                     else{
@@ -89,23 +89,11 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 break;
             case 4:
                 fetch('http://localhost:5000/main_admin/top_teachers',{
-                    method: 'post',
-                    headers: {
-                        'Content-Type':'application/json'
-                    },
-                    body: JSON.stringify({
-                        month: month
-                    })
+                    method: 'get'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if(data?.borrow === 'none'){
-                        setData([]);
-                    }
-                    else{
-                        setData(data);
-                    }
-                    
+                    setData(data.result);
                 })
                 break;
             case 5:
@@ -120,24 +108,12 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 break;
             case 6:
-            fetch('http://localhost:5000/main_admin/all_borrows',{
-                method: 'post',
-                headers: {
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify({
-                    month: month
-                })
+            fetch('http://localhost:5000/main_admin/same_borrows_admin',{
+                method: 'get' 
             })
             .then(response => response.json())
             .then(data => {
-                if(data?.borrow === 'none'){
-                    setData([]);
-                }
-                else{
-                    setData(data);
-                }
-                
+                console.log(data);
             })
             break;
             case 7:
@@ -146,7 +122,7 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    setData(data.result);
                 })
                 break;
             case 8:

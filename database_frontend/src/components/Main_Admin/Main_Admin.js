@@ -47,10 +47,13 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query3 = () => {
+        setShowCategories(true);
+        setQuery(3);
         setRoute2('query');
     }
     
     const Query4 = () => {
+        setQuery(4);
         setRoute2('query');
     }
 
@@ -60,6 +63,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query6 = () => {
+        setQuery(6);
         setRoute2('query');
     }
 

@@ -5,21 +5,20 @@ import BookTemplate from '../BookTemplate/BookTemplate';
 
 const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
 
-    const [category, setCategory] = useState('All');
+    const [category, setCategory] = useState('all');
     const [authorsearch, setAuthorSearch] = useState('');
     const [titlesearch, setTitleSearch] = useState('');
     const [booklist,setBooklist] = useState([]);
 
     useEffect(() =>{
         let temp = books.filter(book => {
-            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())});
+            return book.title.toLowerCase().includes(titlesearch.toLowerCase()) && book.authors.some(author => {return author[0].toLowerCase().includes(authorsearch.toLowerCase())}) && (book.category.some(categorychoice => {return categorychoice[0].toLowerCase().includes(category.toLowerCase())}) || category == 'all');
         })
         setBooklist(temp);
-    },[titlesearch,books,authorsearch,count2])
+    },[titlesearch,books,authorsearch,count2,category])
 
     const onBookClicked2 = (isbn) =>{
         onBookClicked(isbn);
-        
     }
 
     const onCategorySelect = (event) => {
@@ -68,9 +67,9 @@ const Books = ({books,onBookClicked,user,isonrequest,update_count,count2}) => {
                 <input className='searchbox' onChange={onTitleSearch} type='text' placeholder='Title..'/>
                 <input className='searchbox' onChange={onAuthorSearch} type='text' placeholder='Author..'/>
                 <select className='search_cat' onChange={onCategorySelect}> 
-                    <option value='' >All</option>
+                    <option value='all' >All</option>
                     <option value='Fantasy' >Fantasy</option>
-                    <option value='Sci-fi' >Sci-fi</option>
+                    <option value='Science fiction' >Sci-fi</option>
                     <option value='Romance' >Romance</option>
                     <option value='Mystery' >Mystery</option>
                     <option value='Drama' >Drama</option>
