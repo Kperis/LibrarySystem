@@ -76,6 +76,37 @@ JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date
 ON App_user.user_id = o.admin_id
 WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = 2023
 ORDER BY o.count_ev;
+--1.5 version 2
+SELECT * FROM(
+        SELECT CONCAT(App_user.first_name," ",App_user.last_name),o.count_ev
+        FROM App_user
+        JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date
+              FROM App_user
+              INNER JOIN School
+              ON School.school_id = App_user.school_id
+              INNER JOIN Borrow
+              ON Borrow.user_id = App_user.user_id
+              GROUP BY App_user.admin_id
+              HAVING COUNT(*) > 0) o
+        ON App_user.user_id = o.admin_id
+        WHERE o.count_ev > 0 AND YEAR(o.acquire_date) = 2023
+        ) t
+        WHERE t.count_ev IN (
+                SELECT l.count_ev
+                FROM App_user
+                JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date
+                      FROM App_user
+                      INNER JOIN School
+                      ON School.school_id = App_user.school_id
+                      INNER JOIN Borrow
+                      ON Borrow.user_id = App_user.user_id
+                      GROUP BY App_user.admin_id
+                      HAVING COUNT(*) > 0) l
+                ON App_user.user_id = l.admin_id
+                WHERE l.count_ev > 0 AND YEAR(l.acquire_date) = 2023
+                GROUP BY l.count_ev
+                HAVING COUNT(*) > 1)
+ORDER BY t.count_ev
 
 --1.7 Main_Admin
 SELECT CONCAT(first_name," ",last_name)
