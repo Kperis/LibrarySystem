@@ -39,7 +39,11 @@ class school_provider:
         number = self.name_num
         school_type = self.type[random.randint(0,3)]
         return '{}o {}'.format(number,school_type)
-
+    def get_phones(self):
+        result = []
+        for i in range(random.randint(1,3)):
+            result.append(fake.phone_number())
+        return result
 
 #Δημιουργεί κάποια απο τα απαραίτητα πεδία του App_user με χρήση της faker
 class user_provider:

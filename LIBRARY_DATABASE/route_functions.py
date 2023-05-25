@@ -312,11 +312,8 @@ def same_borrows_admin():
                         GROUP BY App_user.admin_id \
                         HAVING COUNT(*) > 0) o \
                     ON App_user.user_id = o.admin_id \
-<<<<<<< HEAD
-                    WHERE o.count_ev > 0 AND YEAR(o.acquire_date) = 2023 \
-=======
+                    --WHERE o.count_ev > 0 AND YEAR(o.acquire_date) = 2023 \
                     WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = YEAR(CURDATE()) \
->>>>>>> b2b20163178a304e972d91393c7de94b57499453
                     ORDER BY o.count_ev;')
     data = cursor.fetchall()
     num = 0
@@ -409,6 +406,10 @@ def delete_request(user_id,isbn):
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]
     cursor.execute('UPDATE Stores SET copies=copies-1 WHERE isbn={} AND school_id={}'.format(isbn,school_id))
+    mydb.commit()
+    cursor.execute('SELECT School.total_borrows FROM School WHERE School.school_id = {}'.format(school_id))
+    total_borrows = cursor.fetchall()[0][0]
+    cursor.execute('UPDATE School SET School.total_borrows = {} WHERE School.school_id = {}'.format(total_borrows+1,school_id))
     mydb.commit()
     return
 

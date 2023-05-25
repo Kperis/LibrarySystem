@@ -32,10 +32,18 @@ def Insert_Schools(N_Schools):
     for i in range(N_Schools):
         school = school_provider(fake)
         try:
-            cursor.execute('INSERT INTO School (name,city,email,address,total_borrows) VALUES ("{}","{}","{}","{}",0)'.format(school.get_name(),school.get_city(),school.get_email(),school.get_address()))
+            name = school.get_name()
+            city = school.get_city()
+            cursor.execute('INSERT INTO School (name,city,email,address,total_borrows) VALUES ("{}","{}","{}","{}",0)'.format(name,city,school.get_email(),school.get_address()))
+            phones = school.get_phones()
+            cursor.execute('SELECT School.school_id FROM School WHERE School.name = "{}" AND School.city = "{}"'.format(name,city))
+            school_id = cursor.fetchall()[0][0]
+            for phone in phones:
+                cursor.execute('INSERT INTO Phone (school_id,phone) VALUES ({},"{}")'.format(school_id,phone))
+                mydb.commit()
         except:
             print("probably duplicate entry")
-        mydb.commit()
+        # mydb.commit()
 
 #Προσθέτει στην βάση δεδομένων έναν Admin για κάθε σχολείο
 def Insert_Admins():
@@ -72,11 +80,10 @@ def Insert_Authentication():
         cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'\
                        .format(user_id[0],user.get_username(),user.get_password()))
         mydb.commit()
-
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     
-    sql_file = open("./sql_schemas/drop_schema.sql")  
+    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -97,7 +104,7 @@ def create_objects(N_Schools,N_Users):
     Insert_Users(N_Users)
     Insert_Authentication()
 
-create_objects(4,50)
+create_objects(10,200)
 
 #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
