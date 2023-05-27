@@ -179,4 +179,19 @@ ALTER TABLE Books ADD m_cover_path VARCHAR(70);
 ALTER TABLE Books MODIFY cover_path VARCHAR(70);
 ALTER TABLE Review ADD approved BIT;
 
+ALTER TABLE Borrow ADD active BIT;
 
+ALTER TABLE Stores
+ADD CONSTRAINT unique_book_school UNIQUE(isbn, school_id);
+
+ALTER TABLE Authors
+ADD CONSTRAINT unique_book_author UNIQUE(isbn,first_name,last_name);
+
+ALTER TABLE Categories
+ADD CONSTRAINT unique_book_category UNIQUE(isbn,category);
+
+ALTER TABLE Keywords
+ADD CONSTRAINT unique_book_keyword UNIQUE(isbn,keyword);
+
+ALTER TABLE Phone
+MODIFY COLUMN Phone.phone VARCHAR(10);
