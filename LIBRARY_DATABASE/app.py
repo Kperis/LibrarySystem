@@ -1,9 +1,8 @@
 # from flask import Flask,make_response,render_template
 # from flask import request
 import flask
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import mysql.connector as con
-from flask_mysqldb import MySQL
 from flask_cors import CORS,cross_origin
 # from flask import jsonify
 import route_functions
@@ -121,6 +120,7 @@ def sign_in():
 @app.route('/books',methods = ['POST'])
 @cross_origin(headers=['Content-Type'])
 def books():
+    delete_outdated_requests()
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
     school_city = data['city']
@@ -543,6 +543,27 @@ def edit_book():
         return flask.jsonify({'book':'edited'})
     
 
+@app.route('/main_admin/add_school', methods= ['POST'])
+def add_school_main_admin():
+    data = flask.request.get_json(['body'])
+    school_name = data['school_name']
+    school_city = data['school_city']
+    school_address = data['school_address']
+    school_email = data['school_email']
+    school_phone1 = data['school_phone1']
+    school_phone2 = data['school_phone2']
+    school_phone3 = data['school_phone3']
+    cursor.execute('INSERT INTO School(name,city,email,address,total_borrows) VALUES("{}","{}","{}","{}",0)'.format(school_name,school_city,school_email,school_address))
+    mydb.commit()
+    cursor.execute('SELECT school_id FROM School WHERE email="{}"'.format(school_email))
+    school_id = cursor.fetchall()[0][0]
+    cursor.execute('INSERT INTO Phone(school_id,phone) VALUES({},"{}")'.format(school_id,school_phone1))
+    cursor.execute('INSERT INTO Phone(school_id,phone) VALUES({},"{}")'.format(school_id,school_phone2))
+    cursor.execute('INSERT INTO Phone(school_id,phone) VALUES({},"{}")'.format(school_id,school_phone3))
+    mydb.commit()
+    return flask.jsonify({'success':'success'})
+
+
 
 @app.route('/book_remove', methods = ['PUT'])
 def delete_book():
@@ -621,6 +642,6 @@ def top_three_comb():
 
 if __name__ == "__main__":
     app.debug = True
-    delete_outdated_requests()
     app.run(threaded=True,debug = True, host="localhost", port = 5000)
+    
 

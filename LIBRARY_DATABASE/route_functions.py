@@ -1,8 +1,7 @@
 import app
 from flask import Flask,make_response,request,render_template
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import mysql.connector as con
-from flask_mysqldb import MySQL
 from flask_cors import CORS
 from flask import jsonify
 import datetime
@@ -312,7 +311,6 @@ def same_borrows_admin():
                         GROUP BY App_user.admin_id \
                         HAVING COUNT(*) > 0) o \
                     ON App_user.user_id = o.admin_id \
-                    --WHERE o.count_ev > 0 AND YEAR(o.acquire_date) = 2023 \
                     WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = YEAR(CURDATE()) \
                     ORDER BY o.count_ev;')
     data = cursor.fetchall()
