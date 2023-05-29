@@ -1,6 +1,6 @@
 import requests
 from flask import Flask,make_response,request,render_template
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
 import json
@@ -56,7 +56,7 @@ for i in range(70):
         cursor.execute('INSERT INTO Request(date_of_request,isbn,user_id) VALUES("{}",{},{})'.format(random_date,isbn,user_id))
         mydb.commit()
     
-for i in range(60):
+for i in range(40):
     result = data[random.randint(0,len(data)-1)]
     user_id = result[0]
     school_id = result[1]

@@ -1,0 +1,46 @@
+.add_school_form_container{
+    margin: 40px auto 80px auto;
+    padding: 20px;
+    width: 80%;
+    height: 600px;
+    border: solid white 2px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background-color: blueviolet;
+}
+
+.add_school_form_container > label{
+    color: rgb(56, 50, 50);
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.add_school_form_container > input{
+    width: 80%;
+    height: 36px;
+    border: solid black 1px;
+}
+
+.add_school_form_container > button{
+    margin-top: 20px;
+    width: 100px;
+    height: 50px;
+    background-color: rgb(7, 255, 185);
+    font-size: 16px;
+    font-weight: 600;
+    border: solid black 1px;
+    border-radius: 6px;
+    transition: all linear 0.2s;
+}
+
+.add_school_form_container > button:hover{
+    transform: scale(1.1);
+}
+
+.add_school_form_container > button:active{
+    transform: scale(0.9);
+}

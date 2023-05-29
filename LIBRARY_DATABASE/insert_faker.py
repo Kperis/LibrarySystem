@@ -2,8 +2,8 @@ from faker_data import school_provider,user_provider
 
 from faker import Faker
 from flask import Flask,make_response,request,render_template
-from app import app#,mysql
-from flask_mysqldb import MySQL
+from app import app
+# from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
 

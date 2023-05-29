@@ -3,6 +3,7 @@ import Main_Admin_Queries from "../Main_Admin_Queries/Main_Admin_Queries";
 import './Main_Admin.css';
 import '../Navigation/Navigation.css'
 import Approve from "../Approve/Approve";
+import Add_School from "../Add_School/Add_School";
 
 
 const Main_Admin = ({user,onSignout,onRouteChange}) =>{
@@ -88,6 +89,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
             <div className="Nav_p">
                 <p onClick={()=> {setRoute2('main'); setShowCategories(false); setShowMonths(false); }}>Home</p>
                 <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
+                <p onClick={()=> setRoute2('add_school')}>Add school</p>
                 <p onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
             </div>
             {route2 === 'main'
@@ -122,7 +124,10 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                     </div>
                     :   (route2==='query'
                         ?   <Main_Admin_Queries showMonths={showMonths} showCategories={showCategories} query={query} resetQuery={resetQuery}/>
-                        :   <Approve user={user} should_load={true} banMode={false}/>
+                        :   (route2 === 'approve'
+                                ?   <Approve user={user} should_load={true} banMode={false}/>
+                                :   <Add_School />    
+                           )
                         )
             }
            

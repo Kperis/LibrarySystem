@@ -1,6 +1,6 @@
 import requests
 from flask import Flask,make_response,request,render_template
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
 import json

@@ -1,7 +1,7 @@
 from faker import Faker
 from flask import Flask,make_response,request,render_template
-from app import app#,mysql
-from flask_mysqldb import MySQL
+from app import app
+# from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
 
@@ -51,7 +51,7 @@ class user_provider:
     def __init__(self,fake):
         user_provider.num_of_users+=1
         self.profile = fake.simple_profile()
-        self.type = random.choices(['Μαθητής', 'Καθηγητής', 'Χειριστής','Κεντρικός Χειριστής'],weights = [90,10,0,0])
+        self.type = random.choices(['Μαθητής', 'Καθηγητής', 'Χειριστής','Κεντρικός Χειριστής'],weights = [75,25,0,0])
     def get_first_name(self):
         return self.profile['name'].split(' ')[0]
     def get_last_name(self):
