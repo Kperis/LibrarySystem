@@ -5,6 +5,9 @@ import mysql.connector as con
 from flask_cors import CORS
 from flask import jsonify
 import datetime
+import os
+import time
+import insert_faker
 
 
 
@@ -429,4 +432,12 @@ def approve_review(isbn,username):
                    WHERE Review.isbn = {} AND Review.user_id = {}'.format(isbn,user_id))
     mydb.commit()
     return
+
+def run_backup():
+    #FIRSTLY WE TRUNCATE THE TABLES
+    print(" i am also here for a reason")
+    insert_faker.Empty_Tables()
+    insert_faker.Drop_Tables()
+    insert_faker.backup()
+
 

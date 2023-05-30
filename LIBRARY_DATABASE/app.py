@@ -11,6 +11,9 @@ import json
 from datetime import date
 from datetime import datetime
 
+global backup_running
+backup_running = True
+
 app = flask.Flask(__name__)
 cors = CORS(app,resources={
     r"/*":{
@@ -40,8 +43,6 @@ def delete_outdated_requests():
         if difference.days > 7:
             cursor.execute('DELETE FROM Request WHERE Request.request_id = {}'.format(data[i][0]))
             mydb.commit()
-
-
 
 
 @app.route('/register', methods=['GET','POST'])
@@ -639,9 +640,16 @@ def top_three_comb():
     dir = {"result":result}
     return dir
 
+@app.route('/main_admin/run_backup',methods = ['PUT'])
+@cross_origin(headers = ['Content-Type'])
+def run_backup():
+    print("what the hell i am doing here")
+    route_functions.run_backup()
+    return {"result":"backup installed"}
 
 if __name__ == "__main__":
     app.debug = True
     app.run(threaded=True,debug = True, host="localhost", port = 5000)
+
     
 

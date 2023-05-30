@@ -82,6 +82,21 @@ def Insert_Authentication():
         mydb.commit()
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
+    print("what the hell i am doing here")
+    sql_file = open("LIBRARY_DATABASE/sql_schemas/truncate_schema.sql")  
+    
+    sql_string = sql_file.read().split(';')
+    print(sql_string)
+    for row in sql_string:
+        try:
+            if(row[0] == '\n'):
+                cursor.execute(row[1:])
+            else:
+                cursor.execute(row)
+        except:
+            print("error")
+
+def Drop_Tables():
     
     sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
     
@@ -95,6 +110,19 @@ def Empty_Tables():
                 cursor.execute(row)
         except:
             print("error")
+def backup():
+    with open('C:\\users\\ggeor\\backup_database_project\\schooldatabasev4-2023-05-30_10-37.sql', 'r',encoding="utf8") as sql_file:
+        try:
+            result_iterator = cursor.execute(sql_file.read(), multi=True)
+            for res in result_iterator:
+                try:
+                    print("Running query: ", res)  # Will print out a short representation of the query
+                    print(f"Affected {res.rowcount} rows" )
+                except Exception:
+                    pass
+            mydb.commit()
+        except Exception:
+            pass
 
 #Συνδιάζει τις παραπάνω συναρτήσεις
 def create_objects(N_Schools,N_Users):
@@ -104,8 +132,10 @@ def create_objects(N_Schools,N_Users):
     Insert_Users(N_Users)
     Insert_Authentication()
 
-create_objects(10,200)
-
+#create_objects(10,200)
+# Empty_Tables()
+# Drop_Tables()
+# backup()
 #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
 
