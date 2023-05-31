@@ -10,9 +10,9 @@ import random
 import json
 from datetime import date
 from datetime import datetime
+from backup_creator import run_backup_creator
 
-global backup_running
-backup_running = True
+
 
 app = flask.Flask(__name__)
 cors = CORS(app,resources={
@@ -643,9 +643,14 @@ def top_three_comb():
 @app.route('/main_admin/run_backup',methods = ['PUT'])
 @cross_origin(headers = ['Content-Type'])
 def run_backup():
-    print("what the hell i am doing here")
     route_functions.run_backup()
     return {"result":"backup installed"}
+
+@app.route('/main_admin/create_backup',methods = ['PUT'])
+@cross_origin(headers = ['Content-Type'])
+def create_backup():
+    run_backup_creator()
+    return {"result":"backup created/updated"}
 
 if __name__ == "__main__":
     app.debug = True

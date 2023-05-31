@@ -119,7 +119,7 @@ def Drop_Tables():
         except:
             print("error")
 def backup():
-    with open('C:\\users\\ggeor\\backup_database_project\\schooldatabasev4-2023-05-30_10-37.sql', 'r',encoding="utf8") as sql_file:
+    with open('C:\\Users\\ggeor\\Desktop\\vscode^ projects\\DATABASE-PROJECT\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql', 'r',encoding="utf8") as sql_file:
         try:
             result_iterator = cursor.execute(sql_file.read(), multi=True)
             for res in result_iterator:
