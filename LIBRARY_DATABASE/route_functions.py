@@ -1,4 +1,4 @@
-import app
+#import app
 from flask import Flask,make_response,request,render_template
 # from flask_mysqldb import MySQL
 import mysql.connector as con
@@ -7,7 +7,7 @@ from flask import jsonify
 import datetime
 import os
 import time
-import insert_faker
+from insert_faker import Empty_Tables,Drop_Tables,backup
 
 
 
@@ -436,8 +436,8 @@ def approve_review(isbn,username):
 def run_backup():
     #FIRSTLY WE TRUNCATE THE TABLES
     print(" i am also here for a reason")
-    insert_faker.Empty_Tables()
-    insert_faker.Drop_Tables()
-    insert_faker.backup()
+    Empty_Tables()
+    Drop_Tables()
+    backup()
 
 

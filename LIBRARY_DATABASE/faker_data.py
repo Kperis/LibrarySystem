@@ -1,6 +1,6 @@
 from faker import Faker
 from flask import Flask,make_response,request,render_template
-from app import app
+#from app import app
 # from flask_mysqldb import MySQL
 import mysql.connector as con
 import random

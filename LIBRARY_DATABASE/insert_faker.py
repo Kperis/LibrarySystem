@@ -2,7 +2,7 @@ from faker_data import school_provider,user_provider
 
 from faker import Faker
 from flask import Flask,make_response,request,render_template
-from app import app
+#from app import app
 # from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
@@ -52,25 +52,33 @@ def Insert_Admins():
     for i in range(len(schools_ids)):
         user = user_provider(fake)
         school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                {},NULL,"{}","{}",{},"Admin",0)'.format(schools_ids[i][0],user.get_first_name(),user.get_last_name(),user.get_age()))
+                                {},NULL,"{}","{}",{},"Admin",{})'.format(schools_ids[i][0],user.get_first_name(),user.get_last_name(),random.randint(24,65),random.randint(0,1)))
         mydb.commit()
 
 #Προσθέτει στην βάση ένα συγκεκριμένο αριθμό App_user (Μαθητών ή Καθηγητών)
 def Insert_Users(N_Users):
     N = Number_of_Schools()
 
-    cursor.execute('SELECT App_user.user_id,App_user.school_id FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
+    cursor.execute('SELECT App_user.user_id,App_user.school_id,App_user.approved FROM App_user WHERE App_user.type = "Admin" ORDER BY RAND()')
     data = cursor.fetchall()
 
     for i in range(N_Users):
         var = random.randint(0,N-1)
         admin_id = data[var][0]
         school_id = data[var][1]
+        approved = data[var][2]
         user = user_provider(fake)
-        school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                {},{},"{}","{}",{},"{}",0)'.format(school_id,admin_id,user.get_first_name(),\
-                                user.get_last_name(),user.get_age(),user.get_type()))
-        mydb.commit()
+        if approved == 1:
+            school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
+                                    {},{},"{}","{}",{},"{}",{})'.format(school_id,admin_id,user.get_first_name(),\
+                                    user.get_last_name(),user.get_age(),user.get_type(),random.randint(0,1)))
+            mydb.commit()
+        else :
+            school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
+                        {},{},"{}","{}",{},"{}",{})'.format(school_id,admin_id,user.get_first_name(),\
+                        user.get_last_name(),user.get_age(),user.get_type(),0))
+            mydb.commit()
+
 def Insert_Authentication():
     cursor.execute('SELECT App_user.user_id\
                     FROM App_user')
@@ -131,6 +139,10 @@ def create_objects(N_Schools,N_Users):
     Insert_Admins()
     Insert_Users(N_Users)
     Insert_Authentication()
+
+#ΠΡΟΣΟΧΗ ΌΣΟ ΈΧΕΤΕ ΑΝΟΙΧΤΟ ΤΟΝ ΣΕΡΒΕΡ ΜΗΝ ΚΑΝΕΤΕ UNCOMMENT ΚΑΠΟΙΟ ΑΠΟ ΑΥΤΕΣ ΤΙΣ ΣΥΝΑΡΤΗΣΕΙΣ ΔΙΟΤΙ
+#ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
+#ΤΗΝ ΒΑΣΗ
 
 #create_objects(10,200)
 # Empty_Tables()
