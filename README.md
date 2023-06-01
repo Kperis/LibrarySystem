@@ -25,4 +25,6 @@ INSTALLATION:
   -API_Import.py
   -Borrow_Requests.py
 6)Finally cd into database_frontend and run npm install react-router-dom@6
-7) Now that everything is setup run npm start. This starts the flask server and opens frontend application.
+7) In order to start the app:
+  -Inside /LIBRARY_DATABASE run command 'flask --debug run --with-threads'. This will fire up the server/backend
+  -Then cd into /database_frontend and run command 'npm start'

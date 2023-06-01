@@ -194,4 +194,6 @@ ALTER TABLE Keywords
 ADD CONSTRAINT unique_book_keyword UNIQUE(isbn,keyword);
 
 ALTER TABLE Phone
-MODIFY COLUMN Phone.phone VARCHAR(10);
+MODIFY COLUMN Phone.phone VARCHAR(20);
+
+ALTER TABLE Borrow MODIFY return_date DATE;
