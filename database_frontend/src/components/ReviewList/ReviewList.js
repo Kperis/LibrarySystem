@@ -72,19 +72,28 @@ const ReviewList = ({user,should_load}) =>{
         })
         .then(response => response.json())
         .then(data => {
-            setMeanScore(data);
+            if(data?.none === 'none'){
+                alert('None');
+            }
+            else{
+
+                setMeanScore(data);
+
+                if(showCat){
+                    setShowCat(false);
+                    setShowMean(true);
+                }
+                else if(showMean){
+                    setShowMean(false);
+                }
+                else{
+                    setShowMean(true);
+                }
+            }
+            
         })
 
-        if(showCat){
-            setShowCat(false);
-            setShowMean(true);
-        }
-        else if(showMean){
-            setShowMean(false);
-        }
-        else{
-            setShowMean(true);
-        }
+        
     
     }
 
@@ -94,17 +103,23 @@ const ReviewList = ({user,should_load}) =>{
         })
         .then(response => response.json())
         .then(data => {
-            setMeanScore(data);
-            if(showMean){
-                setShowMean(false);
-                setShowCat(true);
-            }
-            else if(showCat) {
-                setShowCat(false);
+            if(data?.none === 'none'){
+                alert('None');
             }
             else{
-                setShowCat(true);
+                setMeanScore(data);
+                if(showMean){
+                    setShowMean(false);
+                    setShowCat(true);
+                }
+                else if(showCat) {
+                    setShowCat(false);
+                }
+                else{
+                    setShowCat(true);
+                }
             }
+            
         })
 
     }
