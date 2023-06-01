@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Phone(
     CONSTRAINT fk_Phone_school
         FOREIGN KEY (school_id)
         REFERENCES School (school_id)
-        ON UPDATE CASCADE 
+        ON UPDATE CASCADE
         ON DELETE RESTRICT
 )ENGINE = InnoDB;
 
