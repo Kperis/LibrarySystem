@@ -6,6 +6,7 @@ from flask import Flask,make_response,request,render_template
 # from flask_mysqldb import MySQL
 import mysql.connector as con
 import random
+import os
 
 
 
@@ -91,7 +92,7 @@ def Insert_Authentication():
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
     print("what the hell i am doing here")
-    sql_file = open("LIBRARY_DATABASE/sql_schemas/truncate_schema.sql")  
+    sql_file = open(os.getcwd()+'/LIBRARY_DATABASE/sql_schemas/drop_schema.sql/truncate_schema.sql')  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -106,7 +107,7 @@ def Empty_Tables():
 
 def Drop_Tables():
     
-    sql_file = open("LIBRARY_DATABASE/sql_schemas/drop_schema.sql")  
+    sql_file = open(os.getcwd()+'/LIBRARY_DATABASE/sql_schemas/drop_schema.sql')  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -119,7 +120,8 @@ def Drop_Tables():
         except:
             print("error")
 def backup():
-    with open('C:\\Users\\ggeor\\Desktop\\vscode^ projects\\DATABASE-PROJECT\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql', 'r',encoding="utf8") as sql_file:
+    #with open('C:\\Users\\ggeor\\Desktop\\vscode^ projects\\DATABASE-PROJECT\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql', 'r',encoding="utf8") as sql_file:
+    with open('./sql_schemas/schooldatabasev4-back_up.sql', 'r',encoding="utf8") as sql_file:
         try:
             result_iterator = cursor.execute(sql_file.read(), multi=True)
             for res in result_iterator:
@@ -143,12 +145,12 @@ def create_objects(N_Schools,N_Users):
 #ΠΡΟΣΟΧΗ ΌΣΟ ΈΧΕΤΕ ΑΝΟΙΧΤΟ ΤΟΝ ΣΕΡΒΕΡ ΜΗΝ ΚΑΝΕΤΕ UNCOMMENT ΚΑΠΟΙΟ ΑΠΟ ΑΥΤΕΣ ΤΙΣ ΣΥΝΑΡΤΗΣΕΙΣ ΔΙΟΤΙ
 #ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
 #ΤΗΝ ΒΑΣΗ
-
-#create_objects(10,200)
-# Empty_Tables()
-# Drop_Tables()
-# backup()
-#Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
+if __name__ == "__main__":
+    create_objects(10,200)
+    # Empty_Tables()
+    # Drop_Tables()
+    #backup()
+    #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
 
 

@@ -9,7 +9,9 @@ def run_backup_creator():
     DB_PASS = ''
     DB_NAME = 'schooldatabasev4'
 
-    BACKUP_DIR = 'C:\\Users\\ggeor\\Desktop\\vscode^ projects\\DATABASE-PROJECT\\LIBRARY_DATABASE\\sql_schemas'
+    BACKUP_DIR = os.getcwd()+'/LIBRARY_DATABASE/sql_schemas'#'./'
+    print(BACKUP_DIR)
+    print(type(BACKUP_DIR))
 
 
     os.chdir("C:\\xampp\\mysql\\bin")
@@ -20,22 +22,7 @@ def run_backup_creator():
     mysqldump_cmd = f'mysqldump -u {DB_USER} {DB_PASS} {DB_NAME} > {backup_file_path}'
     os.system(mysqldump_cmd)
     os.system(f'{DB_PASS}')
-        # gzip_cmd = f'zip {backup_file_path}'
-        # os.system(gzip_cmd)
-        # var = str(int(current_time[14:16])-1)
-        # if len(var) < 2:
-        #     var = "0"+var
 
-        # current_time = current_time[0:14]+var#+current_time[16:19]
-        # print(current_time)
-        # print(type(current_time))
-        # try:
-        #     find_cmd = f'del {BACKUP_DIR}\\{DB_NAME}-{current_time}.sql'
-        #     # find_cmd = f'find {BACKUP_DIR} -type f -name "*.sql" -mtime +7 -delete'
-        #     os.system(find_cmd)
-        # except:
-        #     print("file not found")
-
-        # time.sleep(BACKUP_INTERVAL)
 #print('{}'.format(os.getcwd()))
-run_backup_creator()
+if __name__ == "__main__":
+    run_backup_creator()

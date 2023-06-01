@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Phone(
     CONSTRAINT fk_Phone_school
         FOREIGN KEY (school_id)
         REFERENCES School (school_id)
-        ON UPDATE CASCADE 
+        ON UPDATE CASCADE
         ON DELETE RESTRICT
 )ENGINE = InnoDB;
 
@@ -194,4 +194,4 @@ ALTER TABLE Keywords
 ADD CONSTRAINT unique_book_keyword UNIQUE(isbn,keyword);
 
 ALTER TABLE Phone
-MODIFY COLUMN Phone.phone VARCHAR(10);
+MODIFY COLUMN Phone.phone VARCHAR(20);

@@ -435,7 +435,6 @@ def approve_review(isbn,username):
 
 def run_backup():
     #FIRSTLY WE TRUNCATE THE TABLES
-    print(" i am also here for a reason")
     Empty_Tables()
     Drop_Tables()
     backup()
