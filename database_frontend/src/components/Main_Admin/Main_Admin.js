@@ -84,12 +84,40 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
         setQuery(0);
     }
 
+    const onRestoreDatabase = () =>{
+        fetch('http://localhost:5000/main_admin/run_backup', {
+                method: 'put',
+                headers: {
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response2 => response2.json())
+            .then(data2 => {
+                alert(data2?.result)
+            })
+    }
+
+    const onCreateBackup = ()=>{
+        fetch('http://localhost:5000/main_admin/create_backup', {
+                method: 'put',
+                headers: {
+                    'Content-Type':'application/json'
+                }
+            })
+            .then(response2 => response2.json())
+            .then(data2 => {
+                alert(data2?.result)
+            })
+    }
+
     return(
         <div>
             <div className="Nav_p">
                 <p onClick={()=> {setRoute2('main'); setShowCategories(false); setShowMonths(false); }}>Home</p>
                 <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
                 <p onClick={()=> setRoute2('add_school')}>Add school</p>
+                <p onClick={()=> onCreateBackup()}>Create Backup</p>
+                <p onClick={()=> onRestoreDatabase()}>Restore Database from Backup</p>
                 <p onClick={() => {window.localStorage.clear(); onSignout(); onRouteChange('signin');}}>Sign Out</p>
             </div>
             {route2 === 'main'
