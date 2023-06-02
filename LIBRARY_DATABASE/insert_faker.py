@@ -32,10 +32,13 @@ def Number_of_Schools():
 def Insert_Schools(N_Schools):
     for i in range(N_Schools):
         school = school_provider(fake)
+        principal = user_provider(fake)
         try:
             name = school.get_name()
             city = school.get_city()
-            cursor.execute('INSERT INTO School (name,city,email,address,total_borrows) VALUES ("{}","{}","{}","{}",0)'.format(name,city,school.get_email(),school.get_address()))
+            first_name = principal.get_first_name()
+            last_name = principal.get_last_name()
+            cursor.execute('INSERT INTO School (name,city,email,address,total_borrows,principal_first_name,principal_last_name) VALUES ("{}","{}","{}","{}",0,"{}","{}")'.format(name,city,school.get_email(),school.get_address(),first_name,last_name))
             phones = school.get_phones()
             cursor.execute('SELECT School.school_id FROM School WHERE School.name = "{}" AND School.city = "{}"'.format(name,city))
             school_id = cursor.fetchall()[0][0]
@@ -147,17 +150,10 @@ def create_objects(N_Schools,N_Users):
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
     print(os.getcwd())
-<<<<<<< HEAD
     #create_objects(10,200)
     Empty_Tables()
     Drop_Tables()
     backup()
-=======
-    # create_objects(10,200)
-    # Empty_Tables()
-    # Drop_Tables()
-    # backup()
->>>>>>> 2fd7ffb3918498331a2203508ebc30dae1f1bd27
     #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
 
