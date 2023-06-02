@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 -- MariaDB dump 10.19  Distrib 10.4.27-MariaDB, for Win64 (AMD64)
 --
 -- Host: localhost    Database: schooldatabasev4
@@ -455,3 +457,4 @@ SET character_set_client = @saved_cs_client;
 =======
 -- Dump completed on 2023-05-31 19:40:08
 >>>>>>> dcfa430403909a0666b0177ebd41164ee0e052ed
+>>>>>>> 2cc2af69de625230ca449a47e6851100e8019a5b

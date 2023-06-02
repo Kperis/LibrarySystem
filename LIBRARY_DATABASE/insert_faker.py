@@ -147,10 +147,17 @@ def create_objects(N_Schools,N_Users):
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
     print(os.getcwd())
+<<<<<<< HEAD
     #create_objects(10,200)
     Empty_Tables()
     Drop_Tables()
     backup()
+=======
+    # create_objects(10,200)
+    # Empty_Tables()
+    # Drop_Tables()
+    # backup()
+>>>>>>> 2fd7ffb3918498331a2203508ebc30dae1f1bd27
     #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
 

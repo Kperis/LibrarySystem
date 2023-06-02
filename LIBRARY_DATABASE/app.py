@@ -521,7 +521,6 @@ def edit_book():
         username = data['username']
         keywords = ','.join(keywords)
         categories = ','.join(categories)
-        keywords = ','.join(keywords)
         categories = ','.join(categories)
         cursor.execute('SELECT App_user.school_id FROM App_user JOIN Authentication ON App_user.user_id=Authentication.user_id WHERE Authentication.username="{}"'.format(username))
         school_id = cursor.fetchall()[0][0]
