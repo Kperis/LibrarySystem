@@ -29,6 +29,7 @@ const SignIn = ({loadUser, onRouteChange}) => {
                 }
                 else{
                     loadUser(user,'home');
+                    console.log(user);
                     navigate('/');
                 }
             }
