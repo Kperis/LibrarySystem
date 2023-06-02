@@ -9,11 +9,15 @@ def run_backup_creator():
     DB_PASS = ''
     DB_NAME = 'schooldatabasev4'
 
+<<<<<<< HEAD
+    BACKUP_DIR = os.getcwd()+'LIBRARY_DATABSE/sql_schemas'
+=======
     temp = os.getcwd()
     BACKUP_DIR = os.getcwd()+'/sql_schemas'
+>>>>>>> 538b21490789d26896be2a2737b2dad05879503a
 
 
-    os.chdir("/opt/lampp/bin")
+    os.chdir("C:\\xampp\\mysql\\bin")
     # print(os.getcwd())
     backup_file = f'{DB_NAME}-back_up.sql'
     backup_file_path = os.path.join(BACKUP_DIR,backup_file)
