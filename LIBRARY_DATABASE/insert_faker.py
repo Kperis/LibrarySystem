@@ -146,10 +146,11 @@ def create_objects(N_Schools,N_Users):
 #ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
-    create_objects(10,200)
-    # Empty_Tables()
-    # Drop_Tables()
-    #backup()
+    print(os.getcwd())
+    #create_objects(10,200)
+    Empty_Tables()
+    Drop_Tables()
+    backup()
     #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω
 
 
