@@ -149,10 +149,10 @@ def create_objects(N_Schools,N_Users):
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
     print(os.getcwd())
-    #create_objects(10,200)
-    Empty_Tables()
-    Drop_Tables()
-    backup()
+    create_objects(4,100)
+    # Empty_Tables()
+    # Drop_Tables()
+    # backup()
 
     # create_objects(10,200)
     # Empty_Tables()
