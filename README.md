@@ -26,6 +26,7 @@ IMPORTANT NOTE!!! DO NOT RUN PYTHON SCRIPTS FROM (EXAMPLE) VSCODE. DO IT THROUGH
   Open backup_creator.py that is located in LIBRARY_DATABASE with your preferred text editor. At line 16 where the command os.chdir is located, make sure you point it to your mysql bin where mysqldump is located inorder to make sure that backup creation from main admin is available. This will ensure that mysqldump functions properly. For example on Linux with lampp installed the path is /opt/lampp/bin
 
 After that run the following python scripts that are within DATABASE-PROJECT/LIBRARY_DATABASE in this specific order:
+
   -insert_faker.py -> creates neccessary mock data
   
   -API_Import.py -> imports books and info from opelibrary.org
