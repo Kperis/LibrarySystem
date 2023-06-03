@@ -34,14 +34,15 @@ def delete_outdated_requests():
     today.strftime("%Y/%m/%d")
 
     cursor.execute('SELECT Request.request_id,Request.date_of_request FROM Request')
-    data = cursor.fetchall()
-    for i in range(len(data)):
-        acquire_date = data[i][1]
+    request_list = cursor.fetchall()
+    print(request_list)
+    for i in range(len(request_list)):
+        acquire_date = request_list[i][1]
         acquire_date.strftime("%Y/%m/%d")
         difference = today - acquire_date
 
         if difference.days > 7:
-            cursor.execute('DELETE FROM Request WHERE Request.request_id = {}'.format(data[i][0]))
+            cursor.execute('DELETE FROM Request WHERE Request.request_id = {}'.format(request_list[i][0]))
             mydb.commit()
 
 
@@ -92,15 +93,19 @@ def sign_in():
         cursor.execute('SELECT type FROM App_user WHERE user_id={}'.format(user_id))
         result1 = cursor.fetchall()[0][0]
         if result1 != 'Main_Admin':
-            cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name\
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card \
+            cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name \
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card,School.city \
                         FROM Authentication JOIN App_user \
                         ON App_user.user_id = Authentication.user_id JOIN School \
-                        ON School.school_id = App_user.school_id \
+                        ON School.school_id = App_user.school_id JOIN Phone\
+                        ON Phone.school_id=School.school_id \
                         WHERE Authentication.user_id = {} AND App_user.approved=1'.format(user_id))
             result = cursor.fetchall()
+            print(result)
             if result:
-                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9]})
+                cursor.execute('SELECT Phone.phone FROM Phone JOIN School ON School.school_id=Phone.school_id JOIN App_user ON App_user.school_id=Phone.school_id WHERE App_user.user_id={}'.format(user_id))
+                temp = cursor.fetchall()
+                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9],"school_city":result[0][10],"phone":temp})
             else:
                 return flask.jsonify({'user':'none'})
         else:
@@ -121,7 +126,6 @@ def sign_in():
 @app.route('/books',methods = ['POST'])
 @cross_origin(headers=['Content-Type'])
 def books():
-    delete_outdated_requests()
     data = flask.request.get_json(['body'])
     school_name = data['school_name']
     school_city = data['city']
@@ -653,6 +657,7 @@ def create_backup():
 
 if __name__ == "__main__":
     app.debug = True
+    delete_outdated_requests()
     app.run(threaded=True,debug = True, host="localhost", port = 5000)
 
     
