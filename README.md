@@ -18,7 +18,7 @@ INSTALLATION:
 
 IMPORTANT NOTE!!! DO NOT RUN PYTHON SCRIPTS FROM (EXAMPLE) VSCODE. DO IT THROUGH A TERMINAL ALWAYS SO THAT THE FILEPATHS WORK CORRECTLY!!
 
-1) clone the repository by running in terminal git clone https://github.com/DSpaceT/DATABASE-PROJECT.git then cd into the folder created.
+1) clone the repository by running in terminal "git clone https://github.com/DSpaceT/DATABASE-PROJECT.git" then cd into the folder created.
 2) Connect to preferred DBMS and run the create_schema.sql file that is within DATABASE-PROJECT/LIBRARY_DATABASE/sql_schemas
 3) Then run the indexes.sql file to create required indexes.
 4) Next, in the DATABASE-PROJECT folder run pip install -r requirements.txt to install dependencies and libraries.
