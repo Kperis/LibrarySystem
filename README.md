@@ -2,7 +2,7 @@
 CONTRIBUTORS:
 1.Dimitris Georgoulopoulos
 2.Markos Kalogerakis
-3.Konstantinos Perifanos
+3.Konstantinos Perifanos 03120134
 
 Requirements:
 1) Python 3.10.6
@@ -24,6 +24,14 @@ IMPORTANT NOTE!!! DO NOT RUN PYTHON SCRIPTS FROM (EXAMPLE) VSCODE. DO IT THROUGH
 4) Next, in the DATABASE-PROJECT folder run pip install -r requirements.txt to install dependencies and libraries.
 5) Now the database is ready to get data. But before we do so make sure to configure a filepath according to your machine.
   Open backup_creator.py that is located in LIBRARY_DATABASE with your preferred text editor. At line 16 where the command os.chdir is located, make sure you point it to your mysql bin where mysqldump is located inorder to make sure that backup creation from main admin is available. This will ensure that mysqldump functions properly. For example on Linux with lampp installed the path is /opt/lampp/bin
+
+Also make sure to insert your database credentials(preferably use sa user to have all privileges) at the top of insert_faker,API_Import, Borrow_Requests,faker_data,app,route_functions
+
+example:
+  host = "localhost",
+  user = "root",
+  password = "",
+  database = "schooldatabasev4"
 
 After that run the following python scripts that are within DATABASE-PROJECT/LIBRARY_DATABASE in this specific order:
 
