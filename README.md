@@ -29,8 +29,11 @@ Also make sure to insert your database credentials(preferably use sa user to hav
 
 example:
   host = "localhost",
+  
   user = "root",
+  
   password = "",
+  
   database = "schooldatabasev4"
 
 After that run the following python scripts that are within DATABASE-PROJECT/LIBRARY_DATABASE in this specific order:
