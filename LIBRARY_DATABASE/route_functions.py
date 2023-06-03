@@ -7,7 +7,8 @@ from flask import jsonify
 import datetime
 import os
 import time
-from insert_faker import Empty_Tables,Drop_Tables,backup
+import random
+from insert_faker import Empty_Tables,Drop_Tables,backup,generate_card
 
 
 
@@ -21,7 +22,6 @@ database = "schooldatabasev4"
 
 
 cursor = mydb.cursor(buffered = True)
-
 
 
 def print_aaa():
@@ -381,8 +381,10 @@ def top_three_comb():
     return result
 
 def insert_user(school_id,first_name,last_name,age,type,admin_id):
+    current_year = datetime.date.today().year
+    temp = int(current_year) - int(age)
     cursor.execute('INSERT INTO App_user (school_id,first_name,last_name,age,type,admin_id,approved) \
-                VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,age,type,admin_id))
+                VALUES ({},"{}","{}",{},"{}",{},0)'.format(school_id,first_name,last_name,temp,type,admin_id))
     mydb.commit()
     return
 
@@ -392,7 +394,7 @@ def insert_authentication(user_id,username,password):
     return
 
 def notactive_borrow(user_id,isbn):
-    cursor.execute('UPDATE Borrow SET Borrow.active = 0 WHERE user_id={} AND isbn={}'.format(user_id,isbn))
+    cursor.execute('UPDATE Borrow SET Borrow.active = 0,Borrow.return_date=CURDATE() WHERE user_id={} AND isbn={}'.format(user_id,isbn))
     mydb.commit()
     cursor.execute('SELECT school_id FROM App_user WHERE user_id={}'.format(user_id))
     school_id = cursor.fetchall()[0][0]

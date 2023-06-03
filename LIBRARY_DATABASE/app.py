@@ -11,6 +11,7 @@ import json
 from datetime import date
 from datetime import datetime
 from backup_creator import run_backup_creator
+from insert_faker import generate_card
 
 
 
@@ -426,18 +427,9 @@ def approve_user():
             cursor.execute('UPDATE App_user SET approved=1 WHERE user_id={}'.format(user_id))
             mydb.commit()
             if role == 'Admin':
-                found = False
-                while found==False:
-                    card = random.randint(10**7,10**8-1)
-                    cursor.execute('SELECT * FROM App_user WHERE card={}'.format(card))
-                    temp_list = cursor.fetchall()
-                    if temp_list:
-                        continue
-                    else:
-                        found == True
-                        cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
-                        mydb.commit()
-                        break
+                card = generate_card()
+                cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
+                mydb.commit()
                 return flask.jsonify({"user":"activated"})
             return flask.jsonify({"user":"activated"})
         else:
