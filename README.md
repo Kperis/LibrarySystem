@@ -27,8 +27,11 @@ IMPORTANT NOTE!!! DO NOT RUN PYTHON SCRIPTS FROM (EXAMPLE) VSCODE. DO IT THROUGH
 
 After that run the following python scripts that are within DATABASE-PROJECT/LIBRARY_DATABASE in this specific order:
   -insert_faker.py -> creates neccessary mock data
+  
   -API_Import.py -> imports books and info from opelibrary.org
+  
   -Borrow_Requests.py -> creates random borrow and requests for presentation
+  
 6)Finally cd into database_frontend and run "npm install react-router-dom@6"
 7) In order to start the app:
   -Inside /LIBRARY_DATABASE run command 'flask --debug run --with-threads'. This will fire up the server/backend
