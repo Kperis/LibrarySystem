@@ -201,3 +201,4 @@ ALTER TABLE Borrow MODIFY return_date DATE;
 ALTER TABLE School ADD principal_first_name VARCHAR(40);
 ALTER TABLE School ADD principal_last_name VARCHAR(40);
 
+
