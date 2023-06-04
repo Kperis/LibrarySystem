@@ -18,7 +18,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
     const [books,setBooks] = useState([]);
     const [borrowed,setBorrowed] = useState([]);
     const [requested,setRequested] = useState([]);
-    const [delayed_return, setDelayedReturn] = useState(false);
     const [count,setCount] = useState(0);
     const [count2,setCount2] = useState(0);
     const [should_load,setShouldLoad] = useState(false);
@@ -99,6 +98,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                 }
                 else{
                     setBorrowed(data);
+                    console.log('lol');
                 }
                 
                 fetch('http://localhost:5000/request', {
@@ -119,19 +119,6 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         else{
                             setRequested(data);
                         }
-                        
-                        borrowed.forEach(element => {
-                            const date1 = new Date(element.acquire_date);
-                            const date2 = new Date(element.return_date);
-                
-                            const diffTime = Math.abs(date2-date1);
-                            const diffDays = Math.ceil(diffTime / (1000*60*60*24));
-                            if(diffDays > 7){
-                                setDelayedReturn(true);
-                            }
-                            
-                        });
-
                         setShouldLoad(true);
             })
             })
@@ -314,7 +301,7 @@ const Home = ({user, onRouteChange,onSignout}) => {
                         </div>
                     } />
                     <Route path="/book" element={
-                        <Book hasDelayed={delayed_return} editBook={editBook} requested={requested} update_count={update_request_count} borrowed={borrowed} />
+                        <Book editBook={editBook} should_load={should_load} requested={requested} update_count={update_request_count} borrowed={borrowed} />
                     } />
                     <Route path='/myProfile' element={
                         <UserInfo user={user}/>

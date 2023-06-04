@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react';
 import './Book.css';
 import Reviews from '../Reviews/Reviews';
 
-const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
+const Book = ({hasDelayed,requested,borrowed,update_count,editBook,should_load}) =>{
     
     
     let temp1 = JSON.parse(window.localStorage.getItem('user'));
@@ -25,6 +25,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
     const [editPublisher,setEditPublisher] = useState('');
     const [editCopies,setEditCopies] = useState(0);
     const [editPageCount,setEditPageCount] = useState(0);
+    const [delayed_return, setDelayedReturn] = useState(false);
     // const [editCategories,setEditCategories] = useState([{name:'Fantasy',checked:false},
     //                                                     {name:'Sci-fi',checked:false},
     //                                                     {name:'Romance',checked:false},
@@ -35,61 +36,74 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
    const checkList = ['Fantasy','Sci-fi','Romance','Mystery','Drama','Action','Historical'];
     
     useEffect(() => {
-        if(window.localStorage.getItem("reviews") === null || refetch===1){
-            fetchreviews();
-        }
-        else{
-            setReviews(JSON.parse(window.localStorage.getItem("reviews")));
-            setHasReviewed(JSON.parse(window.localStorage.getItem("hasReviewed")));
-        }
-        console.log(book);
+        // window.localStorage.removeItem("reviews");
+        // if(refetch===1){
+        //     fetchreviews();
+        // }
+        // else{
+        //     setReviews(JSON.parse(window.localStorage.getItem("reviews")));
+        //     setHasReviewed(JSON.parse(window.localStorage.getItem("hasReviewed")));
+        // }
+        // console.log(book);
 
-        return () =>{
-            window.localStorage.removeItem("reviews");
-            window.localStorage.removeItem("hasReviewed");
-        }
-        
-    },[refetch])
+        // return () =>{
+        //     window.localStorage.removeItem("reviews");
+        //     window.localStorage.removeItem("hasReviewed");
+        // }
+        fetchreviews();
+        borrowed.forEach(element => {
+            const date1 = new Date(element.acquire_date);
+            const date2 = new Date();
+
+            const diffTime = Math.abs(date2-date1);
+            const diffDays = Math.ceil(diffTime / (1000*60*60*24));
+            if(diffDays > 7){
+                setDelayedReturn(true);
+            }
+            
+        });
+    },[refetch,should_load])
 
     const fetchreviews = () =>{
-
-        fetch('http://localhost:5000/reviews', {
-            method: 'post',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                isbn:book?.isbn,
-                role: 'student',
-                username: user?.username
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data?.reviews === 'none'){
-                setReviews([]);
-                window.localStorage.setItem("reviews",[]);
-            }
-            else{
-                setReviews(data);
-                window.localStorage.setItem("reviews",JSON.stringify(data));
-            }
-
-            fetch('http://localhost:5000/user_review', {
+        if(should_load){
+            fetch('http://localhost:5000/reviews', {
                 method: 'post',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    username: user?.username, 
-                    isbn:book?.isbn
+                    isbn:book?.isbn,
+                    role: 'student',
+                    username: user?.username
                 })
             })
             .then(response => response.json())
             .then(data => {
-                if(data.reviewed === 'yes'){
-                    setHasReviewed(true);
-                    window.localStorage.setItem("hasReviewed",true);
+                if(data?.reviews === 'none'){
+                    setReviews([]);
+                    window.localStorage.setItem("reviews",[]);
                 }
+                else{
+                    setReviews(data);
+                    window.localStorage.setItem("reviews",JSON.stringify(data));
+                }
+
+                fetch('http://localhost:5000/user_review', {
+                    method: 'post',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({
+                        username: user?.username, 
+                        isbn:book?.isbn
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.reviewed === 'yes'){
+                        setHasReviewed(true);
+                        window.localStorage.setItem("hasReviewed",true);
+                    }
+                })
             })
-        })
-        .catch(err => console.log(err))
+            .catch(err => console.log(err))
+        }
 
     }
 
@@ -134,7 +148,6 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
                     if(element.isbn === book.isbn){
                         hasRequested = true;
                     }
-                    return;
                 });
             }
             
@@ -143,12 +156,11 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
                     if(element.isbn === book.isbn){
                         hasBorrowed = true;
                     }
-                    return;
                 });
             }
             
             if(user.role.length === 7){
-                if(requested.length < 2 && !hasDelayed && !hasRequested && !hasBorrowed){
+                if(requested.length < 2 && !delayed_return && !hasRequested && !hasBorrowed){
                     fetch('http://localhost:5000/book_request', {
                         method: 'post',
                         headers: {
@@ -192,6 +204,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
         else{
             alert('Cannot request book');;
         }
+        setClicked(true);
         return;
     }
 
@@ -327,7 +340,7 @@ const Book = ({hasDelayed,requested,borrowed,update_count,editBook}) =>{
                     <li>
                         {
                         (user.role !== 'Admin'
-                        ?    <button className='submit_review' onClick={() => {onRequestBook(); setClicked(true);}} >Request book!</button>
+                        ?    <button className='submit_review' onClick={() => {onRequestBook();}} >Request book!</button>
                         :   (editMode===false
                             ?    <button className='submit_review' onClick={()=>onEditBook()} >Edit Book</button>
                             :   <div className='edit_info'>
