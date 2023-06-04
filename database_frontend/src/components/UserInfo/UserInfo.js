@@ -72,6 +72,9 @@ const UserInfo = ({user}) => {
                     <p>{`School email: ${user.school_email}`}</p>
                 </li>
                 <li>
+                    <p>{`Principal: ${user.principal_first.concat(' ',user.principal_last)}`}</p>
+                </li>
+                <li>
                     <p>{`School Phones: ${user.phone}`}</p>
                 </li>
                 <button onClick={onPasswordChange}>Change Password</button>

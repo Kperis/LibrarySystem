@@ -94,7 +94,7 @@ def sign_in():
         result1 = cursor.fetchall()[0][0]
         if result1 != 'Main_Admin':
             cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name \
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card,School.city, School.email \
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card,School.city, School.email,School.principal_first_name, School.principal_last_name \
                         FROM Authentication JOIN App_user \
                         ON App_user.user_id = Authentication.user_id JOIN School \
                         ON School.school_id = App_user.school_id JOIN Phone\
@@ -105,7 +105,7 @@ def sign_in():
             if result:
                 cursor.execute('SELECT Phone.phone FROM Phone JOIN School ON School.school_id=Phone.school_id JOIN App_user ON App_user.school_id=Phone.school_id WHERE App_user.user_id={}'.format(user_id))
                 temp = cursor.fetchall()
-                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9],"school_city":result[0][10],"school_email":result[0][11],"phone":temp})
+                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9],"school_city":result[0][10],"school_email":result[0][11],"principal_first":result[0][12],"principal_last":result[0][13],"phone":temp})
             else:
                 return flask.jsonify({'user':'none'})
         else:
