@@ -94,8 +94,7 @@ def Insert_Authentication():
         mydb.commit()
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
-    print("what the hell i am doing here")
-    sql_file = open(os.getcwd()+'/sql_schemas/truncate_schema.sql')  
+    sql_file = open(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\truncate_schema.sql')  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -109,8 +108,7 @@ def Empty_Tables():
             print("error")
 
 def Drop_Tables():
-    
-    sql_file = open(os.getcwd()+'/sql_schemas/drop_schema.sql')  
+    sql_file = open(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\drop_schema.sql')  
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -122,10 +120,11 @@ def Drop_Tables():
                 cursor.execute(row)
         except:
             print("error")
+    
 def backup():
-    print(os.getcwd()+'/sql_schemas/schooldatabasev4-back_up.sql')
+    print(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql')
     #with open('C:\\Users\\ggeor\\Desktop\\vscode^ projects\\DATABASE-PROJECT\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql', 'r',encoding="utf8") as sql_file:
-    with open(os.getcwd()+'/sql_schemas/schooldatabasev4-back_up.sql', 'r') as sql_file:
+    with open(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\schooldatabasev4-back_up.sql', 'r',encoding = 'utf8') as sql_file:
         try:
             result_iterator = cursor.execute(sql_file.read(), multi=True)
             for res in result_iterator:
@@ -151,14 +150,9 @@ def create_objects(N_Schools,N_Users):
 #ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
-    print(os.getcwd())
-    create_objects(4,100)
+    # print(os.getcwd())
+    # #create_objects(10,200)
     # Empty_Tables()
     # Drop_Tables()
-    # backup()
-
-    # create_objects(10,200)
-    # Empty_Tables()
-    # Drop_Tables()
-    # backup()
+    backup()
     #Για να τρέξουμε ξεχωριστά τις συναρτήσεις πρέπει να το κάνουμε ακολουθώντας την συγκεκριμένη σειρά που φαίνεται παραπάνω

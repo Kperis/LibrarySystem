@@ -35,7 +35,6 @@ def delete_outdated_requests():
 
     cursor.execute('SELECT Request.request_id,Request.date_of_request FROM Request')
     request_list = cursor.fetchall()
-    print(request_list)
     for i in range(len(request_list)):
         acquire_date = request_list[i][1]
         acquire_date.strftime("%Y/%m/%d")
