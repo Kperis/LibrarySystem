@@ -48,3 +48,5 @@ After that run the following python scripts that are within DATABASE-PROJECT/LIB
 7) In order to start the app:
   -Inside /LIBRARY_DATABASE run command 'flask --debug run --with-threads'. This will fire up the server/backend
   -Then cd into /database_frontend and run command 'npm start'
+
+  FINAL NOTE: for the purpose of demonstration of user approval feature some admins/user are randomly not approved. If you wish sign in to main admin account with username 'test' and password 'test' and approve every admin. Likewise if a specific student or teacher is not approved the admin can approve them.
