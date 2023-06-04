@@ -1,6 +1,6 @@
 # DATABASE-PROJECT
 CONTRIBUTORS:
-1.Dimitris Georgoulopoulos
+1.Dimitris Georgoulopoulos 03120862
 2.Markos Kalogerakis
 3.Konstantinos Perifanos 03120134
 
