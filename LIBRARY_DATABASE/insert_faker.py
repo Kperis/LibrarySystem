@@ -128,11 +128,7 @@ def Insert_Authentication():
 
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
-<<<<<<< HEAD
     sql_file = open(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\truncate_schema.sql')  
-=======
-    sql_file = open(os.getcwd()+'/sql_schemas/truncate_schema.sql')  
->>>>>>> b46dae23bf2573ec15cee5f7769ca8a83da3d25f
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -188,12 +184,6 @@ def create_objects(N_Schools,N_Users):
 #ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
-<<<<<<< HEAD
-    # print(os.getcwd())
-    # #create_objects(10,200)
-=======
-    create_objects(4,150)
->>>>>>> b46dae23bf2573ec15cee5f7769ca8a83da3d25f
     # Empty_Tables()
     # Drop_Tables()
     backup()

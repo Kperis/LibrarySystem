@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS schooldatabasev4;
+
+USE schooldatabasev4;
+
 CREATE TABLE IF NOT EXISTS School(
     school_id INT AUTO_INCREMENT,
     name VARCHAR(40) NOT NULL UNIQUE,
