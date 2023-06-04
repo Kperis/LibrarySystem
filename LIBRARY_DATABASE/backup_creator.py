@@ -14,7 +14,7 @@ def run_backup_creator():
     print(BACKUP_DIR)
 
 
-    os.chdir("C:\\xampp\\mysql\\bin")
+    os.chdir("/opt/lampp/bin")
     # print(os.getcwd())
     backup_file = f'{DB_NAME}-back_up.sql'
     backup_file_path = os.path.join(BACKUP_DIR,backup_file)

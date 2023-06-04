@@ -9,6 +9,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
     // const [delay_list,setDelayList] = useState([]);
     const [array,setArr] = useState([]);
     const [delShow,setDelShow] = useState(false);
+    const [daysDelayed, setDaysDelayed] = useState(0);
 
     useEffect(()=>{
         if(borrow){
@@ -25,7 +26,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
 
                     const diffTime = Math.abs(date2-date1);
                     const diffDays = Math.ceil(diffTime / (1000*60*60*24));
-                    return (diffDays > 7 && book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()))
+                    return (diffDays > 7 && book.first_name.concat(' ',book.last_name).toLowerCase().includes(username.toLowerCase()) && book.title.toLowerCase().includes(title.toLowerCase()) && diffDays-7 > daysDelayed)
                 })
                 setArr(temp);
             }
@@ -36,7 +37,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
             })
             setArr(temp);
         }
-    },[title,username,count2,delShow,count,request_list,borrow_list])
+    },[title,username,count2,delShow,count,request_list,borrow_list,daysDelayed])
 
     const onFilterUser = (event) =>{
         setUser(event.target.value);
@@ -129,12 +130,25 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
         
     }
 
+    const onDaysDelayedChange = (event) =>{
+        if(Number(event.target.value === null)){
+            setDaysDelayed(0);
+        }
+        else{
+            setDaysDelayed(Number(event.target.value))
+        }
+    }
+
 
     return(
         <div>
             <div className='searchspace'>
                 <input className='searchbox' type='text' onChange={onFilterTitle} placeholder='Search by title...'/>
                 <input className='searchbox' type='text' onChange={onFilterUser} placeholder='Search by User...'/>
+                {delShow
+                    ? <input type='text' className='searchbox' placeholder='Number of days at least delayed' onChange={onDaysDelayedChange}/>
+                    : <div></div>
+                }
             </div>
             <div className='borrow_container'>
                 {borrow === true
@@ -144,7 +158,7 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
                         (array.map((element,index) => {
                         return(
                             <div key={element.borrow_id} className='borrow_box'>
-                                <p className='borrow_text'>{`${element.first_name} ${element.last_name} (${element.role}): ${element.title} due return-> ${element.return_date}`}</p>
+                                <p className='borrow_text'>{`${element.first_name} ${element.last_name} (${element.role}): ${element.title} acquired-> ${element.acquire_date}`}</p>
                                 <button className='Grant' onClick={() => onGrantReturn(index)} >Returned</button>
                             </div>
                         )

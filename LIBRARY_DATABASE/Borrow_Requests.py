@@ -10,7 +10,7 @@ from datetime import timedelta
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = '',#"ChoedanKal2002",
+password = '',
 database = "schooldatabasev4"
 )
 
@@ -21,11 +21,11 @@ data = cursor.fetchall()
 
 end_date_req = datetime.date.today()
 start_date_req = end_date_req - datetime.timedelta(days=10)
-start_date = datetime.date(2023, 1, 1)
+start_date = datetime.date(2022, 9, 11)
 end_date = datetime.date(2023,5,10)
 
 
-for i in range(80):
+for i in range(140):
     result = data[random.randint(0,len(data)-1)]
     user_id = result[0]
     school_id = result[1]

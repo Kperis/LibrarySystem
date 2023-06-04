@@ -13,6 +13,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     const [showMonths,setShowMonths] = useState(false);
     const [showCategories,setShowCategories] = useState(false);
     const [query,setQuery] = useState(0);
+    const [showYears, setShowYears] = useState(false);
 
     useEffect(()=>{
         fetchUsers();
@@ -36,6 +37,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query1 = () => {
+        setShowYears(true);
         setShowMonths(true);
         setQuery(1);
         setRoute2('query');
@@ -64,6 +66,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     }
 
     const Query6 = () => {
+        setShowYears(true);
         setQuery(6);
         setRoute2('query');
     }
@@ -113,7 +116,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
     return(
         <div>
             <div className="Nav_p">
-                <p onClick={()=> {setRoute2('main'); setShowCategories(false); setShowMonths(false); }}>Home</p>
+                <p onClick={()=> {setRoute2('main'); setShowCategories(false); setShowMonths(false); setShowYears(false); }}>Home</p>
                 <p onClick={()=> setRoute2('approve')}>Approve Admins</p>
                 <p onClick={()=> setRoute2('add_school')}>Add school</p>
                 <p onClick={()=> onCreateBackup()}>Create Backup</p>
@@ -151,7 +154,7 @@ const Main_Admin = ({user,onSignout,onRouteChange}) =>{
                         </ul>
                     </div>
                     :   (route2==='query'
-                        ?   <Main_Admin_Queries showMonths={showMonths} showCategories={showCategories} query={query} resetQuery={resetQuery}/>
+                        ?   <Main_Admin_Queries showMonths={showMonths} showCategories={showCategories} showYears={showYears} query={query} resetQuery={resetQuery}/>
                         :   (route2 === 'approve'
                                 ?   <Approve user={user} should_load={true} banMode={false}/>
                                 :   <Add_School />    

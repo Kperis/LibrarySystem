@@ -11,6 +11,7 @@ import json
 from datetime import date
 from datetime import datetime
 from backup_creator import run_backup_creator
+from insert_faker import generate_card
 
 
 
@@ -93,7 +94,7 @@ def sign_in():
         result1 = cursor.fetchall()[0][0]
         if result1 != 'Main_Admin':
             cursor.execute('SELECT Authentication.username,Authentication.password,School.city,School.name \
-                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card,School.city \
+                       ,App_user.first_name,App_user.last_name,App_user.type,App_user.age,App_user.approved,App_user.card,School.city, School.email \
                         FROM Authentication JOIN App_user \
                         ON App_user.user_id = Authentication.user_id JOIN School \
                         ON School.school_id = App_user.school_id JOIN Phone\
@@ -104,7 +105,7 @@ def sign_in():
             if result:
                 cursor.execute('SELECT Phone.phone FROM Phone JOIN School ON School.school_id=Phone.school_id JOIN App_user ON App_user.school_id=Phone.school_id WHERE App_user.user_id={}'.format(user_id))
                 temp = cursor.fetchall()
-                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9],"school_city":result[0][10],"phone":temp})
+                return flask.jsonify({"username":result[0][0],"password":result[0][1],"city":result[0][2],"school_name":result[0][3],"first_name":result[0][4],"last_name":result[0][5],"role":result[0][6],"age":result[0][7],"user_id":user_id,"approved":result[0][8],"card":result[0][9],"school_city":result[0][10],"school_email":result[0][11],"phone":temp})
             else:
                 return flask.jsonify({'user':'none'})
         else:
@@ -425,18 +426,9 @@ def approve_user():
             cursor.execute('UPDATE App_user SET approved=1 WHERE user_id={}'.format(user_id))
             mydb.commit()
             if role == 'Admin':
-                found = False
-                while found==False:
-                    card = random.randint(10**7,10**8-1)
-                    cursor.execute('SELECT * FROM App_user WHERE card={}'.format(card))
-                    temp_list = cursor.fetchall()
-                    if temp_list:
-                        continue
-                    else:
-                        found == True
-                        cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
-                        mydb.commit()
-                        break
+                card = generate_card()
+                cursor.execute('UPDATE App_user SET card={} WHERE user_id={}'.format(card,user_id))
+                mydb.commit()
                 return flask.jsonify({"user":"activated"})
             return flask.jsonify({"user":"activated"})
         else:
@@ -585,7 +577,8 @@ def delete_book():
 def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
-    data = route_functions.fallborrows_schools(month)
+    year = data['year']
+    data = route_functions.fallborrows_schools(month,year)
     mydb.commit()
     if data:
         result = [dict(zip(('info1','info2','info4','info3'),x)) for x in data]
@@ -629,11 +622,13 @@ def top_teachers():
     dir = {"result":result}
     return flask.jsonify(dir)
 
-@app.route('/main_admin/same_borrows_admin',methods = ['GET'])#3.5
+@app.route('/main_admin/same_borrows_admin',methods = ['POST'])#3.5
 @cross_origin(headers = ['Content-Type'])
 def same_borrows_admin():
-    result = route_functions.same_borrows_admin()
-    return flask.jsonify(result)
+    data = flask.request.get_json(['body'])
+    year = data['year']
+    result = route_functions.same_borrows_admin(year)
+    return result
 
 @app.route('/main_admin/top_3_category_combinations',methods = ['GET'])#3.6
 @cross_origin(headers = ['Content-Type'])

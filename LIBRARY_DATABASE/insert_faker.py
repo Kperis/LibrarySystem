@@ -13,7 +13,7 @@ import os
 mydb = con.connect(
 host = 'localhost',
 user = 'root',
-password = '',#'ChoedanKal2002',
+password = '',
 database = 'schooldatabasev4',
 )
 
@@ -21,6 +21,22 @@ database = 'schooldatabasev4',
 fake = Faker('el_GR')
 
 cursor = mydb.cursor(buffered = True)
+
+
+def generate_card():
+    found = False
+    result = 0
+    while found==False:
+        card = random.randint(10**7,10**8-1)
+        cursor.execute('SELECT * FROM App_user WHERE card={}'.format(card))
+        temp_list = cursor.fetchall()
+        if temp_list:
+            continue
+        else:
+            found == True
+            result = card
+            break
+    return result
 
 #Βρίσκει τον αριθμό τον schools που υπάρχουν στο σύστημα 
 def Number_of_Schools():
@@ -73,15 +89,25 @@ def Insert_Users(N_Users):
         approved = data[var][2]
         user = user_provider(fake)
         if approved == 1:
-            school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
-                                    {},{},"{}","{}",{},"{}",{})'.format(school_id,admin_id,user.get_first_name(),\
-                                    user.get_last_name(),user.get_age(),user.get_type(),random.randint(0,1)))
-            mydb.commit()
+            temp = random.randint(0,1)
+            if temp == 1:
+                card = generate_card()
+                school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,card,approved) VALUES(\
+                                        {},{},"{}","{}",{},"{}",{},{})'.format(school_id,admin_id,user.get_first_name(),\
+                                        user.get_last_name(),user.get_age(),user.get_type(),card,temp))
+                mydb.commit()
+            else:
+                school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
+                                        {},{},"{}","{}",{},"{}",{})'.format(school_id,admin_id,user.get_first_name(),\
+                                        user.get_last_name(),user.get_age(),user.get_type(),temp))
+                mydb.commit()
+
         else :
             school_id = cursor.execute('INSERT INTO App_user (school_id,admin_id,first_name,last_name,age,type,approved) VALUES(\
                         {},{},"{}","{}",{},"{}",{})'.format(school_id,admin_id,user.get_first_name(),\
                         user.get_last_name(),user.get_age(),user.get_type(),0))
             mydb.commit()
+   
 
 def Insert_Authentication():
     cursor.execute('SELECT App_user.user_id\
@@ -92,9 +118,21 @@ def Insert_Authentication():
         cursor.execute('INSERT INTO Authentication (user_id,username,password) VALUES ({},"{}","{}")'\
                        .format(user_id[0],user.get_username(),user.get_password()))
         mydb.commit()
+    cursor.execute('INSERT INTO App_user(first_name,last_name,age,type,approved) VALUES("Eren","Yeager",42,"Main_Admin",1)')
+    mydb.commit()
+    cursor.execute('SELECT user_id FROM App_user WHERE type="Main_Admin"')
+    temp = cursor.fetchall()[0][0]
+    cursor.execute('INSERT INTO Authentication(user_id,username,password) VALUES({},"test","test")'.format(temp))
+    mydb.commit()
+
+
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
+<<<<<<< HEAD
     sql_file = open(os.getcwd()+'\\LIBRARY_DATABASE\\sql_schemas\\truncate_schema.sql')  
+=======
+    sql_file = open(os.getcwd()+'/sql_schemas/truncate_schema.sql')  
+>>>>>>> b46dae23bf2573ec15cee5f7769ca8a83da3d25f
     
     sql_string = sql_file.read().split(';')
     print(sql_string)
@@ -150,8 +188,12 @@ def create_objects(N_Schools,N_Users):
 #ΛΟΓΩ ΤΟΝ IMPORT ΠΟΥ ΘΑ ΓΙΝΟΥΝ ΘΑ ΤΡΕΞΕΙ ΜΑΖΙ ΜΕ ΤΟΝ ΣΕΡΒΕΡ ΚΑΙ ΘΑ ΔΙΑΓΡΑΨΕΙ ΠΙΘΑΝΟΝ ΔΕΔΟΜΕΝΑ ΑΠΟ
 #ΤΗΝ ΒΑΣΗ
 if __name__ == "__main__":
+<<<<<<< HEAD
     # print(os.getcwd())
     # #create_objects(10,200)
+=======
+    create_objects(4,150)
+>>>>>>> b46dae23bf2573ec15cee5f7769ca8a83da3d25f
     # Empty_Tables()
     # Drop_Tables()
     backup()
