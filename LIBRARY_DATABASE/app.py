@@ -578,7 +578,8 @@ def delete_book():
 def borrows_of_schools():
     data = flask.request.get_json(['body'])
     month = data['month']
-    data = route_functions.fallborrows_schools(month)
+    year = data['year']
+    data = route_functions.fallborrows_schools(month,year)
     mydb.commit()
     if data:
         result = [dict(zip(('info1','info2','info4','info3'),x)) for x in data]
@@ -622,11 +623,13 @@ def top_teachers():
     dir = {"result":result}
     return flask.jsonify(dir)
 
-@app.route('/main_admin/same_borrows_admin',methods = ['GET'])#3.5
+@app.route('/main_admin/same_borrows_admin',methods = ['POST'])#3.5
 @cross_origin(headers = ['Content-Type'])
 def same_borrows_admin():
-    result = route_functions.same_borrows_admin()
-    return flask.jsonify(result)
+    data = flask.request.get_json(['body'])
+    year = data['year']
+    result = route_functions.same_borrows_admin(year)
+    return result
 
 @app.route('/main_admin/top_3_category_combinations',methods = ['GET'])#3.6
 @cross_origin(headers = ['Content-Type'])

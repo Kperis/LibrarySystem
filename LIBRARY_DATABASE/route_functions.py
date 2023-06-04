@@ -183,7 +183,7 @@ def fmean_score_user(school_id):
     
 
 
-def fallborrows_schools(month):
+def fallborrows_schools(month,year):
     months = ['January','February','March','April','May','June','July','August','September','October','November','December','all']
     num_month = 0
     for i in range(len(months)):
@@ -199,8 +199,8 @@ def fallborrows_schools(month):
                         ON App_user.user_id = Borrow.user_id \
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
-                        WHERE YEAR(Borrow.acquire_date) = YEAR(CURDATE()) \
-                        GROUP BY School.school_id ORDER BY count_ev DESC;')
+                        WHERE YEAR(Borrow.acquire_date) = {} \
+                        GROUP BY School.school_id ORDER BY count_ev DESC;'.format(year))
         result = cursor.fetchall()
         return result
 
@@ -213,8 +213,8 @@ def fallborrows_schools(month):
                         ON App_user.user_id = Borrow.user_id \
                         INNER JOIN School \
                         ON School.school_id = App_user.school_id \
-                        WHERE MONTH(Borrow.acquire_date) = {} \
-                        GROUP BY School.school_id ORDER BY count_ev DESC;'.format(num_month))
+                        WHERE MONTH(Borrow.acquire_date) = {} AND YEAR(Borrow.acquire_date)={} \
+                        GROUP BY School.school_id ORDER BY count_ev DESC;'.format(num_month,year))
         result = cursor.fetchall()
         return result
 
@@ -301,30 +301,35 @@ def fno_borrows_authors():
     for item in data:
         result.append(str(item[0])+' '+str(item[1]))
     return result
-def same_borrows_admin():
-
-    cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name),o.count_ev \
-                    FROM App_user \
-                    JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date \
-                        FROM App_user \
-                        INNER JOIN School \
-                        ON School.school_id = App_user.school_id \
-                        INNER JOIN Borrow \
-                        ON Borrow.user_id = App_user.user_id \
-                        GROUP BY App_user.admin_id \
-                        HAVING COUNT(*) > 0) o \
-                    ON App_user.user_id = o.admin_id \
-                    WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = YEAR(CURDATE()) \
-                    ORDER BY o.count_ev;')
+def same_borrows_admin(year):
+    # cursor.execute('SELECT CONCAT(App_user.first_name," ",App_user.last_name),o.count_ev \
+    #                 FROM App_user \
+    #                 JOIN (SELECT App_user.admin_id,COUNT(*) AS count_ev,Borrow.acquire_date \
+    #                     FROM App_user \
+    #                     INNER JOIN School \
+    #                     ON School.school_id = App_user.school_id \
+    #                     INNER JOIN Borrow \
+    #                     ON Borrow.user_id = App_user.user_id \
+    #                     GROUP BY admin_id\
+    #                     HAVING COUNT(*) > 0) o \
+    #                 ON App_user.user_id = o.admin_id \
+    #                 WHERE o.count_ev > 20 AND YEAR(o.acquire_date) = {} \
+    #                 ORDER BY o.count_ev;'.format(year))
+    cursor.execute('WITH result AS(SELECT App_user.user_id,App_user.first_name,App_user.last_name,o.count_ev FROM App_user\
+                    JOIN (SELECT COUNT(*) AS count_ev,App_user.admin_id FROM Borrow JOIN App_user ON App_user.user_id=Borrow.user_id\
+                    WHERE YEAR(Borrow.acquire_date)={} GROUP BY App_user.admin_id) o \
+                    ON App_user.user_id=o.admin_id)\
+                    SELECT A.first_name AS first_name1,A.last_name AS last_name1,A.count_ev,B.first_name AS first_name2,B.last_name AS last_name2 \
+                    FROM result A,result B \
+                    WHERE A.user_id <> B.user_id AND A.user_id > B.user_id AND A.count_ev=B.count_ev AND A.count_ev>20;'.format(year))
     data = cursor.fetchall()
-    num = 0
-    dir = {}
-    for i in range(len(data)):
-        dir[data[i][1]] = []
-    for item in data:
-        dir[item[1]].append(item[0])
+    # dir = {}
+    # for i in range(len(data)):
+    #     dir[data[i][0]] = ''
+    # for item in data:
+    #     dir[item[1]].append(item[0])
     
-    return dir
+    return data
 
         
 

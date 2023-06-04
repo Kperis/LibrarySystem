@@ -2,38 +2,37 @@ import React, { useEffect, useState } from "react";
 import './Main_Admin_Queries.css'
 
 
-const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
+const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery,showYears}) => {
 
-    const [month,setMonth] = useState('all');
     const [data,setData] = useState([]);
-    const [info1,setInfo1] = useState('');
-    const [info2,setInfo2] = useState('');
-    const [info3,setInfo3] = useState('');
-
 
     useEffect(() =>{
         
-        selectFetch(query,'all','fantasy');
+        selectFetch(query,'all','fantasy',2023);
 
         return () =>{
             resetQuery();
         }
     },[])
     
-    
+    const [monthStore, setMonthStore] = useState('all');
+    const [yearStore,setYearStore] = useState(2023);
+
     const Months = ['all','January','February','March','April','May','June','July','August','September','October','November','December'];
     const categories = ['fantasy','action & adventure','history','drama','science fiction','romance','mystery'];
+    const Years = [2023,2022,2021,2020];
 
 
     const onMonthChange = (event) =>{
-        selectFetch(query,event.target.value,'');
+        setMonthStore(event.target.value);
+        selectFetch(query,event.target.value,'',yearStore);
     }
 
     const onCategoryChange = (event) =>{
-        selectFetch(query,'',event.target.value)
+        selectFetch(query,'',event.target.value,0)
     }
 
-    const selectFetch = (query,month,category)=>{
+    const selectFetch = (query,month,category,year)=>{
         switch (query){
             case 1:
                 fetch('http://localhost:5000/main_admin/all_borrows',{
@@ -42,7 +41,8 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                         'Content-Type':'application/json'
                     },
                     body: JSON.stringify({
-                        month: month
+                        month: month,
+                        year: year
                     })
                 })
                 .then(response => response.json())
@@ -109,11 +109,24 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                 break;
             case 6:
             fetch('http://localhost:5000/main_admin/same_borrows_admin',{
-                method: 'get' 
+                method: 'post',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    year: year
+                }) 
             })
+
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                let result = []
+                for(let i = 0; i<data.length ; i++){
+                    let temp = data[i].join('       ');
+                    result.push(temp);
+                }
+                
+                setData(result);
             })
             break;
             case 7:
@@ -140,6 +153,11 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
         }
     }
 
+    const onYearChange = (event) =>{
+        setYearStore(event.target.value);
+        selectFetch(query,monthStore,'',event.target.value);
+    }
+
 
     return(
         <div>
@@ -159,6 +177,17 @@ const Main_Admin_Queries = ({showCategories,showMonths,query,resetQuery}) => {
                         categories.map((category,index)=>{
                             return <option key={index} value={category} >{category}</option>
                         })
+                    }
+                </select>
+            :   <div></div>
+            }
+            {showYears
+            ?   <select onChange={onYearChange}>
+                    {
+                        Years.map((year,index)=>{
+                            return <option key={index} value={year} >{year}</option>
+                        })
+                        
                     }
                 </select>
             :   <div></div>

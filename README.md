@@ -1,8 +1,8 @@
 # DATABASE-PROJECT
 CONTRIBUTORS:
-1.Dimitris Georgoulopoulos 03120862
-2.Markos Kalogerakis
-3.Konstantinos Perifanos 03120134
+1.Dimitris Georgoulopoulos  
+2.Markos Kalogerakis  03119115
+3.Konstantinos Perifanos  03120134
 
 Requirements:
 1) Python 3.10.6
@@ -44,7 +44,7 @@ After that run the following python scripts that are within DATABASE-PROJECT/LIB
   
   -Borrow_Requests.py -> creates random borrow and requests for presentation
   
-6)Finally cd into database_frontend and run "npm install react-router-dom@6"
+6)Finally cd into database_frontend and run "npm install" to install react dependencies.
 7) In order to start the app:
   -Inside /LIBRARY_DATABASE run command 'flask --debug run --with-threads'. This will fire up the server/backend
   -Then cd into /database_frontend and run command 'npm start'
