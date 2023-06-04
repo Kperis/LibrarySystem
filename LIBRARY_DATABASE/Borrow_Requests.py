@@ -10,7 +10,7 @@ from datetime import timedelta
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = '',#"ChoedanKal2002",
+password = '',
 database = "schooldatabasev4"
 )
 

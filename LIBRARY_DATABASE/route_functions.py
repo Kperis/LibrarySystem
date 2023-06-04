@@ -15,7 +15,7 @@ from insert_faker import Empty_Tables,Drop_Tables,backup,generate_card
 mydb = con.connect(
 host = "localhost",
 user = "root",
-password = "",#"ChoedanKal2002",
+password = "",
 database = "schooldatabasev4"
 )
 

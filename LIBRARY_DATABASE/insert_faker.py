@@ -128,7 +128,6 @@ def Insert_Authentication():
 
 #Αδειάζει όλα τα δεδομένα όλων των πινάκων της βάσης
 def Empty_Tables():
-    print("what the hell i am doing here")
     sql_file = open(os.getcwd()+'/sql_schemas/truncate_schema.sql')  
     
     sql_string = sql_file.read().split(';')
