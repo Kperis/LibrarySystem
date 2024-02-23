@@ -6,7 +6,6 @@ const Admin = ({count,count2,request_list,borrow,user,borrow_list,update_count})
     
     const [username, setUser] = useState('');
     const [title,setTitle] = useState('');
-    // const [delay_list,setDelayList] = useState([]);
     const [array,setArr] = useState([]);
     const [delShow,setDelShow] = useState(false);
     const [daysDelayed, setDaysDelayed] = useState(0);
